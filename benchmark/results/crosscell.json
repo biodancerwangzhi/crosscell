@@ -1,0 +1,1338 @@
+{
+  "tool": "crosscell",
+  "timestamp": "2026-02-11T06:17:36Z",
+  "config": {
+    "runs_per_test": 3,
+    "timeout_seconds": 600
+  },
+  "rds_to_h5ad": [
+    {
+      "test_id": "v4_pbmc3k_raw",
+      "dataset": "pbmc3k",
+      "direction": "rds_to_h5ad",
+      "status": "success",
+      "conversion_time_seconds": 0.455,
+      "peak_memory_mb": 152.3,
+      "output_file_size_mb": 26.2,
+      "all_times": [
+        0.409,
+        0.455,
+        0.614
+      ],
+      "all_mems": [
+        152.2,
+        152.3,
+        152.5
+      ],
+      "n_cells": 2700,
+      "n_genes": 13714,
+      "scale": "small",
+      "seurat_version": "V4",
+      "type": "raw"
+    },
+    {
+      "test_id": "v4_pbmc3k_processed",
+      "dataset": "pbmc3k",
+      "direction": "rds_to_h5ad",
+      "status": "success",
+      "conversion_time_seconds": 0.684,
+      "peak_memory_mb": 232.3,
+      "output_file_size_mb": 27.3,
+      "all_times": [
+        0.658,
+        0.684,
+        0.752
+      ],
+      "all_mems": [
+        232.3,
+        232.3,
+        232.3
+      ],
+      "n_cells": 2700,
+      "n_genes": 13714,
+      "scale": "small",
+      "seurat_version": "V4",
+      "type": "processed"
+    },
+    {
+      "test_id": "v5_pbmc3k_raw",
+      "dataset": "pbmc3k",
+      "direction": "rds_to_h5ad",
+      "status": "success",
+      "conversion_time_seconds": 0.318,
+      "peak_memory_mb": 113.9,
+      "output_file_size_mb": 26.2,
+      "all_times": [
+        0.29,
+        0.318,
+        0.343
+      ],
+      "all_mems": [
+        113.9,
+        113.9,
+        114.1
+      ],
+      "n_cells": 2700,
+      "n_genes": 13714,
+      "scale": "small",
+      "seurat_version": "V5",
+      "type": "raw"
+    },
+    {
+      "test_id": "v5_pbmc3k_processed",
+      "dataset": "pbmc3k",
+      "direction": "rds_to_h5ad",
+      "status": "success",
+      "conversion_time_seconds": 0.789,
+      "peak_memory_mb": 246.5,
+      "output_file_size_mb": 27.3,
+      "all_times": [
+        0.707,
+        0.789,
+        0.852
+      ],
+      "all_mems": [
+        246.4,
+        246.5,
+        246.5
+      ],
+      "n_cells": 2700,
+      "n_genes": 13714,
+      "scale": "small",
+      "seurat_version": "V5",
+      "type": "processed"
+    },
+    {
+      "test_id": "v4_stxKidney_raw",
+      "dataset": "stxKidney",
+      "direction": "rds_to_h5ad",
+      "status": "success",
+      "conversion_time_seconds": 1.729,
+      "peak_memory_mb": 565.6,
+      "output_file_size_mb": 91.9,
+      "all_times": [
+        1.638,
+        1.729,
+        2.111
+      ],
+      "all_mems": [
+        565.1,
+        565.6,
+        565.7
+      ],
+      "n_cells": 1438,
+      "n_genes": 31053,
+      "scale": "small",
+      "seurat_version": "V4",
+      "type": "raw"
+    },
+    {
+      "test_id": "v5_stxKidney_raw",
+      "dataset": "stxKidney",
+      "direction": "rds_to_h5ad",
+      "status": "success",
+      "conversion_time_seconds": 1.15,
+      "peak_memory_mb": 409.2,
+      "output_file_size_mb": 91.92,
+      "all_times": [
+        1.114,
+        1.15,
+        1.291
+      ],
+      "all_mems": [
+        409.0,
+        409.2,
+        409.2
+      ],
+      "n_cells": 1438,
+      "n_genes": 31053,
+      "scale": "small",
+      "seurat_version": "V5",
+      "type": "raw"
+    },
+    {
+      "test_id": "v4_celegans_raw",
+      "dataset": "celegans.embryo",
+      "direction": "rds_to_h5ad",
+      "status": "success",
+      "conversion_time_seconds": 1.124,
+      "peak_memory_mb": 317.1,
+      "output_file_size_mb": 58.67,
+      "all_times": [
+        1.061,
+        1.124,
+        1.379
+      ],
+      "all_mems": [
+        316.9,
+        317.1,
+        317.2
+      ],
+      "n_cells": 6188,
+      "n_genes": 20222,
+      "scale": "medium",
+      "seurat_version": "V4",
+      "type": "raw"
+    },
+    {
+      "test_id": "v4_celegans_processed",
+      "dataset": "celegans.embryo",
+      "direction": "rds_to_h5ad",
+      "status": "success",
+      "conversion_time_seconds": 1.506,
+      "peak_memory_mb": 479.7,
+      "output_file_size_mb": 61.18,
+      "all_times": [
+        1.4,
+        1.506,
+        1.641
+      ],
+      "all_mems": [
+        479.5,
+        479.7,
+        479.7
+      ],
+      "n_cells": 6188,
+      "n_genes": 20222,
+      "scale": "medium",
+      "seurat_version": "V4",
+      "type": "processed"
+    },
+    {
+      "test_id": "v5_celegans_raw",
+      "dataset": "celegans.embryo",
+      "direction": "rds_to_h5ad",
+      "status": "success",
+      "conversion_time_seconds": 0.96,
+      "peak_memory_mb": 257.1,
+      "output_file_size_mb": 58.67,
+      "all_times": [
+        0.863,
+        0.96,
+        1.075
+      ],
+      "all_mems": [
+        257.1,
+        257.1,
+        257.3
+      ],
+      "n_cells": 6188,
+      "n_genes": 20222,
+      "scale": "medium",
+      "seurat_version": "V5",
+      "type": "raw"
+    },
+    {
+      "test_id": "v5_celegans_processed",
+      "dataset": "celegans.embryo",
+      "direction": "rds_to_h5ad",
+      "status": "success",
+      "conversion_time_seconds": 2.001,
+      "peak_memory_mb": 520.2,
+      "output_file_size_mb": 61.18,
+      "all_times": [
+        1.875,
+        2.001,
+        2.033
+      ],
+      "all_mems": [
+        520.1,
+        520.2,
+        520.4
+      ],
+      "n_cells": 6188,
+      "n_genes": 20222,
+      "scale": "medium",
+      "seurat_version": "V5",
+      "type": "processed"
+    },
+    {
+      "test_id": "v4_cbmc_raw",
+      "dataset": "cbmc",
+      "direction": "rds_to_h5ad",
+      "status": "success",
+      "conversion_time_seconds": 2.315,
+      "peak_memory_mb": 580.2,
+      "output_file_size_mb": 95.39,
+      "all_times": [
+        2.258,
+        2.315,
+        2.42
+      ],
+      "all_mems": [
+        580.0,
+        580.2,
+        580.2
+      ],
+      "n_cells": 8617,
+      "n_genes": 20501,
+      "scale": "medium",
+      "seurat_version": "V4",
+      "type": "raw"
+    },
+    {
+      "test_id": "v4_cbmc_processed",
+      "dataset": "cbmc",
+      "direction": "rds_to_h5ad",
+      "status": "success",
+      "conversion_time_seconds": 3.068,
+      "peak_memory_mb": 716.9,
+      "output_file_size_mb": 98.87,
+      "all_times": [
+        2.511,
+        3.068,
+        3.108
+      ],
+      "all_mems": [
+        716.9,
+        716.9,
+        717.2
+      ],
+      "n_cells": 8617,
+      "n_genes": 20501,
+      "scale": "medium",
+      "seurat_version": "V4",
+      "type": "processed"
+    },
+    {
+      "test_id": "v5_cbmc_raw",
+      "dataset": "cbmc",
+      "direction": "rds_to_h5ad",
+      "status": "success",
+      "conversion_time_seconds": 1.292,
+      "peak_memory_mb": 419.6,
+      "output_file_size_mb": 94.73,
+      "all_times": [
+        1.252,
+        1.292,
+        1.501
+      ],
+      "all_mems": [
+        419.3,
+        419.6,
+        419.6
+      ],
+      "n_cells": 8617,
+      "n_genes": 20501,
+      "scale": "medium",
+      "seurat_version": "V5",
+      "type": "raw"
+    },
+    {
+      "test_id": "v5_cbmc_processed",
+      "dataset": "cbmc",
+      "direction": "rds_to_h5ad",
+      "status": "success",
+      "conversion_time_seconds": 3.07,
+      "peak_memory_mb": 828.6,
+      "output_file_size_mb": 98.21,
+      "all_times": [
+        2.923,
+        3.07,
+        3.219
+      ],
+      "all_mems": [
+        828.4,
+        828.6,
+        828.7
+      ],
+      "n_cells": 8617,
+      "n_genes": 20501,
+      "scale": "medium",
+      "seurat_version": "V5",
+      "type": "processed"
+    },
+    {
+      "test_id": "v4_ifnb_raw",
+      "dataset": "ifnb",
+      "direction": "rds_to_h5ad",
+      "status": "success",
+      "conversion_time_seconds": 2.454,
+      "peak_memory_mb": 583.7,
+      "output_file_size_mb": 113.47,
+      "all_times": [
+        2.297,
+        2.454,
+        2.572
+      ],
+      "all_mems": [
+        583.6,
+        583.7,
+        583.9
+      ],
+      "n_cells": 13999,
+      "n_genes": 14053,
+      "scale": "medium",
+      "seurat_version": "V4",
+      "type": "raw"
+    },
+    {
+      "test_id": "v4_ifnb_processed",
+      "dataset": "ifnb",
+      "direction": "rds_to_h5ad",
+      "status": "success",
+      "conversion_time_seconds": 3.943,
+      "peak_memory_mb": 965.8,
+      "output_file_size_mb": 119.13,
+      "all_times": [
+        3.841,
+        3.943,
+        4.053
+      ],
+      "all_mems": [
+        965.7,
+        965.8,
+        966.1
+      ],
+      "n_cells": 13999,
+      "n_genes": 14053,
+      "scale": "medium",
+      "seurat_version": "V4",
+      "type": "processed"
+    },
+    {
+      "test_id": "v5_ifnb_raw",
+      "dataset": "ifnb",
+      "direction": "rds_to_h5ad",
+      "status": "success",
+      "conversion_time_seconds": 1.739,
+      "peak_memory_mb": 465.2,
+      "output_file_size_mb": 113.47,
+      "all_times": [
+        1.682,
+        1.739,
+        1.765
+      ],
+      "all_mems": [
+        465.2,
+        465.2,
+        465.2
+      ],
+      "n_cells": 13999,
+      "n_genes": 14053,
+      "scale": "medium",
+      "seurat_version": "V5",
+      "type": "raw"
+    },
+    {
+      "test_id": "v5_ifnb_processed",
+      "dataset": "ifnb",
+      "direction": "rds_to_h5ad",
+      "status": "success",
+      "conversion_time_seconds": 4.122,
+      "peak_memory_mb": 995.9,
+      "output_file_size_mb": 119.13,
+      "all_times": [
+        3.72,
+        4.122,
+        4.856
+      ],
+      "all_mems": [
+        995.7,
+        995.9,
+        996.1
+      ],
+      "n_cells": 13999,
+      "n_genes": 14053,
+      "scale": "medium",
+      "seurat_version": "V5",
+      "type": "processed"
+    },
+    {
+      "test_id": "v4_panc8_raw",
+      "dataset": "panc8",
+      "direction": "rds_to_h5ad",
+      "status": "success",
+      "conversion_time_seconds": 16.42,
+      "peak_memory_mb": 3004.3,
+      "output_file_size_mb": 596.15,
+      "all_times": [
+        16.296,
+        16.42,
+        16.591
+      ],
+      "all_mems": [
+        3004.2,
+        3004.3,
+        3004.4
+      ],
+      "n_cells": 14890,
+      "n_genes": 34363,
+      "scale": "medium",
+      "seurat_version": "V4",
+      "type": "raw"
+    },
+    {
+      "test_id": "v4_panc8_processed",
+      "dataset": "panc8",
+      "direction": "rds_to_h5ad",
+      "status": "success",
+      "conversion_time_seconds": 18.232,
+      "peak_memory_mb": 3298.6,
+      "output_file_size_mb": 602.18,
+      "all_times": [
+        17.114,
+        18.232,
+        21.136
+      ],
+      "all_mems": [
+        3298.6,
+        3298.6,
+        3298.9
+      ],
+      "n_cells": 14890,
+      "n_genes": 34363,
+      "scale": "medium",
+      "seurat_version": "V4",
+      "type": "processed"
+    },
+    {
+      "test_id": "v5_panc8_raw",
+      "dataset": "panc8",
+      "direction": "rds_to_h5ad",
+      "status": "success",
+      "conversion_time_seconds": 12.155,
+      "peak_memory_mb": 2398.8,
+      "output_file_size_mb": 596.15,
+      "all_times": [
+        11.898,
+        12.155,
+        12.191
+      ],
+      "all_mems": [
+        2398.8,
+        2398.8,
+        2398.8
+      ],
+      "n_cells": 14890,
+      "n_genes": 34363,
+      "scale": "medium",
+      "seurat_version": "V5",
+      "type": "raw"
+    },
+    {
+      "test_id": "v5_panc8_processed",
+      "dataset": "panc8",
+      "direction": "rds_to_h5ad",
+      "status": "success",
+      "conversion_time_seconds": 19.485,
+      "peak_memory_mb": 4072.2,
+      "output_file_size_mb": 602.18,
+      "all_times": [
+        19.271,
+        19.485,
+        21.095
+      ],
+      "all_mems": [
+        4072.0,
+        4072.2,
+        4072.3
+      ],
+      "n_cells": 14890,
+      "n_genes": 34363,
+      "scale": "medium",
+      "seurat_version": "V5",
+      "type": "processed"
+    },
+    {
+      "test_id": "v4_thp1_raw",
+      "dataset": "thp1.eccite",
+      "direction": "rds_to_h5ad",
+      "status": "success",
+      "conversion_time_seconds": 25.861,
+      "peak_memory_mb": 4148.0,
+      "output_file_size_mb": 818.29,
+      "all_times": [
+        25.02,
+        25.861,
+        28.162
+      ],
+      "all_mems": [
+        4148.0,
+        4148.0,
+        4148.1
+      ],
+      "n_cells": 20729,
+      "n_genes": 18649,
+      "scale": "large",
+      "seurat_version": "V4",
+      "type": "raw"
+    },
+    {
+      "test_id": "v4_thp1_processed",
+      "dataset": "thp1.eccite",
+      "direction": "rds_to_h5ad",
+      "status": "success",
+      "conversion_time_seconds": 24.297,
+      "peak_memory_mb": 4536.2,
+      "output_file_size_mb": 826.67,
+      "all_times": [
+        23.791,
+        24.297,
+        24.472
+      ],
+      "all_mems": [
+        4536.2,
+        4536.2,
+        4536.4
+      ],
+      "n_cells": 20729,
+      "n_genes": 18649,
+      "scale": "large",
+      "seurat_version": "V4",
+      "type": "processed"
+    },
+    {
+      "test_id": "v5_thp1_raw",
+      "dataset": "thp1.eccite",
+      "direction": "rds_to_h5ad",
+      "status": "success",
+      "conversion_time_seconds": 15.739,
+      "peak_memory_mb": 3203.6,
+      "output_file_size_mb": 798.2,
+      "all_times": [
+        15.728,
+        15.739,
+        17.031
+      ],
+      "all_mems": [
+        3203.6,
+        3203.6,
+        3203.6
+      ],
+      "n_cells": 20729,
+      "n_genes": 18649,
+      "scale": "large",
+      "seurat_version": "V5",
+      "type": "raw"
+    },
+    {
+      "test_id": "v5_thp1_processed",
+      "dataset": "thp1.eccite",
+      "direction": "rds_to_h5ad",
+      "status": "success",
+      "conversion_time_seconds": 27.81,
+      "peak_memory_mb": 5453.4,
+      "output_file_size_mb": 806.66,
+      "all_times": [
+        27.474,
+        27.81,
+        29.036
+      ],
+      "all_mems": [
+        5453.4,
+        5453.4,
+        5453.7
+      ],
+      "n_cells": 20729,
+      "n_genes": 18649,
+      "scale": "large",
+      "seurat_version": "V5",
+      "type": "processed"
+    },
+    {
+      "test_id": "v4_bmcite_raw",
+      "dataset": "bmcite",
+      "direction": "rds_to_h5ad",
+      "status": "success",
+      "conversion_time_seconds": 8.455,
+      "peak_memory_mb": 1853.0,
+      "output_file_size_mb": 336.16,
+      "all_times": [
+        8.135,
+        8.455,
+        9.748
+      ],
+      "all_mems": [
+        1852.9,
+        1853.0,
+        1853.1
+      ],
+      "n_cells": 30672,
+      "n_genes": 17009,
+      "scale": "large",
+      "seurat_version": "V4",
+      "type": "raw"
+    },
+    {
+      "test_id": "v4_bmcite_processed",
+      "dataset": "bmcite",
+      "direction": "rds_to_h5ad",
+      "status": "success",
+      "conversion_time_seconds": 11.077,
+      "peak_memory_mb": 2623.6,
+      "output_file_size_mb": 348.56,
+      "all_times": [
+        10.434,
+        11.077,
+        11.877
+      ],
+      "all_mems": [
+        2623.3,
+        2623.6,
+        2623.6
+      ],
+      "n_cells": 30672,
+      "n_genes": 17009,
+      "scale": "large",
+      "seurat_version": "V4",
+      "type": "processed"
+    },
+    {
+      "test_id": "v5_bmcite_raw",
+      "dataset": "bmcite",
+      "direction": "rds_to_h5ad",
+      "status": "success",
+      "conversion_time_seconds": 5.036,
+      "peak_memory_mb": 1288.8,
+      "output_file_size_mb": 318.6,
+      "all_times": [
+        4.966,
+        5.036,
+        5.356
+      ],
+      "all_mems": [
+        1288.7,
+        1288.8,
+        1289.0
+      ],
+      "n_cells": 30672,
+      "n_genes": 17009,
+      "scale": "large",
+      "seurat_version": "V5",
+      "type": "raw"
+    },
+    {
+      "test_id": "v5_bmcite_processed",
+      "dataset": "bmcite",
+      "direction": "rds_to_h5ad",
+      "status": "success",
+      "conversion_time_seconds": 12.397,
+      "peak_memory_mb": 2595.1,
+      "output_file_size_mb": 331.01,
+      "all_times": [
+        11.839,
+        12.397,
+        13.307
+      ],
+      "all_mems": [
+        2595.0,
+        2595.1,
+        2595.3
+      ],
+      "n_cells": 30672,
+      "n_genes": 17009,
+      "scale": "large",
+      "seurat_version": "V5",
+      "type": "processed"
+    },
+    {
+      "test_id": "v4_pbmcsca_raw",
+      "dataset": "pbmcsca",
+      "direction": "rds_to_h5ad",
+      "status": "success",
+      "conversion_time_seconds": 7.231,
+      "peak_memory_mb": 1651.5,
+      "output_file_size_mb": 325.16,
+      "all_times": [
+        7.043,
+        7.231,
+        8.126
+      ],
+      "all_mems": [
+        1651.1,
+        1651.5,
+        1651.5
+      ],
+      "n_cells": 31021,
+      "n_genes": 33694,
+      "scale": "large",
+      "seurat_version": "V4",
+      "type": "raw"
+    },
+    {
+      "test_id": "v4_pbmcsca_processed",
+      "dataset": "pbmcsca",
+      "direction": "rds_to_h5ad",
+      "status": "success",
+      "conversion_time_seconds": 10.463,
+      "peak_memory_mb": 2439.0,
+      "output_file_size_mb": 337.71,
+      "all_times": [
+        9.799,
+        10.463,
+        10.841
+      ],
+      "all_mems": [
+        2438.9,
+        2439.0,
+        2439.3
+      ],
+      "n_cells": 31021,
+      "n_genes": 33694,
+      "scale": "large",
+      "seurat_version": "V4",
+      "type": "processed"
+    },
+    {
+      "test_id": "v5_pbmcsca_raw",
+      "dataset": "pbmcsca",
+      "direction": "rds_to_h5ad",
+      "status": "success",
+      "conversion_time_seconds": 5.145,
+      "peak_memory_mb": 1319.6,
+      "output_file_size_mb": 325.16,
+      "all_times": [
+        5.104,
+        5.145,
+        5.92
+      ],
+      "all_mems": [
+        1319.6,
+        1319.6,
+        1319.8
+      ],
+      "n_cells": 31021,
+      "n_genes": 33694,
+      "scale": "large",
+      "seurat_version": "V5",
+      "type": "raw"
+    },
+    {
+      "test_id": "v5_pbmcsca_processed",
+      "dataset": "pbmcsca",
+      "direction": "rds_to_h5ad",
+      "status": "success",
+      "conversion_time_seconds": 11.389,
+      "peak_memory_mb": 2654.2,
+      "output_file_size_mb": 337.71,
+      "all_times": [
+        10.553,
+        11.389,
+        11.419
+      ],
+      "all_mems": [
+        2654.2,
+        2654.2,
+        2654.4
+      ],
+      "n_cells": 31021,
+      "n_genes": 33694,
+      "scale": "large",
+      "seurat_version": "V5",
+      "type": "processed"
+    },
+    {
+      "test_id": "v4_hcabm40k_raw",
+      "dataset": "hcabm40k",
+      "direction": "rds_to_h5ad",
+      "status": "success",
+      "conversion_time_seconds": 11.511,
+      "peak_memory_mb": 2352.2,
+      "output_file_size_mb": 462.26,
+      "all_times": [
+        10.994,
+        11.511,
+        13.388
+      ],
+      "all_mems": [
+        2352.1,
+        2352.2,
+        2352.2
+      ],
+      "n_cells": 40000,
+      "n_genes": 17369,
+      "scale": "large",
+      "seurat_version": "V4",
+      "type": "raw"
+    },
+    {
+      "test_id": "v4_hcabm40k_processed",
+      "dataset": "hcabm40k",
+      "direction": "rds_to_h5ad",
+      "status": "success",
+      "conversion_time_seconds": 16.762,
+      "peak_memory_mb": 3297.2,
+      "output_file_size_mb": 478.44,
+      "all_times": [
+        16.429,
+        16.762,
+        18.733
+      ],
+      "all_mems": [
+        3296.8,
+        3297.2,
+        3297.2
+      ],
+      "n_cells": 40000,
+      "n_genes": 17369,
+      "scale": "large",
+      "seurat_version": "V4",
+      "type": "processed"
+    },
+    {
+      "test_id": "v5_hcabm40k_raw",
+      "dataset": "hcabm40k",
+      "direction": "rds_to_h5ad",
+      "status": "success",
+      "conversion_time_seconds": 8.497,
+      "peak_memory_mb": 1876.6,
+      "output_file_size_mb": 462.26,
+      "all_times": [
+        8.399,
+        8.497,
+        8.866
+      ],
+      "all_mems": [
+        1876.5,
+        1876.6,
+        1876.7
+      ],
+      "n_cells": 40000,
+      "n_genes": 17369,
+      "scale": "large",
+      "seurat_version": "V5",
+      "type": "raw"
+    },
+    {
+      "test_id": "v5_hcabm40k_processed",
+      "dataset": "hcabm40k",
+      "direction": "rds_to_h5ad",
+      "status": "success",
+      "conversion_time_seconds": 17.394,
+      "peak_memory_mb": 3720.5,
+      "output_file_size_mb": 478.44,
+      "all_times": [
+        17.007,
+        17.394,
+        20.02
+      ],
+      "all_mems": [
+        3720.0,
+        3720.5,
+        3720.5
+      ],
+      "n_cells": 40000,
+      "n_genes": 17369,
+      "scale": "large",
+      "seurat_version": "V5",
+      "type": "processed"
+    },
+    {
+      "test_id": "v4_ssHippo_raw",
+      "dataset": "ssHippo",
+      "direction": "rds_to_h5ad",
+      "status": "success",
+      "conversion_time_seconds": 8.503,
+      "peak_memory_mb": 1343.9,
+      "output_file_size_mb": 256.94,
+      "all_times": [
+        6.726,
+        8.503,
+        10.175
+      ],
+      "all_mems": [
+        1343.8,
+        1343.9,
+        1343.9
+      ],
+      "n_cells": 53173,
+      "n_genes": 23264,
+      "scale": "large",
+      "seurat_version": "V4",
+      "type": "raw"
+    },
+    {
+      "test_id": "v4_ssHippo_processed",
+      "dataset": "ssHippo",
+      "direction": "rds_to_h5ad",
+      "status": "success",
+      "conversion_time_seconds": 12.235,
+      "peak_memory_mb": 2945.0,
+      "output_file_size_mb": 278.44,
+      "all_times": [
+        10.172,
+        12.235,
+        12.363
+      ],
+      "all_mems": [
+        2944.8,
+        2945.0,
+        2945.0
+      ],
+      "n_cells": 53173,
+      "n_genes": 23264,
+      "scale": "large",
+      "seurat_version": "V4",
+      "type": "processed"
+    },
+    {
+      "test_id": "v5_ssHippo_raw",
+      "dataset": "ssHippo",
+      "direction": "rds_to_h5ad",
+      "status": "success",
+      "conversion_time_seconds": 6.028,
+      "peak_memory_mb": 1072.5,
+      "output_file_size_mb": 256.94,
+      "all_times": [
+        5.339,
+        6.028,
+        7.844
+      ],
+      "all_mems": [
+        1072.0,
+        1072.5,
+        1072.7
+      ],
+      "n_cells": 53173,
+      "n_genes": 23264,
+      "scale": "large",
+      "seurat_version": "V5",
+      "type": "raw"
+    },
+    {
+      "test_id": "v5_ssHippo_processed",
+      "dataset": "ssHippo",
+      "direction": "rds_to_h5ad",
+      "status": "success",
+      "conversion_time_seconds": 12.377,
+      "peak_memory_mb": 2912.3,
+      "output_file_size_mb": 278.44,
+      "all_times": [
+        11.956,
+        12.377,
+        13.112
+      ],
+      "all_mems": [
+        2912.3,
+        2912.3,
+        2912.4
+      ],
+      "n_cells": 53173,
+      "n_genes": 23264,
+      "scale": "large",
+      "seurat_version": "V5",
+      "type": "processed"
+    }
+  ],
+  "h5ad_to_rds": [
+    {
+      "test_id": "scanpy_pbmc3k",
+      "dataset": "scanpy_pbmc3k",
+      "direction": "h5ad_to_rds",
+      "status": "success",
+      "conversion_time_seconds": 2.969,
+      "peak_memory_mb": 152.6,
+      "output_file_size_mb": 4.84,
+      "all_times": [
+        2.842,
+        2.969,
+        3.111
+      ],
+      "all_mems": [
+        152.5,
+        152.6,
+        152.7
+      ],
+      "n_cells": 2700,
+      "n_genes": 32738,
+      "scale": "small",
+      "seurat_version": "",
+      "type": ""
+    },
+    {
+      "test_id": "scanpy_pbmc3k_processed",
+      "dataset": "scanpy_pbmc3k_processed",
+      "direction": "h5ad_to_rds",
+      "status": "success",
+      "conversion_time_seconds": 8.687,
+      "peak_memory_mb": 254.2,
+      "output_file_size_mb": 21.43,
+      "all_times": [
+        8.621,
+        8.687,
+        8.919
+      ],
+      "all_mems": [
+        254.0,
+        254.2,
+        254.2
+      ],
+      "n_cells": 2638,
+      "n_genes": 1838,
+      "scale": "small",
+      "seurat_version": "",
+      "type": ""
+    },
+    {
+      "test_id": "scvelo_pancreas",
+      "dataset": "scvelo_pancreas",
+      "direction": "h5ad_to_rds",
+      "status": "success",
+      "conversion_time_seconds": 28.227,
+      "peak_memory_mb": 901.0,
+      "output_file_size_mb": 45.78,
+      "all_times": [
+        26.835,
+        28.227,
+        28.805
+      ],
+      "all_mems": [
+        900.7,
+        901.0,
+        914.4
+      ],
+      "n_cells": 3696,
+      "n_genes": 27998,
+      "scale": "small",
+      "seurat_version": "",
+      "type": ""
+    },
+    {
+      "test_id": "scvelo_dentategyrus",
+      "dataset": "scvelo_dentategyrus",
+      "direction": "h5ad_to_rds",
+      "status": "success",
+      "conversion_time_seconds": 13.701,
+      "peak_memory_mb": 458.0,
+      "output_file_size_mb": 22.01,
+      "all_times": [
+        13.278,
+        13.701,
+        14.371
+      ],
+      "all_mems": [
+        410.9,
+        458.0,
+        458.1
+      ],
+      "n_cells": 2930,
+      "n_genes": 13913,
+      "scale": "small",
+      "seurat_version": "",
+      "type": ""
+    },
+    {
+      "test_id": "squidpy_imc",
+      "dataset": "squidpy_imc",
+      "direction": "h5ad_to_rds",
+      "status": "success",
+      "conversion_time_seconds": 0.412,
+      "peak_memory_mb": 17.0,
+      "output_file_size_mb": 0.83,
+      "all_times": [
+        0.397,
+        0.412,
+        0.454
+      ],
+      "all_mems": [
+        16.9,
+        17.0,
+        17.1
+      ],
+      "n_cells": 4668,
+      "n_genes": 34,
+      "scale": "small",
+      "seurat_version": "",
+      "type": ""
+    },
+    {
+      "test_id": "squidpy_mibitof",
+      "dataset": "squidpy_mibitof",
+      "direction": "h5ad_to_rds",
+      "status": "success",
+      "conversion_time_seconds": 0.48,
+      "peak_memory_mb": 26.6,
+      "output_file_size_mb": 1.53,
+      "all_times": [
+        0.456,
+        0.48,
+        0.73
+      ],
+      "all_mems": [
+        26.6,
+        26.6,
+        26.8
+      ],
+      "n_cells": 3309,
+      "n_genes": 36,
+      "scale": "small",
+      "seurat_version": "",
+      "type": ""
+    },
+    {
+      "test_id": "squidpy_visium_hne",
+      "dataset": "squidpy_visium_hne",
+      "direction": "h5ad_to_rds",
+      "status": "success",
+      "conversion_time_seconds": 20.429,
+      "peak_memory_mb": 919.3,
+      "output_file_size_mb": 35.99,
+      "all_times": [
+        20.377,
+        20.429,
+        23.02
+      ],
+      "all_mems": [
+        919.1,
+        919.3,
+        919.3
+      ],
+      "n_cells": 2688,
+      "n_genes": 18078,
+      "scale": "small",
+      "seurat_version": "",
+      "type": ""
+    },
+    {
+      "test_id": "cellxgene_pbmc_15k",
+      "dataset": "cellxgene_pbmc_15k",
+      "direction": "h5ad_to_rds",
+      "status": "success",
+      "conversion_time_seconds": 20.004,
+      "peak_memory_mb": 858.4,
+      "output_file_size_mb": 35.74,
+      "all_times": [
+        19.772,
+        20.004,
+        20.625
+      ],
+      "all_mems": [
+        858.3,
+        858.4,
+        858.4
+      ],
+      "n_cells": 14783,
+      "n_genes": 17222,
+      "scale": "medium",
+      "seurat_version": "",
+      "type": ""
+    },
+    {
+      "test_id": "squidpy_seqfish",
+      "dataset": "squidpy_seqfish",
+      "direction": "h5ad_to_rds",
+      "status": "success",
+      "conversion_time_seconds": 2.308,
+      "peak_memory_mb": 98.3,
+      "output_file_size_mb": 3.64,
+      "all_times": [
+        2.192,
+        2.308,
+        2.356
+      ],
+      "all_mems": [
+        98.3,
+        98.3,
+        98.5
+      ],
+      "n_cells": 19416,
+      "n_genes": 351,
+      "scale": "medium",
+      "seurat_version": "",
+      "type": ""
+    },
+    {
+      "test_id": "cellxgene_heart_23k",
+      "dataset": "cellxgene_heart_23k",
+      "direction": "h5ad_to_rds",
+      "status": "success",
+      "conversion_time_seconds": 44.081,
+      "peak_memory_mb": 2076.2,
+      "output_file_size_mb": 82.72,
+      "all_times": [
+        43.826,
+        44.081,
+        45.304
+      ],
+      "all_mems": [
+        2075.8,
+        2076.2,
+        2076.3
+      ],
+      "n_cells": 23483,
+      "n_genes": 32330,
+      "scale": "large",
+      "seurat_version": "",
+      "type": ""
+    },
+    {
+      "test_id": "cellxgene_brain_40k",
+      "dataset": "cellxgene_brain_40k",
+      "direction": "h5ad_to_rds",
+      "status": "success",
+      "conversion_time_seconds": 296.943,
+      "peak_memory_mb": 11900.2,
+      "output_file_size_mb": 495.9,
+      "all_times": [
+        288.749,
+        296.943,
+        299.567
+      ],
+      "all_mems": [
+        11899.7,
+        11900.2,
+        11900.3
+      ],
+      "n_cells": 40165,
+      "n_genes": 58232,
+      "scale": "large",
+      "seurat_version": "",
+      "type": ""
+    },
+    {
+      "test_id": "squidpy_slideseqv2",
+      "dataset": "squidpy_slideseqv2",
+      "direction": "h5ad_to_rds",
+      "status": "success",
+      "conversion_time_seconds": 10.341,
+      "peak_memory_mb": 333.9,
+      "output_file_size_mb": 20.65,
+      "all_times": [
+        9.691,
+        10.341,
+        10.349
+      ],
+      "all_mems": [
+        333.6,
+        333.9,
+        334.2
+      ],
+      "n_cells": 41786,
+      "n_genes": 4000,
+      "scale": "large",
+      "seurat_version": "",
+      "type": ""
+    },
+    {
+      "test_id": "squidpy_merfish",
+      "dataset": "squidpy_merfish",
+      "direction": "h5ad_to_rds",
+      "status": "success",
+      "conversion_time_seconds": 7.161,
+      "peak_memory_mb": 301.0,
+      "output_file_size_mb": 19.54,
+      "all_times": [
+        7.101,
+        7.161,
+        7.345
+      ],
+      "all_mems": [
+        300.9,
+        301.0,
+        301.1
+      ],
+      "n_cells": 73655,
+      "n_genes": 161,
+      "scale": "large",
+      "seurat_version": "",
+      "type": ""
+    }
+  ],
+  "summary": {
+    "total": 55,
+    "success": 55,
+    "failed": 0,
+    "skipped": 0
+  }
+}

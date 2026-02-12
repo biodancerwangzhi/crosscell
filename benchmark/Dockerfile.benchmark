@@ -1,0 +1,231 @@
+# ============================================
+# CrossCell Performance Benchmark Environment
+# ============================================
+# 用于对比 CrossCell 与其他工具的性能
+# 包含: CrossCell, Zellkonverter, anndataR, convert2anndata, easySCF
+# ============================================
+
+FROM ubuntu:22.04
+
+LABEL maintainer="CrossCell Contributors"
+LABEL description="Performance benchmark environment for single-cell data conversion tools"
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+# ============================================
+# 1. 系统依赖
+# ============================================
+RUN sed -i 's/archive.ubuntu.com/mirrors.aliyun.com/g' /etc/apt/sources.list && \
+    sed -i 's/security.ubuntu.com/mirrors.aliyun.com/g' /etc/apt/sources.list && \
+    apt-get update && apt-get install -y \
+    build-essential \
+    pkg-config \
+    cmake \
+    git \
+    curl \
+    wget \
+    vim \
+    ca-certificates \
+    software-properties-common \
+    dirmngr \
+    gnupg \
+    libhdf5-dev \
+    hdf5-tools \
+    libcurl4-openssl-dev \
+    libssl-dev \
+    libxml2-dev \
+    libfontconfig1-dev \
+    libfreetype6-dev \
+    libpng-dev \
+    libtiff5-dev \
+    libjpeg-dev \
+    libharfbuzz-dev \
+    libfribidi-dev \
+    libglpk-dev \
+    libopenblas-dev \
+    zlib1g-dev \
+    libbz2-dev \
+    liblzma-dev \
+    python3 \
+    python3-pip \
+    python3-dev \
+    python3-venv \
+    time \
+    procps \
+    && rm -rf /var/lib/apt/lists/*
+
+# ============================================
+# 2. 安装 R 4.5
+# ============================================
+RUN wget -qO- https://cloud.r-project.org/bin/linux/ubuntu/marutter_pubkey.asc | gpg --dearmor -o /usr/share/keyrings/r-project.gpg && \
+    echo "deb [signed-by=/usr/share/keyrings/r-project.gpg] https://cloud.r-project.org/bin/linux/ubuntu jammy-cran40/" > /etc/apt/sources.list.d/r-project.list && \
+    apt-get update && \
+    apt-get install -y r-base r-base-dev && \
+    rm -rf /var/lib/apt/lists/*
+
+# ============================================
+# 3. 配置 R 镜像源（CRAN + Bioconductor 国内镜像）
+# ============================================
+RUN mkdir -p /usr/lib/R/etc && \
+    echo 'options( \
+  repos = c(CRAN = "https://mirrors.nju.edu.cn/CRAN"), \
+  BioC_mirror = "https://mirrors.nju.edu.cn/bioconductor", \
+  download.file.method = "libcurl", \
+  download.file.extra = "--retry 5 --retry-delay 3", \
+  Ncpus = 4 \
+)' >> /usr/lib/R/etc/Rprofile.site
+
+# ============================================
+# 4. R 基础包 + Bioconductor
+# ============================================
+RUN R -e "install.packages('BiocManager')"
+
+RUN R -e "BiocManager::install(c( \
+    'SingleCellExperiment', \
+    'SummarizedExperiment', \
+    'Biobase', \
+    'S4Vectors', \
+    'DelayedArray', \
+    'rhdf5' \
+), ask = FALSE, update = FALSE)"
+
+RUN R -e "install.packages(c( \
+    'Matrix', \
+    'arrow', \
+    'hdf5r', \
+    'devtools', \
+    'remotes', \
+    'jsonlite', \
+    'R6', \
+    'cli', \
+    'rlang' \
+))"
+
+# ============================================
+# 5. Seurat V5
+# ============================================
+RUN R -e "install.packages('Seurat', dependencies = TRUE)"
+
+# ============================================
+# 6. Python 3.12 + venv (必须在 zellkonverter 之前)
+# ============================================
+RUN add-apt-repository -y ppa:deadsnakes/ppa && \
+    apt-get update && \
+    apt-get install -y python3.12 python3.12-venv python3.12-dev && \
+    rm -rf /var/lib/apt/lists/*
+
+RUN python3.12 -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+
+# anndata 版本固定为 0.12.3，与 zellkonverter basilisk 环境一致
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir \
+    -i https://mirror.nju.edu.cn/pypi/web/simple \
+    --trusted-host mirror.nju.edu.cn \
+    --timeout 120 \
+    --retries 5 \
+    numpy scipy pandas "anndata==0.12.3" scanpy h5py
+
+# ============================================
+# 7. convert2anndata
+# ============================================
+RUN R -e "install.packages('remotes')" && \
+    R -e "library(remotes); install_url('https://github.com/settylab/convert2anndata/archive/refs/heads/main.tar.gz')"
+
+# ============================================
+# 8. easySCF (Python + R)
+# ============================================
+RUN pip install --no-cache-dir \
+    -i https://mirror.nju.edu.cn/pypi/web/simple \
+    --trusted-host mirror.nju.edu.cn \
+    --timeout 120 \
+    --retries 5 \
+    easySCFpy
+
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    pkg-config \
+    libfreetype6-dev \
+    libpng-dev \
+    libtiff5-dev \
+    libjpeg-dev \
+    libwebp-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN R -e "install.packages('remotes')" && \
+    R -e "library(remotes); install_url('https://github.com/xleizi/easySCF/archive/refs/heads/main.tar.gz', subdir='r')"
+
+# ============================================
+# 9. Zellkonverter + anndataR (Bioconductor)
+#    必须在所有其他 R 包之后安装，避免被依赖更新破坏
+# ============================================
+RUN R -e "BiocManager::install(c('zellkonverter', 'HDF5Array'), ask = FALSE, update = FALSE)" && \
+    R -e "library(zellkonverter); cat('zellkonverter', as.character(packageVersion('zellkonverter')), 'OK\n')"
+
+RUN R -e "BiocManager::install('anndataR', ask = FALSE, update = FALSE)" && \
+    R -e "library(anndataR); cat('anndataR', as.character(packageVersion('anndataR')), 'OK\n')"
+
+
+# ============================================
+# 10. CrossCell 二进制文件
+# ============================================
+COPY benchmark/crosscell /usr/local/bin/crosscell
+RUN chmod +x /usr/local/bin/crosscell
+
+# ============================================
+# 11. 目录和环境变量
+# ============================================
+RUN mkdir -p /benchmark/scripts /benchmark/data /benchmark/results
+
+ENV BENCHMARK_DATA_DIR=/benchmark/data
+ENV BENCHMARK_RESULTS_DIR=/benchmark/results
+ENV R_LIBS_USER=/usr/local/lib/R/site-library
+
+# ============================================
+# 12. 配置 basilisk (zellkonverter)
+# ============================================
+ENV BASILISK_USE_SYSTEM_DIR=1
+RUN PKGDIR=$(Rscript --slave -e "cat(system.file(package='zellkonverter'))") && \
+    mkdir -p "${PKGDIR}/basilisk" && \
+    ln -sf /opt/venv "${PKGDIR}/basilisk/zellkonverterAnnDataEnv-0.12.3" && \
+    echo "Created symlink at ${PKGDIR}/basilisk/zellkonverterAnnDataEnv-0.12.3 -> /opt/venv" && \
+    ls -la "${PKGDIR}/basilisk/"
+
+# anndata >= 0.11 默认禁止写 nullable strings
+RUN ANNDATA_INIT=$(python3 -c "import anndata; print(anndata.__file__)") && \
+    echo '' >> "${ANNDATA_INIT}" && \
+    echo '# Auto-enable nullable strings writing (patched by CrossCell benchmark)' >> "${ANNDATA_INIT}" && \
+    echo 'try:' >> "${ANNDATA_INIT}" && \
+    echo '    settings.allow_write_nullable_strings = True' >> "${ANNDATA_INIT}" && \
+    echo 'except: pass' >> "${ANNDATA_INIT}" && \
+    python3 -c "import anndata; print('allow_write_nullable_strings:', anndata.settings.allow_write_nullable_strings)"
+
+# ============================================
+# 13. 安装 Jupyter
+# ============================================
+# RUN pip install --no-cache-dir jupyter notebook matplotlib && \
+#     R -e "install.packages('IRkernel', repos='https://cloud.r-project.org')" && \
+#     R -e "IRkernel::installspec(user = FALSE)"
+RUN pip install --no-cache-dir \
+    -i https://mirror.nju.edu.cn/pypi/web/simple \
+    --trusted-host mirror.nju.edu.cn \
+    --timeout 120 \
+    --retries 5 \
+    jupyter notebook matplotlib
+
+# ============================================
+# 14. 验证安装
+# ============================================
+RUN echo "=== Verifying installations ===" && \
+    crosscell --version && \
+    R -e "library(zellkonverter); packageVersion('zellkonverter')" && \
+    R -e "library(anndataR); packageVersion('anndataR')" && \
+    R -e "library(convert2anndata); packageVersion('convert2anndata')" && \
+    R -e "library(easySCFr); packageVersion('easySCFr')" && \
+    python3 -c "import easySCFpy; print('easySCFpy OK')" && \
+    jupyter --version && \
+    echo "=== All tools installed successfully ==="
+
+WORKDIR /benchmark
+
+CMD ["/bin/bash"]

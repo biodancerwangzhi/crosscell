@@ -1,0 +1,593 @@
+{
+  "tool": "convert2anndata",
+  "timestamp": "2026-02-11T15:29:48Z",
+  "config": {
+    "runs_per_test": 3,
+    "timeout_seconds": 600
+  },
+  "rds_to_h5ad": [
+    {
+      "test_id": "v4_pbmc3k_raw",
+      "dataset": "pbmc3k",
+      "direction": "rds_to_h5ad",
+      "status": "failed",
+      "error": "[2026-02-11 15:29:59] Input object class: Seurat \n[2026-02-11 15:29:59] Converting Seurat object...\n[2026-02-11 15:29:59] Proceeding with custom conversion...\n[2026-02-11 15:29:59] Found assays: RNA \n[2026-02-11 15:29:59] Processing assay: RNA\nLoading required package: SeuratObject\nLoading required package: sp\n\nAttaching package: ‘SeuratObject’\n\nThe following objects are masked from ‘package:base’:\n\n    intersect, t\n\nValidating object structure\nUpdating object slots\nEnsuring keys are in the proper structure\nWarning: Assay RNA changing from Assay to Assay\nEnsuring keys are in the proper structure\nEnsuring feature names don't have underscores or pipes\nUpdating slots in RNA\nValidating object structure for Assay ‘RNA’\nObject representation is consistent with the most current Seurat version\nError in value[[3L]](cond) : \n  Failed to retrieve counts matrix: The `slot` argument of `GetAssayData()` was deprecated in SeuratObject 5.0.0 and is now defunct.Please use the `layer` argument instead.\nCalls: convert_seurat_to_sce ... tryCatch -> tryCatchList -> tryCatchOne -> <Anonymous>\nExecution halted\nCommand exited with non-zero status 1",
+      "run": 1
+    },
+    {
+      "test_id": "v4_pbmc3k_processed",
+      "dataset": "pbmc3k",
+      "direction": "rds_to_h5ad",
+      "status": "failed",
+      "error": "[2026-02-11 15:30:12] Input object class: Seurat \n[2026-02-11 15:30:12] Converting Seurat object...\n[2026-02-11 15:30:12] Proceeding with custom conversion...\n[2026-02-11 15:30:12] Found assays: RNA \n[2026-02-11 15:30:12] Processing assay: RNA\nLoading required package: SeuratObject\nLoading required package: sp\n\nAttaching package: ‘SeuratObject’\n\nThe following objects are masked from ‘package:base’:\n\n    intersect, t\n\nValidating object structure\nUpdating object slots\nEnsuring keys are in the proper structure\nUpdating matrix keys for DimReduc ‘pca’\nUpdating matrix keys for DimReduc ‘umap’\nWarning: Assay RNA changing from Assay to Assay\nEnsuring keys are in the proper structure\nEnsuring feature names don't have underscores or pipes\nUpdating slots in RNA\nUpdating slots in RNA_nn\nSetting default assay of RNA_nn to RNA\nUpdating slots in RNA_snn\nSetting default assay of RNA_snn to RNA\nUpdating slots in pca\nUpdating slots in umap\nSetting umap DimReduc to global\nSetting assay used for NormalizeData.RNA to RNA\nSetting assay used for FindVariableFeatures.RNA to RNA\nSetting assay used for ScaleData.RNA to RNA\nSetting assay used for RunPCA.RNA to RNA\nSetting assay used for FindNeighbors.RNA.pca to RNA\nNo assay information could be found for FindClusters\nSetting assay used for RunUMAP.RNA.pca to RNA\nValidating object structure for Assay ‘RNA’\nValidating object structure for Graph ‘RNA_nn’\nValidating object structure for Graph ‘RNA_snn’\nValidating object structure for DimReduc ‘pca’\nValidating object structure for DimReduc ‘umap’\nObject representation is consistent with the most current Seurat version\nWarning message:\nAdding a command log without an assay associated with it \nError in value[[3L]](cond) : \n  Failed to retrieve counts matrix: The `slot` argument of `GetAssayData()` was deprecated in SeuratObject 5.0.0 and is now defunct.Please use the `layer` argument instead.\nCalls: convert_seurat_to_sce ... tryCatch -> tryCatchList -> tryCatchOne -> <Anonymous>\nExecution halted\nCommand exited with non-zero status 1",
+      "run": 1
+    },
+    {
+      "test_id": "v5_pbmc3k_raw",
+      "dataset": "pbmc3k",
+      "direction": "rds_to_h5ad",
+      "status": "failed",
+      "error": "[2026-02-11 15:30:25] Input object class: Seurat \n[2026-02-11 15:30:25] Converting Seurat object...\n[2026-02-11 15:30:25] Proceeding with custom conversion...\n[2026-02-11 15:30:25] Found assays: RNA \n[2026-02-11 15:30:25] Processing assay: RNA \n[2026-02-11 15:30:25] Found 1 layers: counts \n[2026-02-11 15:30:25] Custom conversion to SingleCellExperiment completed successfully.\n[2026-02-11 15:30:25] Summary of SingleCellExperiment object:\n\nclass: SingleCellExperiment \ndim: 13714 2700 \nmetadata(1): version\nassays(1): RNA_counts\nrownames(13714): AL627309.1 AP006222.2 ... PNRC2.1 SRSF10.1\nrowData names(0):\ncolnames(2700): AAACATACAACCAC AAACATTGAGCTAC ... TTTGCATGAGAGGC\n  TTTGCATGCCTCAC\ncolData names(4): orig.ident nCount_RNA nFeature_RNA seurat_annotations\nreducedDimNames(0):\nmainExpName: NULL\naltExpNames(0):\n\n[2026-02-11 15:30:25] Checking for altExperiments...\n[2026-02-11 15:30:25] Processing assay 'counts' for anndata.X...\n[2026-02-11 15:30:25] WARNING: The specified assay 'counts' is not available. Using 'RNA_counts' as active layer instead.\n[2026-02-11 15:30:26] Using 'RNA_counts' assay as the main data matrix (converted to CsparseMatrix).\n[2026-02-11 15:30:26] Processing all assays...\n[2026-02-11 15:30:26] Assays processed and converted to CsparseMatrix format.\n[2026-02-11 15:30:26] Processing dimensional reductions...\n[2026-02-11 15:30:26] No dimensional reductions found.\n[2026-02-11 15:30:26] Successfully extracted obs/colData with internal=TRUE.\n[2026-02-11 15:30:26] Successfully extracted var/rowData with internal=TRUE.\n[2026-02-11 15:30:26] Column Pairs : No pairwise data found.\n[2026-02-11 15:30:26] Row Pairs : No pairwise data found.\n[2026-02-11 15:30:26] No colPairs data extracted.\n[2026-02-11 15:30:26] No rowPairs data extracted.\n[2026-02-11 15:30:26] Gathering metadata and pairwise matrices...\n[2026-02-11 15:30:26] Metadata and pairwise data organized.\nLoading required package: SeuratObject\nLoading required package: sp\n\nAttaching package: ‘SeuratObject’\n\nThe following objects are masked from ‘package:base’:\n\n    intersect, t\n\nValidating object structure\nUpdating object slots\nEnsuring keys are in the proper structure\nEnsuring keys are in the proper structure\nEnsuring feature names don't have underscores or pipes\nUpdating slots in RNA\nValidating object structure for Assay5 ‘RNA’\nObject representation is consistent with the most current Seurat version\nDownloading uv...Done!\nError: Installation of Python not found, Python bindings not loaded.\nSee the Python \"Order of Discovery\" here: https://rstudio.github.io/reticulate/articles/versions.html#order-of-discovery.\nExecution halted\nCommand exited with non-zero status 1",
+      "run": 1
+    },
+    {
+      "test_id": "v5_pbmc3k_processed",
+      "dataset": "pbmc3k",
+      "direction": "rds_to_h5ad",
+      "status": "failed",
+      "error": "[2026-02-11 15:30:42] Input object class: Seurat \n[2026-02-11 15:30:42] Converting Seurat object...\n[2026-02-11 15:30:42] Proceeding with custom conversion...\n[2026-02-11 15:30:42] Found assays: RNA \n[2026-02-11 15:30:42] Processing assay: RNA \n[2026-02-11 15:30:42] Found 3 layers: counts, data, scale.data \n[2026-02-11 15:30:43] Moved layer scale.data to altExp due to mismatched features: RNA_scale.data \n[2026-02-11 15:30:43] Attempting to preserve dimensional reductions.\n[2026-02-11 15:30:43] Updated reduction ' pca ' to match combined cells.\n[2026-02-11 15:30:43] Updated reduction ' umap ' to match combined cells.\n[2026-02-11 15:30:43] Found 2 graphs. Moving to colPair.\n[2026-02-11 15:30:43] Custom conversion to SingleCellExperiment completed successfully.\n[2026-02-11 15:30:43] Summary of SingleCellExperiment object:\n\nclass: SingleCellExperiment \ndim: 13714 2700 \nmetadata(2): version commands\nassays(2): RNA_counts RNA_data\nrownames(13714): AL627309.1 AP006222.2 ... PNRC2.1 SRSF10.1\nrowData names(0):\ncolnames(2700): AAACATACAACCAC AAACATTGAGCTAC ... TTTGCATGAGAGGC\n  TTTGCATGCCTCAC\ncolData names(6): orig.ident nCount_RNA ... RNA_snn_res.0.8\n  seurat_clusters\nreducedDimNames(2): pca umap\nmainExpName: NULL\naltExpNames(1): RNA_scale.data\n\n[2026-02-11 15:30:43] Checking for altExperiments...\n[2026-02-11 15:30:43] WARNING: The SingleCellExperiment object contains alternative experiments (altExps) which cannot ideally be reflected in the AnnData object.\n[2026-02-11 15:30:43] The following altExps will be processed and stored in uns['altExperiments']:  RNA_scale.data \n[2026-02-11 15:30:43] Starting processing of altExp 'RNA_scale.data'...\n[2026-02-11 15:30:43] Summary of SingleCellExperiment object:\n\nclass: SingleCellExperiment \ndim: 2000 2700 \nmetadata(0):\nassays(1): counts\nrownames(2000): ISG15 CPSF3L ... MT-CO2 MT-ND6\nrowData names(0):\ncolnames(2700): AAACATACAACCAC AAACATTGAGCTAC ... TTTGCATGAGAGGC\n  TTTGCATGCCTCAC\ncolData names(0):\nreducedDimNames(0):\nmainExpName: NULL\naltExpNames(0):\n\n[2026-02-11 15:30:43] Checking for altExperiments...\n[2026-02-11 15:30:43] Processing assay 'counts' for anndata.X...\n[2026-02-11 15:30:44] Using 'counts' assay as the main data matrix (converted to CsparseMatrix).\n[2026-02-11 15:30:44] Processing all assays...\n[2026-02-11 15:30:45] Assays processed and converted to CsparseMatrix format.\n[2026-02-11 15:30:45] Processing dimensional reductions...\n[2026-02-11 15:30:45] No dimensional reductions found.\n[2026-02-11 15:30:45] Successfully extracted obs/colData with internal=TRUE.\n[2026-02-11 15:30:45] Successfully extracted var/rowData with internal=TRUE.\n[2026-02-11 15:30:45] Column Pairs : No pairwise data found.\n[2026-02-11 15:30:45] Row Pairs : No pairwise data found.\n[2026-02-11 15:30:45] No colPairs data extracted.\n[2026-02-11 15:30:45] No rowPairs data extracted.\n[2026-02-11 15:30:45] Gathering metadata and pairwise matrices...\n[2026-02-11 15:30:45] Metadata and pairwise data organized.\nLoading required package: Se",
+      "run": 1
+    },
+    {
+      "test_id": "v4_stxKidney_raw",
+      "dataset": "stxKidney",
+      "direction": "rds_to_h5ad",
+      "status": "failed",
+      "error": "Loading required package: SeuratObject\nLoading required package: sp\n\nAttaching package: ‘SeuratObject’\n\nThe following objects are masked from ‘package:base’:\n\n    intersect, t\n\nValidating object structure\nUpdating object slots\nEnsuring keys are in the proper structure\nWarning: Assay Spatial changing from Assay to Assay\nError in slot(object = object, name = \"key\") : \n  no slot of name \"key\" for this object of class \"SliceImage\"\nCalls: UpdateSeuratObject\nExecution halted\nCommand exited with non-zero status 1",
+      "run": 1
+    },
+    {
+      "test_id": "v5_stxKidney_raw",
+      "dataset": "stxKidney",
+      "direction": "rds_to_h5ad",
+      "status": "failed",
+      "error": "[2026-02-11 15:31:18] Input object class: Seurat \n[2026-02-11 15:31:18] Converting Seurat object...\n[2026-02-11 15:31:18] Proceeding with custom conversion...\n[2026-02-11 15:31:18] Found assays: Spatial \n[2026-02-11 15:31:18] Processing assay: Spatial \n[2026-02-11 15:31:18] Found 1 layers: counts \n[2026-02-11 15:31:19] Custom conversion to SingleCellExperiment completed successfully.\n[2026-02-11 15:31:19] Summary of SingleCellExperiment object:\n\nclass: SingleCellExperiment \ndim: 31053 1438 \nmetadata(1): version\nassays(1): Spatial_counts\nrownames(31053): Xkr4 Gm1992 ... Vmn2r122 CAAA01147332.1\nrowData names(0):\ncolnames(1438): AAACCGTTCGTCCAGG-1 AAACCTAAGCAGCCGG-1 ...\n  TTGTTGTGTGTCAAGA-1 TTGTTTCACATCCAGG-1\ncolData names(5): orig.ident nCount_Spatial nFeature_Spatial spatial_x\n  spatial_y\nreducedDimNames(0):\nmainExpName: NULL\naltExpNames(0):\n\n[2026-02-11 15:31:19] Checking for altExperiments...\n[2026-02-11 15:31:19] Processing assay 'counts' for anndata.X...\n[2026-02-11 15:31:19] WARNING: The specified assay 'counts' is not available. Using 'Spatial_counts' as active layer instead.\n[2026-02-11 15:31:19] Using 'Spatial_counts' assay as the main data matrix (converted to CsparseMatrix).\n[2026-02-11 15:31:19] Processing all assays...\n[2026-02-11 15:31:20] Assays processed and converted to CsparseMatrix format.\n[2026-02-11 15:31:20] Processing dimensional reductions...\n[2026-02-11 15:31:20] No dimensional reductions found.\n[2026-02-11 15:31:20] Successfully extracted obs/colData with internal=TRUE.\n[2026-02-11 15:31:20] Successfully extracted var/rowData with internal=TRUE.\n[2026-02-11 15:31:20] Column Pairs : No pairwise data found.\n[2026-02-11 15:31:20] Row Pairs : No pairwise data found.\n[2026-02-11 15:31:20] No colPairs data extracted.\n[2026-02-11 15:31:20] No rowPairs data extracted.\n[2026-02-11 15:31:20] Gathering metadata and pairwise matrices...\n[2026-02-11 15:31:20] Metadata and pairwise data organized.\nLoading required package: SeuratObject\nLoading required package: sp\n\nAttaching package: ‘SeuratObject’\n\nThe following objects are masked from ‘package:base’:\n\n    intersect, t\n\nValidating object structure\nUpdating object slots\nEnsuring keys are in the proper structure\nEnsuring keys are in the proper structure\nEnsuring feature names don't have underscores or pipes\nUpdating slots in Spatial\nValidating object structure for Assay5 ‘Spatial’\nObject representation is consistent with the most current Seurat version\nDownloading uv...Error in download.file(url, install_uv, quiet = TRUE) : \n  cannot open URL 'https://astral.sh/uv/install.sh'\nIn addition: Warning message:\nIn download.file(url, install_uv, quiet = TRUE) :\n  URL 'https://astral.sh/uv/install.sh': status was 'SSL connect error'\nError: Installation of Python not found, Python bindings not loaded.\nSee the Python \"Order of Discovery\" here: https://rstudio.github.io/reticulate/articles/versions.html#order-of-discovery.\nExecution halted\nCommand exited with non-zero status 1",
+      "run": 1
+    },
+    {
+      "test_id": "v4_celegans_raw",
+      "dataset": "celegans.embryo",
+      "direction": "rds_to_h5ad",
+      "status": "failed",
+      "error": "[2026-02-11 15:31:33] Input object class: Seurat \n[2026-02-11 15:31:33] Converting Seurat object...\n[2026-02-11 15:31:33] Proceeding with custom conversion...\n[2026-02-11 15:31:33] Found assays: RNA \n[2026-02-11 15:31:33] Processing assay: RNA\nLoading required package: SeuratObject\nLoading required package: sp\n\nAttaching package: ‘SeuratObject’\n\nThe following objects are masked from ‘package:base’:\n\n    intersect, t\n\nValidating object structure\nUpdating object slots\nEnsuring keys are in the proper structure\nWarning: Assay RNA changing from Assay to Assay\nEnsuring keys are in the proper structure\nEnsuring feature names don't have underscores or pipes\nUpdating slots in RNA\nValidating object structure for Assay ‘RNA’\nObject representation is consistent with the most current Seurat version\nError in value[[3L]](cond) : \n  Failed to retrieve counts matrix: The `slot` argument of `GetAssayData()` was deprecated in SeuratObject 5.0.0 and is now defunct.Please use the `layer` argument instead.\nCalls: convert_seurat_to_sce ... tryCatch -> tryCatchList -> tryCatchOne -> <Anonymous>\nExecution halted\nCommand exited with non-zero status 1",
+      "run": 1
+    },
+    {
+      "test_id": "v4_celegans_processed",
+      "dataset": "celegans.embryo",
+      "direction": "rds_to_h5ad",
+      "status": "failed",
+      "error": "[2026-02-11 15:31:48] Input object class: Seurat \n[2026-02-11 15:31:48] Converting Seurat object...\n[2026-02-11 15:31:48] Proceeding with custom conversion...\n[2026-02-11 15:31:48] Found assays: RNA \n[2026-02-11 15:31:48] Processing assay: RNA\nLoading required package: SeuratObject\nLoading required package: sp\n\nAttaching package: ‘SeuratObject’\n\nThe following objects are masked from ‘package:base’:\n\n    intersect, t\n\nValidating object structure\nUpdating object slots\nEnsuring keys are in the proper structure\nUpdating matrix keys for DimReduc ‘pca’\nUpdating matrix keys for DimReduc ‘umap’\nWarning: Assay RNA changing from Assay to Assay\nEnsuring keys are in the proper structure\nEnsuring feature names don't have underscores or pipes\nUpdating slots in RNA\nUpdating slots in RNA_nn\nSetting default assay of RNA_nn to RNA\nUpdating slots in RNA_snn\nSetting default assay of RNA_snn to RNA\nUpdating slots in pca\nUpdating slots in umap\nSetting umap DimReduc to global\nSetting assay used for NormalizeData.RNA to RNA\nSetting assay used for FindVariableFeatures.RNA to RNA\nSetting assay used for ScaleData.RNA to RNA\nSetting assay used for RunPCA.RNA to RNA\nSetting assay used for FindNeighbors.RNA.pca to RNA\nNo assay information could be found for FindClusters\nSetting assay used for RunUMAP.RNA.pca to RNA\nValidating object structure for Assay ‘RNA’\nValidating object structure for Graph ‘RNA_nn’\nValidating object structure for Graph ‘RNA_snn’\nValidating object structure for DimReduc ‘pca’\nValidating object structure for DimReduc ‘umap’\nObject representation is consistent with the most current Seurat version\nWarning message:\nAdding a command log without an assay associated with it \nError in value[[3L]](cond) : \n  Failed to retrieve counts matrix: The `slot` argument of `GetAssayData()` was deprecated in SeuratObject 5.0.0 and is now defunct.Please use the `layer` argument instead.\nCalls: convert_seurat_to_sce ... tryCatch -> tryCatchList -> tryCatchOne -> <Anonymous>\nExecution halted\nCommand exited with non-zero status 1",
+      "run": 1
+    },
+    {
+      "test_id": "v5_celegans_raw",
+      "dataset": "celegans.embryo",
+      "direction": "rds_to_h5ad",
+      "status": "failed",
+      "error": "[2026-02-11 15:32:01] Input object class: Seurat \n[2026-02-11 15:32:01] Converting Seurat object...\n[2026-02-11 15:32:01] Proceeding with custom conversion...\n[2026-02-11 15:32:01] Found assays: RNA \n[2026-02-11 15:32:01] Processing assay: RNA \n[2026-02-11 15:32:01] Found 1 layers: counts \n[2026-02-11 15:32:01] Custom conversion to SingleCellExperiment completed successfully.\n[2026-02-11 15:32:01] Summary of SingleCellExperiment object:\n\nclass: SingleCellExperiment \ndim: 20222 6188 \nmetadata(1): version\nassays(1): RNA_counts\nrownames(20222): WBGene00010957 WBGene00010958 ... WBGene00021594\n  WBGene00007064\nrowData names(0):\ncolnames(6188): AAACCTGCAAGACGTG-300.1.1 AAACCTGGTGTGAATA-300.1.1 ...\n  TGCGGGTAGTACTTGC-b02 TTTGTCAAGTACACCT-b02\ncolData names(22): orig.ident nCount_RNA ... bg.b01.loading\n  bg.b02.loading\nreducedDimNames(0):\nmainExpName: NULL\naltExpNames(0):\n\n[2026-02-11 15:32:02] Checking for altExperiments...\n[2026-02-11 15:32:02] Processing assay 'counts' for anndata.X...\n[2026-02-11 15:32:02] WARNING: The specified assay 'counts' is not available. Using 'RNA_counts' as active layer instead.\n[2026-02-11 15:32:02] Using 'RNA_counts' assay as the main data matrix (converted to CsparseMatrix).\n[2026-02-11 15:32:02] Processing all assays...\n[2026-02-11 15:32:02] Assays processed and converted to CsparseMatrix format.\n[2026-02-11 15:32:02] Processing dimensional reductions...\n[2026-02-11 15:32:02] No dimensional reductions found.\n[2026-02-11 15:32:02] Successfully extracted obs/colData with internal=TRUE.\n[2026-02-11 15:32:02] Successfully extracted var/rowData with internal=TRUE.\n[2026-02-11 15:32:02] Column Pairs : No pairwise data found.\n[2026-02-11 15:32:02] Row Pairs : No pairwise data found.\n[2026-02-11 15:32:02] No colPairs data extracted.\n[2026-02-11 15:32:02] No rowPairs data extracted.\n[2026-02-11 15:32:02] Gathering metadata and pairwise matrices...\n[2026-02-11 15:32:02] Metadata and pairwise data organized.\nLoading required package: SeuratObject\nLoading required package: sp\n\nAttaching package: ‘SeuratObject’\n\nThe following objects are masked from ‘package:base’:\n\n    intersect, t\n\nValidating object structure\nUpdating object slots\nEnsuring keys are in the proper structure\nEnsuring keys are in the proper structure\nEnsuring feature names don't have underscores or pipes\nUpdating slots in RNA\nValidating object structure for Assay5 ‘RNA’\nObject representation is consistent with the most current Seurat version\nDownloading uv...Error in download.file(url, install_uv, quiet = TRUE) : \n  cannot open URL 'https://astral.sh/uv/install.sh'\nIn addition: Warning message:\nIn download.file(url, install_uv, quiet = TRUE) :\n  URL 'https://release-assets.githubusercontent.com/github-production-release-asset/699532645/627c8246-8f54-4115-8118-e021f080ee2d?sp=r&sv=2018-11-09&sr=b&spr=https&se=2026-02-11T16%3A26%3A13Z&rscd=attachment%3B+filename%3Duv-installer.sh&rsct=application%2Foctet-stream&skoid=96c2d410-5711-43a1-aedd-ab1947aa7ab0&sktid=398a6654-99",
+      "run": 1
+    },
+    {
+      "test_id": "v5_celegans_processed",
+      "dataset": "celegans.embryo",
+      "direction": "rds_to_h5ad",
+      "status": "success",
+      "conversion_time_seconds": 21.472,
+      "peak_memory_mb": 2176.9,
+      "output_file_size_mb": 399.65,
+      "all_times": [
+        21.384,
+        21.472,
+        439.551
+      ],
+      "all_mems": [
+        2176.5,
+        2176.9,
+        2185.2
+      ],
+      "n_cells": 6188,
+      "n_genes": 20222,
+      "scale": "medium",
+      "seurat_version": "V5",
+      "type": "processed"
+    },
+    {
+      "test_id": "v4_cbmc_raw",
+      "dataset": "cbmc",
+      "direction": "rds_to_h5ad",
+      "status": "failed",
+      "error": "[2026-02-11 15:40:25] Input object class: Seurat \n[2026-02-11 15:40:25] Converting Seurat object...\n[2026-02-11 15:40:25] Proceeding with custom conversion...\n[2026-02-11 15:40:25] Found assays: RNA, ADT \n[2026-02-11 15:40:25] Processing assay: RNA\nLoading required package: SeuratObject\nLoading required package: sp\n\nAttaching package: ‘SeuratObject’\n\nThe following objects are masked from ‘package:base’:\n\n    intersect, t\n\nValidating object structure\nUpdating object slots\nEnsuring keys are in the proper structure\nWarning: Assay RNA changing from Assay to Assay\nWarning: Assay ADT changing from Assay to Assay\nEnsuring keys are in the proper structure\nEnsuring feature names don't have underscores or pipes\nUpdating slots in RNA\nUpdating slots in ADT\nValidating object structure for Assay ‘RNA’\nValidating object structure for Assay ‘ADT’\nObject representation is consistent with the most current Seurat version\nError in value[[3L]](cond) : \n  Failed to retrieve counts matrix: The `slot` argument of `GetAssayData()` was deprecated in SeuratObject 5.0.0 and is now defunct.Please use the `layer` argument instead.\nCalls: convert_seurat_to_sce ... tryCatch -> tryCatchList -> tryCatchOne -> <Anonymous>\nExecution halted\nCommand exited with non-zero status 1",
+      "run": 1
+    },
+    {
+      "test_id": "v4_cbmc_processed",
+      "dataset": "cbmc",
+      "direction": "rds_to_h5ad",
+      "status": "failed",
+      "error": "[2026-02-11 15:40:39] Input object class: Seurat \n[2026-02-11 15:40:39] Converting Seurat object...\n[2026-02-11 15:40:39] Proceeding with custom conversion...\n[2026-02-11 15:40:39] Found assays: RNA, ADT \n[2026-02-11 15:40:39] Processing assay: RNA\nLoading required package: SeuratObject\nLoading required package: sp\n\nAttaching package: ‘SeuratObject’\n\nThe following objects are masked from ‘package:base’:\n\n    intersect, t\n\nValidating object structure\nUpdating object slots\nEnsuring keys are in the proper structure\nUpdating matrix keys for DimReduc ‘pca’\nUpdating matrix keys for DimReduc ‘umap’\nWarning: Assay RNA changing from Assay to Assay\nWarning: Assay ADT changing from Assay to Assay\nEnsuring keys are in the proper structure\nEnsuring feature names don't have underscores or pipes\nUpdating slots in RNA\nUpdating slots in ADT\nUpdating slots in RNA_nn\nSetting default assay of RNA_nn to RNA\nUpdating slots in RNA_snn\nSetting default assay of RNA_snn to RNA\nUpdating slots in pca\nUpdating slots in umap\nSetting umap DimReduc to global\nSetting assay used for NormalizeData.RNA to RNA\nSetting assay used for FindVariableFeatures.RNA to RNA\nSetting assay used for ScaleData.RNA to RNA\nSetting assay used for RunPCA.RNA to RNA\nSetting assay used for FindNeighbors.RNA.pca to RNA\nNo assay information could be found for FindClusters\nSetting assay used for RunUMAP.RNA.pca to RNA\nValidating object structure for Assay ‘RNA’\nValidating object structure for Assay ‘ADT’\nValidating object structure for Graph ‘RNA_nn’\nValidating object structure for Graph ‘RNA_snn’\nValidating object structure for DimReduc ‘pca’\nValidating object structure for DimReduc ‘umap’\nObject representation is consistent with the most current Seurat version\nWarning message:\nAdding a command log without an assay associated with it \nError in value[[3L]](cond) : \n  Failed to retrieve counts matrix: The `slot` argument of `GetAssayData()` was deprecated in SeuratObject 5.0.0 and is now defunct.Please use the `layer` argument instead.\nCalls: convert_seurat_to_sce ... tryCatch -> tryCatchList -> tryCatchOne -> <Anonymous>\nExecution halted\nCommand exited with non-zero status 1",
+      "run": 1
+    },
+    {
+      "test_id": "v5_cbmc_raw",
+      "dataset": "cbmc",
+      "direction": "rds_to_h5ad",
+      "status": "success",
+      "conversion_time_seconds": 14.271,
+      "peak_memory_mb": 1443.4,
+      "output_file_size_mb": 159.03,
+      "all_times": [
+        14.257,
+        14.271,
+        18.314
+      ],
+      "all_mems": [
+        1443.4,
+        1443.4,
+        1443.5
+      ],
+      "n_cells": 8617,
+      "n_genes": 20501,
+      "scale": "medium",
+      "seurat_version": "V5",
+      "type": "raw"
+    },
+    {
+      "test_id": "v5_cbmc_processed",
+      "dataset": "cbmc",
+      "direction": "rds_to_h5ad",
+      "status": "success",
+      "conversion_time_seconds": 23.636,
+      "peak_memory_mb": 2844.6,
+      "output_file_size_mb": 595.15,
+      "all_times": [
+        20.374,
+        23.636,
+        26.323
+      ],
+      "all_mems": [
+        2844.3,
+        2844.6,
+        2844.7
+      ],
+      "n_cells": 8617,
+      "n_genes": 20501,
+      "scale": "medium",
+      "seurat_version": "V5",
+      "type": "processed"
+    },
+    {
+      "test_id": "v4_ifnb_raw",
+      "dataset": "ifnb",
+      "direction": "rds_to_h5ad",
+      "status": "failed",
+      "error": "[2026-02-11 15:42:50] Input object class: Seurat \n[2026-02-11 15:42:50] Converting Seurat object...\n[2026-02-11 15:42:50] Proceeding with custom conversion...\n[2026-02-11 15:42:50] Found assays: RNA \n[2026-02-11 15:42:50] Processing assay: RNA\nLoading required package: SeuratObject\nLoading required package: sp\n\nAttaching package: ‘SeuratObject’\n\nThe following objects are masked from ‘package:base’:\n\n    intersect, t\n\nValidating object structure\nUpdating object slots\nEnsuring keys are in the proper structure\nWarning: Assay RNA changing from Assay to Assay\nEnsuring keys are in the proper structure\nEnsuring feature names don't have underscores or pipes\nUpdating slots in RNA\nValidating object structure for Assay ‘RNA’\nObject representation is consistent with the most current Seurat version\nError in value[[3L]](cond) : \n  Failed to retrieve counts matrix: The `slot` argument of `GetAssayData()` was deprecated in SeuratObject 5.0.0 and is now defunct.Please use the `layer` argument instead.\nCalls: convert_seurat_to_sce ... tryCatch -> tryCatchList -> tryCatchOne -> <Anonymous>\nExecution halted\nCommand exited with non-zero status 1",
+      "run": 1
+    },
+    {
+      "test_id": "v4_ifnb_processed",
+      "dataset": "ifnb",
+      "direction": "rds_to_h5ad",
+      "status": "failed",
+      "error": "[2026-02-11 15:43:04] Input object class: Seurat \n[2026-02-11 15:43:04] Converting Seurat object...\n[2026-02-11 15:43:04] Proceeding with custom conversion...\n[2026-02-11 15:43:04] Found assays: RNA \n[2026-02-11 15:43:04] Processing assay: RNA\nLoading required package: SeuratObject\nLoading required package: sp\n\nAttaching package: ‘SeuratObject’\n\nThe following objects are masked from ‘package:base’:\n\n    intersect, t\n\nValidating object structure\nUpdating object slots\nEnsuring keys are in the proper structure\nUpdating matrix keys for DimReduc ‘pca’\nUpdating matrix keys for DimReduc ‘umap’\nWarning: Assay RNA changing from Assay to Assay\nEnsuring keys are in the proper structure\nEnsuring feature names don't have underscores or pipes\nUpdating slots in RNA\nUpdating slots in RNA_nn\nSetting default assay of RNA_nn to RNA\nUpdating slots in RNA_snn\nSetting default assay of RNA_snn to RNA\nUpdating slots in pca\nUpdating slots in umap\nSetting umap DimReduc to global\nSetting assay used for NormalizeData.RNA to RNA\nSetting assay used for FindVariableFeatures.RNA to RNA\nSetting assay used for ScaleData.RNA to RNA\nSetting assay used for RunPCA.RNA to RNA\nSetting assay used for FindNeighbors.RNA.pca to RNA\nNo assay information could be found for FindClusters\nSetting assay used for RunUMAP.RNA.pca to RNA\nValidating object structure for Assay ‘RNA’\nValidating object structure for Graph ‘RNA_nn’\nValidating object structure for Graph ‘RNA_snn’\nValidating object structure for DimReduc ‘pca’\nValidating object structure for DimReduc ‘umap’\nObject representation is consistent with the most current Seurat version\nWarning message:\nAdding a command log without an assay associated with it \nError in value[[3L]](cond) : \n  Failed to retrieve counts matrix: The `slot` argument of `GetAssayData()` was deprecated in SeuratObject 5.0.0 and is now defunct.Please use the `layer` argument instead.\nCalls: convert_seurat_to_sce ... tryCatch -> tryCatchList -> tryCatchOne -> <Anonymous>\nExecution halted\nCommand exited with non-zero status 1",
+      "run": 1
+    },
+    {
+      "test_id": "v5_ifnb_raw",
+      "dataset": "ifnb",
+      "direction": "rds_to_h5ad",
+      "status": "success",
+      "conversion_time_seconds": 13.402,
+      "peak_memory_mb": 1564.6,
+      "output_file_size_mb": 188.38,
+      "all_times": [
+        13.339,
+        13.402,
+        15.987
+      ],
+      "all_mems": [
+        1564.5,
+        1564.6,
+        1565.0
+      ],
+      "n_cells": 13999,
+      "n_genes": 14053,
+      "scale": "medium",
+      "seurat_version": "V5",
+      "type": "raw"
+    },
+    {
+      "test_id": "v5_ifnb_processed",
+      "dataset": "ifnb",
+      "direction": "rds_to_h5ad",
+      "status": "success",
+      "conversion_time_seconds": 25.63,
+      "peak_memory_mb": 4086.5,
+      "output_file_size_mb": 855.54,
+      "all_times": [
+        25.557,
+        25.63,
+        26.845
+      ],
+      "all_mems": [
+        4086.2,
+        4086.5,
+        4087.2
+      ],
+      "n_cells": 13999,
+      "n_genes": 14053,
+      "scale": "medium",
+      "seurat_version": "V5",
+      "type": "processed"
+    },
+    {
+      "test_id": "v4_panc8_raw",
+      "dataset": "panc8",
+      "direction": "rds_to_h5ad",
+      "status": "failed",
+      "error": "[2026-02-11 15:45:28] Input object class: Seurat \n[2026-02-11 15:45:28] Converting Seurat object...\n[2026-02-11 15:45:28] Proceeding with custom conversion...\n[2026-02-11 15:45:28] Found assays: RNA \n[2026-02-11 15:45:28] Processing assay: RNA\nLoading required package: SeuratObject\nLoading required package: sp\n\nAttaching package: ‘SeuratObject’\n\nThe following objects are masked from ‘package:base’:\n\n    intersect, t\n\nValidating object structure\nUpdating object slots\nEnsuring keys are in the proper structure\nWarning: Assay RNA changing from Assay to Assay\nEnsuring keys are in the proper structure\nEnsuring feature names don't have underscores or pipes\nUpdating slots in RNA\nValidating object structure for Assay ‘RNA’\nObject representation is consistent with the most current Seurat version\nError in value[[3L]](cond) : \n  Failed to retrieve counts matrix: The `slot` argument of `GetAssayData()` was deprecated in SeuratObject 5.0.0 and is now defunct.Please use the `layer` argument instead.\nCalls: convert_seurat_to_sce ... tryCatch -> tryCatchList -> tryCatchOne -> <Anonymous>\nExecution halted\nCommand exited with non-zero status 1",
+      "run": 1
+    },
+    {
+      "test_id": "v4_panc8_processed",
+      "dataset": "panc8",
+      "direction": "rds_to_h5ad",
+      "status": "failed",
+      "error": "[2026-02-11 15:45:51] Input object class: Seurat \n[2026-02-11 15:45:51] Converting Seurat object...\n[2026-02-11 15:45:51] Proceeding with custom conversion...\n[2026-02-11 15:45:51] Found assays: RNA \n[2026-02-11 15:45:51] Processing assay: RNA\nLoading required package: SeuratObject\nLoading required package: sp\n\nAttaching package: ‘SeuratObject’\n\nThe following objects are masked from ‘package:base’:\n\n    intersect, t\n\nValidating object structure\nUpdating object slots\nEnsuring keys are in the proper structure\nUpdating matrix keys for DimReduc ‘pca’\nUpdating matrix keys for DimReduc ‘umap’\nWarning: Assay RNA changing from Assay to Assay\nEnsuring keys are in the proper structure\nEnsuring feature names don't have underscores or pipes\nUpdating slots in RNA\nUpdating slots in RNA_nn\nSetting default assay of RNA_nn to RNA\nUpdating slots in RNA_snn\nSetting default assay of RNA_snn to RNA\nUpdating slots in pca\nUpdating slots in umap\nSetting umap DimReduc to global\nSetting assay used for NormalizeData.RNA to RNA\nSetting assay used for FindVariableFeatures.RNA to RNA\nSetting assay used for ScaleData.RNA to RNA\nSetting assay used for RunPCA.RNA to RNA\nSetting assay used for FindNeighbors.RNA.pca to RNA\nNo assay information could be found for FindClusters\nSetting assay used for RunUMAP.RNA.pca to RNA\nValidating object structure for Assay ‘RNA’\nValidating object structure for Graph ‘RNA_nn’\nValidating object structure for Graph ‘RNA_snn’\nValidating object structure for DimReduc ‘pca’\nValidating object structure for DimReduc ‘umap’\nObject representation is consistent with the most current Seurat version\nWarning message:\nAdding a command log without an assay associated with it \nError in value[[3L]](cond) : \n  Failed to retrieve counts matrix: The `slot` argument of `GetAssayData()` was deprecated in SeuratObject 5.0.0 and is now defunct.Please use the `layer` argument instead.\nCalls: convert_seurat_to_sce ... tryCatch -> tryCatchList -> tryCatchOne -> <Anonymous>\nExecution halted\nCommand exited with non-zero status 1",
+      "run": 1
+    },
+    {
+      "test_id": "v5_panc8_raw",
+      "dataset": "panc8",
+      "direction": "rds_to_h5ad",
+      "status": "success",
+      "conversion_time_seconds": 28.738,
+      "peak_memory_mb": 4789.8,
+      "output_file_size_mb": 990.52,
+      "all_times": [
+        28.419,
+        28.738,
+        29.198
+      ],
+      "all_mems": [
+        4789.7,
+        4789.8,
+        4790.9
+      ],
+      "n_cells": 14890,
+      "n_genes": 34363,
+      "scale": "medium",
+      "seurat_version": "V5",
+      "type": "raw"
+    },
+    {
+      "test_id": "v5_panc8_processed",
+      "dataset": "panc8",
+      "direction": "rds_to_h5ad",
+      "status": "success",
+      "conversion_time_seconds": 45.959,
+      "peak_memory_mb": 8465.9,
+      "output_file_size_mb": 2173.43,
+      "all_times": [
+        45.278,
+        45.959,
+        46.145
+      ],
+      "all_mems": [
+        8465.1,
+        8465.9,
+        8466.4
+      ],
+      "n_cells": 14890,
+      "n_genes": 34363,
+      "scale": "medium",
+      "seurat_version": "V5",
+      "type": "processed"
+    },
+    {
+      "test_id": "v4_thp1_raw",
+      "dataset": "thp1.eccite",
+      "direction": "rds_to_h5ad",
+      "status": "failed",
+      "error": "[2026-02-11 15:50:05] Input object class: Seurat \n[2026-02-11 15:50:05] Converting Seurat object...\n[2026-02-11 15:50:05] Proceeding with custom conversion...\n[2026-02-11 15:50:05] Found assays: RNA, ADT, HTO, GDO \n[2026-02-11 15:50:05] Processing assay: RNA\nLoading required package: SeuratObject\nLoading required package: sp\n\nAttaching package: ‘SeuratObject’\n\nThe following objects are masked from ‘package:base’:\n\n    intersect, t\n\nValidating object structure\nUpdating object slots\nEnsuring keys are in the proper structure\nWarning: Assay RNA changing from Assay to Assay\nWarning: Assay ADT changing from Assay to Assay\nWarning: Assay HTO changing from Assay to Assay\nWarning: Assay GDO changing from Assay to Assay\nEnsuring keys are in the proper structure\nEnsuring feature names don't have underscores or pipes\nUpdating slots in RNA\nUpdating slots in ADT\nUpdating slots in HTO\nUpdating slots in GDO\nValidating object structure for Assay ‘RNA’\nValidating object structure for Assay ‘ADT’\nValidating object structure for Assay ‘HTO’\nValidating object structure for Assay ‘GDO’\nObject representation is consistent with the most current Seurat version\nError in value[[3L]](cond) : \n  Failed to retrieve counts matrix: The `slot` argument of `GetAssayData()` was deprecated in SeuratObject 5.0.0 and is now defunct.Please use the `layer` argument instead.\nCalls: convert_seurat_to_sce ... tryCatch -> tryCatchList -> tryCatchOne -> <Anonymous>\nExecution halted\nCommand exited with non-zero status 1",
+      "run": 1
+    },
+    {
+      "test_id": "v4_thp1_processed",
+      "dataset": "thp1.eccite",
+      "direction": "rds_to_h5ad",
+      "status": "failed",
+      "error": "[2026-02-11 15:50:38] Input object class: Seurat \n[2026-02-11 15:50:38] Converting Seurat object...\n[2026-02-11 15:50:38] Proceeding with custom conversion...\n[2026-02-11 15:50:38] Found assays: RNA, ADT, HTO, GDO \n[2026-02-11 15:50:38] Processing assay: RNA\nLoading required package: SeuratObject\nLoading required package: sp\n\nAttaching package: ‘SeuratObject’\n\nThe following objects are masked from ‘package:base’:\n\n    intersect, t\n\nValidating object structure\nUpdating object slots\nEnsuring keys are in the proper structure\nUpdating matrix keys for DimReduc ‘pca’\nUpdating matrix keys for DimReduc ‘umap’\nWarning: Assay RNA changing from Assay to Assay\nWarning: Assay ADT changing from Assay to Assay\nWarning: Assay HTO changing from Assay to Assay\nWarning: Assay GDO changing from Assay to Assay\nEnsuring keys are in the proper structure\nEnsuring feature names don't have underscores or pipes\nUpdating slots in RNA\nUpdating slots in ADT\nUpdating slots in HTO\nUpdating slots in GDO\nUpdating slots in RNA_nn\nSetting default assay of RNA_nn to RNA\nUpdating slots in RNA_snn\nSetting default assay of RNA_snn to RNA\nUpdating slots in pca\nUpdating slots in umap\nSetting umap DimReduc to global\nSetting assay used for NormalizeData.RNA to RNA\nSetting assay used for FindVariableFeatures.RNA to RNA\nSetting assay used for ScaleData.RNA to RNA\nSetting assay used for RunPCA.RNA to RNA\nSetting assay used for FindNeighbors.RNA.pca to RNA\nNo assay information could be found for FindClusters\nSetting assay used for RunUMAP.RNA.pca to RNA\nValidating object structure for Assay ‘RNA’\nValidating object structure for Assay ‘ADT’\nValidating object structure for Assay ‘HTO’\nValidating object structure for Assay ‘GDO’\nValidating object structure for Graph ‘RNA_nn’\nValidating object structure for Graph ‘RNA_snn’\nValidating object structure for DimReduc ‘pca’\nValidating object structure for DimReduc ‘umap’\nObject representation is consistent with the most current Seurat version\nWarning message:\nAdding a command log without an assay associated with it \nError in value[[3L]](cond) : \n  Failed to retrieve counts matrix: The `slot` argument of `GetAssayData()` was deprecated in SeuratObject 5.0.0 and is now defunct.Please use the `layer` argument instead.\nCalls: convert_seurat_to_sce ... tryCatch -> tryCatchList -> tryCatchOne -> <Anonymous>\nExecution halted\nCommand exited with non-zero status 1",
+      "run": 1
+    },
+    {
+      "test_id": "v5_thp1_raw",
+      "dataset": "thp1.eccite",
+      "direction": "rds_to_h5ad",
+      "status": "success",
+      "conversion_time_seconds": 33.7,
+      "peak_memory_mb": 6154.2,
+      "output_file_size_mb": 1330.51,
+      "all_times": [
+        32.048,
+        33.7,
+        34.108
+      ],
+      "all_mems": [
+        6154.1,
+        6154.2,
+        6154.3
+      ],
+      "n_cells": 20729,
+      "n_genes": 18649,
+      "scale": "large",
+      "seurat_version": "V5",
+      "type": "raw"
+    },
+    {
+      "test_id": "v5_thp1_processed",
+      "dataset": "thp1.eccite",
+      "direction": "rds_to_h5ad",
+      "status": "success",
+      "conversion_time_seconds": 59.002,
+      "peak_memory_mb": 11097.7,
+      "output_file_size_mb": 2946.18,
+      "all_times": [
+        58.206,
+        59.002,
+        59.059
+      ],
+      "all_mems": [
+        11097.6,
+        11097.7,
+        11097.7
+      ],
+      "n_cells": 20729,
+      "n_genes": 18649,
+      "scale": "large",
+      "seurat_version": "V5",
+      "type": "processed"
+    },
+    {
+      "test_id": "v4_bmcite_raw",
+      "dataset": "bmcite",
+      "direction": "rds_to_h5ad",
+      "status": "failed",
+      "error": "[2026-02-11 15:55:36] Input object class: Seurat \n[2026-02-11 15:55:36] Converting Seurat object...\n[2026-02-11 15:55:36] Proceeding with custom conversion...\n[2026-02-11 15:55:36] Found assays: RNA, ADT \n[2026-02-11 15:55:36] Processing assay: RNA\nLoading required package: SeuratObject\nLoading required package: sp\n\nAttaching package: ‘SeuratObject’\n\nThe following objects are masked from ‘package:base’:\n\n    intersect, t\n\nValidating object structure\nUpdating object slots\nEnsuring keys are in the proper structure\nUpdating matrix keys for DimReduc ‘spca’\nWarning: Assay RNA changing from Assay to Assay\nWarning: Assay ADT changing from Assay to Assay\nWarning: Graph wknn changing from Graph to Graph\nWarning: Graph wsnn changing from Graph to Graph\nWarning: DimReduc spca changing from DimReduc to DimReduc\nEnsuring keys are in the proper structure\nEnsuring feature names don't have underscores or pipes\nUpdating slots in RNA\nUpdating slots in ADT\nUpdating slots in wknn\nCannot find wknn in the object, setting default assay of wknn to RNA\nUpdating slots in wsnn\nCannot find wsnn in the object, setting default assay of wsnn to RNA\nUpdating slots in spca\nSetting assay used for NormalizeData.RNA to RNA\nSetting assay used for FindVariableFeatures.RNA to RNA\nSetting assay used for ScaleData.RNA to RNA\nSetting assay used for RunPCA.RNA to RNA\nSetting assay used for NormalizeData.ADT to ADT\nSetting assay used for ScaleData.ADT to ADT\nSetting assay used for RunPCA.ADT to ADT\nNo assay information could be found for FindModalityWeights\nNo assay information could be found for FindMultiModalNeighbors\nSetting assay used for RunSPCA.RNA to RNA\nValidating object structure for Assay ‘RNA’\nValidating object structure for Assay ‘ADT’\nValidating object structure for Graph ‘wknn’\nValidating object structure for Graph ‘wsnn’\nValidating object structure for DimReduc ‘spca’\nObject representation is consistent with the most current Seurat version\nWarning messages:\n1: Adding a command log without an assay associated with it \n2: Adding a command log without an assay associated with it \nError in value[[3L]](cond) : \n  Failed to retrieve counts matrix: The `slot` argument of `GetAssayData()` was deprecated in SeuratObject 5.0.0 and is now defunct.Please use the `layer` argument instead.\nCalls: convert_seurat_to_sce ... tryCatch -> tryCatchList -> tryCatchOne -> <Anonymous>\nExecution halted\nCommand exited with non-zero status 1",
+      "run": 1
+    },
+    {
+      "test_id": "v4_bmcite_processed",
+      "dataset": "bmcite",
+      "direction": "rds_to_h5ad",
+      "status": "failed",
+      "error": "[2026-02-11 15:56:04] Input object class: Seurat \n[2026-02-11 15:56:04] Converting Seurat object...\n[2026-02-11 15:56:04] Proceeding with custom conversion...\n[2026-02-11 15:56:04] Found assays: RNA, ADT \n[2026-02-11 15:56:04] Processing assay: RNA\nLoading required package: SeuratObject\nLoading required package: sp\n\nAttaching package: ‘SeuratObject’\n\nThe following objects are masked from ‘package:base’:\n\n    intersect, t\n\nValidating object structure\nUpdating object slots\nEnsuring keys are in the proper structure\nUpdating matrix keys for DimReduc ‘spca’\nUpdating matrix keys for DimReduc ‘pca’\nUpdating matrix keys for DimReduc ‘umap’\nWarning: Assay RNA changing from Assay to Assay\nWarning: Assay ADT changing from Assay to Assay\nWarning: Graph wknn changing from Graph to Graph\nWarning: Graph wsnn changing from Graph to Graph\nWarning: DimReduc spca changing from DimReduc to DimReduc\nEnsuring keys are in the proper structure\nEnsuring feature names don't have underscores or pipes\nUpdating slots in RNA\nUpdating slots in ADT\nUpdating slots in wknn\nCannot find wknn in the object, setting default assay of wknn to RNA\nUpdating slots in wsnn\nCannot find wsnn in the object, setting default assay of wsnn to RNA\nUpdating slots in RNA_nn\nSetting default assay of RNA_nn to RNA\nUpdating slots in RNA_snn\nSetting default assay of RNA_snn to RNA\nUpdating slots in spca\nUpdating slots in pca\nUpdating slots in umap\nSetting umap DimReduc to global\nSetting assay used for NormalizeData.ADT to ADT\nSetting assay used for ScaleData.ADT to ADT\nSetting assay used for RunPCA.ADT to ADT\nNo assay information could be found for FindModalityWeights\nNo assay information could be found for FindMultiModalNeighbors\nSetting assay used for RunSPCA.RNA to RNA\nSetting assay used for NormalizeData.RNA to RNA\nSetting assay used for FindVariableFeatures.RNA to RNA\nSetting assay used for ScaleData.RNA to RNA\nSetting assay used for RunPCA.RNA to RNA\nSetting assay used for FindNeighbors.RNA.pca to RNA\nNo assay information could be found for FindClusters\nSetting assay used for RunUMAP.RNA.pca to RNA\nValidating object structure for Assay ‘RNA’\nValidating object structure for Assay ‘ADT’\nValidating object structure for Graph ‘wknn’\nValidating object structure for Graph ‘wsnn’\nValidating object structure for Graph ‘RNA_nn’\nValidating object structure for Graph ‘RNA_snn’\nValidating object structure for DimReduc ‘spca’\nValidating object structure for DimReduc ‘pca’\nValidating object structure for DimReduc ‘umap’\nObject representation is consistent with the most current Seurat version\nWarning messages:\n1: Adding a command log without an assay associated with it \n2: Adding a command log without an assay associated with it \n3: Adding a command log without an assay associated with it \nError in value[[3L]](cond) : \n  Failed to retrieve counts matrix: The `slot` argument of `GetAssayData()` was deprecated in SeuratObject 5.0.0 and is now defunct.Please use the `layer` argument instead.\nCalls: convert_seurat_",
+      "run": 1
+    },
+    {
+      "test_id": "v5_bmcite_raw",
+      "dataset": "bmcite",
+      "direction": "rds_to_h5ad",
+      "status": "success",
+      "conversion_time_seconds": 23.5,
+      "peak_memory_mb": 2917.6,
+      "output_file_size_mb": 522.65,
+      "all_times": [
+        22.685,
+        23.5,
+        23.797
+      ],
+      "all_mems": [
+        2917.4,
+        2917.6,
+        2918.6
+      ],
+      "n_cells": 30672,
+      "n_genes": 17009,
+      "scale": "large",
+      "seurat_version": "V5",
+      "type": "raw"
+    },
+    {
+      "test_id": "v5_bmcite_processed",
+      "dataset": "bmcite",
+      "direction": "rds_to_h5ad",
+      "status": "success",
+      "conversion_time_seconds": 44.584,
+      "peak_memory_mb": 8473.7,
+      "output_file_size_mb": 2046.94,
+      "all_times": [
+        39.695,
+        44.584,
+        47.035
+      ],
+      "all_mems": [
+        8472.9,
+        8473.7,
+        8473.9
+      ],
+      "n_cells": 30672,
+      "n_genes": 17009,
+      "scale": "large",
+      "seurat_version": "V5",
+      "type": "processed"
+    },
+    {
+      "test_id": "v4_pbmcsca_raw",
+      "dataset": "pbmcsca",
+      "direction": "rds_to_h5ad",
+      "status": "failed",
+      "error": "[2026-02-11 15:59:47] Input object class: Seurat \n[2026-02-11 15:59:47] Converting Seurat object...\n[2026-02-11 15:59:47] Proceeding with custom conversion...\n[2026-02-11 15:59:47] Found assays: RNA \n[2026-02-11 15:59:47] Processing assay: RNA\nLoading required package: SeuratObject\nLoading required package: sp\n\nAttaching package: ‘SeuratObject’\n\nThe following objects are masked from ‘package:base’:\n\n    intersect, t\n\nValidating object structure\nUpdating object slots\nEnsuring keys are in the proper structure\nWarning: Assay RNA changing from Assay to Assay\nEnsuring keys are in the proper structure\nEnsuring feature names don't have underscores or pipes\nUpdating slots in RNA\nValidating object structure for Assay ‘RNA’\nObject representation is consistent with the most current Seurat version\nError in value[[3L]](cond) : \n  Failed to retrieve counts matrix: The `slot` argument of `GetAssayData()` was deprecated in SeuratObject 5.0.0 and is now defunct.Please use the `layer` argument instead.\nCalls: convert_seurat_to_sce ... tryCatch -> tryCatchList -> tryCatchOne -> <Anonymous>\nExecution halted\nCommand exited with non-zero status 1",
+      "run": 1
+    },
+    {
+      "test_id": "v4_pbmcsca_processed",
+      "dataset": "pbmcsca",
+      "direction": "rds_to_h5ad",
+      "status": "failed",
+      "error": "[2026-02-11 16:00:10] Input object class: Seurat \n[2026-02-11 16:00:10] Converting Seurat object...\n[2026-02-11 16:00:10] Proceeding with custom conversion...\n[2026-02-11 16:00:10] Found assays: RNA \n[2026-02-11 16:00:10] Processing assay: RNA\nLoading required package: SeuratObject\nLoading required package: sp\n\nAttaching package: ‘SeuratObject’\n\nThe following objects are masked from ‘package:base’:\n\n    intersect, t\n\nValidating object structure\nUpdating object slots\nEnsuring keys are in the proper structure\nUpdating matrix keys for DimReduc ‘pca’\nUpdating matrix keys for DimReduc ‘umap’\nWarning: Assay RNA changing from Assay to Assay\nEnsuring keys are in the proper structure\nEnsuring feature names don't have underscores or pipes\nUpdating slots in RNA\nUpdating slots in RNA_nn\nSetting default assay of RNA_nn to RNA\nUpdating slots in RNA_snn\nSetting default assay of RNA_snn to RNA\nUpdating slots in pca\nUpdating slots in umap\nSetting umap DimReduc to global\nSetting assay used for NormalizeData.RNA to RNA\nSetting assay used for FindVariableFeatures.RNA to RNA\nSetting assay used for ScaleData.RNA to RNA\nSetting assay used for RunPCA.RNA to RNA\nSetting assay used for FindNeighbors.RNA.pca to RNA\nNo assay information could be found for FindClusters\nSetting assay used for RunUMAP.RNA.pca to RNA\nValidating object structure for Assay ‘RNA’\nValidating object structure for Graph ‘RNA_nn’\nValidating object structure for Graph ‘RNA_snn’\nValidating object structure for DimReduc ‘pca’\nValidating object structure for DimReduc ‘umap’\nObject representation is consistent with the most current Seurat version\nWarning message:\nAdding a command log without an assay associated with it \nError in value[[3L]](cond) : \n  Failed to retrieve counts matrix: The `slot` argument of `GetAssayData()` was deprecated in SeuratObject 5.0.0 and is now defunct.Please use the `layer` argument instead.\nCalls: convert_seurat_to_sce ... tryCatch -> tryCatchList -> tryCatchOne -> <Anonymous>\nExecution halted\nCommand exited with non-zero status 1",
+      "run": 1
+    },
+    {
+      "test_id": "v5_pbmcsca_raw",
+      "dataset": "pbmcsca",
+      "direction": "rds_to_h5ad",
+      "status": "success",
+      "conversion_time_seconds": 24.286,
+      "peak_memory_mb": 2958.9,
+      "output_file_size_mb": 531.94,
+      "all_times": [
+        22.813,
+        24.286,
+        24.878
+      ],
+      "all_mems": [
+        2958.4,
+        2958.9,
+        2959.2
+      ],
+      "n_cells": 31021,
+      "n_genes": 33694,
+      "scale": "large",
+      "seurat_version": "V5",
+      "type": "raw"
+    },
+    {
+      "test_id": "v5_pbmcsca_processed",
+      "dataset": "pbmcsca",
+      "direction": "rds_to_h5ad",
+      "status": "success",
+      "conversion_time_seconds": 47.041,
+      "peak_memory_mb": 8592.3,
+      "output_file_size_mb": 2075.77,
+      "all_times": [
+        42.209,
+        47.041,
+        47.421
+      ],
+      "all_mems": [
+        8592.2,
+        8592.3,
+        8592.3
+      ],
+      "n_cells": 31021,
+      "n_genes": 33694,
+      "scale": "large",
+      "seurat_version": "V5",
+      "type": "processed"
+    },
+    {
+      "test_id": "v4_hcabm40k_raw",
+      "dataset": "hcabm40k",
+      "direction": "rds_to_h5ad",
+      "status": "failed",
+      "error": "[2026-02-11 16:04:00] Input object class: Seurat \n[2026-02-11 16:04:00] Converting Seurat object...\n[2026-02-11 16:04:00] Proceeding with custom conversion...\n[2026-02-11 16:04:00] Found assays: RNA \n[2026-02-11 16:04:00] Processing assay: RNA\nLoading required package: SeuratObject\nLoading required package: sp\n\nAttaching package: ‘SeuratObject’\n\nThe following objects are masked from ‘package:base’:\n\n    intersect, t\n\nValidating object structure\nUpdating object slots\nEnsuring keys are in the proper structure\nWarning: Assay RNA changing from Assay to Assay\nEnsuring keys are in the proper structure\nEnsuring feature names don't have underscores or pipes\nUpdating slots in RNA\nValidating object structure for Assay ‘RNA’\nObject representation is consistent with the most current Seurat version\nError in value[[3L]](cond) : \n  Failed to retrieve counts matrix: The `slot` argument of `GetAssayData()` was deprecated in SeuratObject 5.0.0 and is now defunct.Please use the `layer` argument instead.\nCalls: convert_seurat_to_sce ... tryCatch -> tryCatchList -> tryCatchOne -> <Anonymous>\nExecution halted\nCommand exited with non-zero status 1",
+      "run": 1
+    },
+    {
+      "test_id": "v4_hcabm40k_processed",
+      "dataset": "hcabm40k",
+      "direction": "rds_to_h5ad",
+      "status": "failed",
+      "error": "[2026-02-11 16:04:31] Input object class: Seurat \n[2026-02-11 16:04:31] Converting Seurat object...\n[2026-02-11 16:04:31] Proceeding with custom conversion...\n[2026-02-11 16:04:31] Found assays: RNA \n[2026-02-11 16:04:31] Processing assay: RNA\nLoading required package: SeuratObject\nLoading required package: sp\n\nAttaching package: ‘SeuratObject’\n\nThe following objects are masked from ‘package:base’:\n\n    intersect, t\n\nValidating object structure\nUpdating object slots\nEnsuring keys are in the proper structure\nUpdating matrix keys for DimReduc ‘pca’\nUpdating matrix keys for DimReduc ‘umap’\nWarning: Assay RNA changing from Assay to Assay\nEnsuring keys are in the proper structure\nEnsuring feature names don't have underscores or pipes\nUpdating slots in RNA\nUpdating slots in RNA_nn\nSetting default assay of RNA_nn to RNA\nUpdating slots in RNA_snn\nSetting default assay of RNA_snn to RNA\nUpdating slots in pca\nUpdating slots in umap\nSetting umap DimReduc to global\nSetting assay used for NormalizeData.RNA to RNA\nSetting assay used for FindVariableFeatures.RNA to RNA\nSetting assay used for ScaleData.RNA to RNA\nSetting assay used for RunPCA.RNA to RNA\nSetting assay used for FindNeighbors.RNA.pca to RNA\nNo assay information could be found for FindClusters\nSetting assay used for RunUMAP.RNA.pca to RNA\nValidating object structure for Assay ‘RNA’\nValidating object structure for Graph ‘RNA_nn’\nValidating object structure for Graph ‘RNA_snn’\nValidating object structure for DimReduc ‘pca’\nValidating object structure for DimReduc ‘umap’\nObject representation is consistent with the most current Seurat version\nWarning message:\nAdding a command log without an assay associated with it \nError in value[[3L]](cond) : \n  Failed to retrieve counts matrix: The `slot` argument of `GetAssayData()` was deprecated in SeuratObject 5.0.0 and is now defunct.Please use the `layer` argument instead.\nCalls: convert_seurat_to_sce ... tryCatch -> tryCatchList -> tryCatchOne -> <Anonymous>\nExecution halted\nCommand exited with non-zero status 1",
+      "run": 1
+    },
+    {
+      "test_id": "v5_hcabm40k_raw",
+      "dataset": "hcabm40k",
+      "direction": "rds_to_h5ad",
+      "status": "success",
+      "conversion_time_seconds": 27.923,
+      "peak_memory_mb": 3916.6,
+      "output_file_size_mb": 773.62,
+      "all_times": [
+        25.529,
+        27.923,
+        28.46
+      ],
+      "all_mems": [
+        3916.4,
+        3916.6,
+        3916.7
+      ],
+      "n_cells": 40000,
+      "n_genes": 17369,
+      "scale": "large",
+      "seurat_version": "V5",
+      "type": "raw"
+    },
+    {
+      "test_id": "v5_hcabm40k_processed",
+      "dataset": "hcabm40k",
+      "direction": "rds_to_h5ad",
+      "status": "success",
+      "conversion_time_seconds": 53.468,
+      "peak_memory_mb": 10153.6,
+      "output_file_size_mb": 2817.5,
+      "all_times": [
+        52.395,
+        53.468,
+        58.136
+      ],
+      "all_mems": [
+        10153.5,
+        10153.6,
+        10154.1
+      ],
+      "n_cells": 40000,
+      "n_genes": 17369,
+      "scale": "large",
+      "seurat_version": "V5",
+      "type": "processed"
+    },
+    {
+      "test_id": "v4_ssHippo_raw",
+      "dataset": "ssHippo",
+      "direction": "rds_to_h5ad",
+      "status": "failed",
+      "error": "[2026-02-11 16:08:58] Input object class: Seurat \n[2026-02-11 16:08:58] Converting Seurat object...\n[2026-02-11 16:08:58] Proceeding with custom conversion...\n[2026-02-11 16:08:58] Found assays: Spatial \n[2026-02-11 16:08:58] Processing assay: Spatial\nLoading required package: SeuratObject\nLoading required package: sp\n\nAttaching package: ‘SeuratObject’\n\nThe following objects are masked from ‘package:base’:\n\n    intersect, t\n\nValidating object structure\nUpdating object slots\nEnsuring keys are in the proper structure\nWarning: Assay Spatial changing from Assay to Assay\nEnsuring keys are in the proper structure\nEnsuring feature names don't have underscores or pipes\nUpdating slots in Spatial\nUpdating slots in image\nValidating object structure for Assay ‘Spatial’\nValidating object structure for SlideSeq ‘image’\nObject representation is consistent with the most current Seurat version\nError in value[[3L]](cond) : \n  Failed to retrieve counts matrix: The `slot` argument of `GetAssayData()` was deprecated in SeuratObject 5.0.0 and is now defunct.Please use the `layer` argument instead.\nCalls: convert_seurat_to_sce ... tryCatch -> tryCatchList -> tryCatchOne -> <Anonymous>\nExecution halted\nCommand exited with non-zero status 1",
+      "run": 1
+    },
+    {
+      "test_id": "v4_ssHippo_processed",
+      "dataset": "ssHippo",
+      "direction": "rds_to_h5ad",
+      "status": "failed",
+      "error": "[2026-02-11 16:09:25] Input object class: Seurat \n[2026-02-11 16:09:25] Converting Seurat object...\n[2026-02-11 16:09:25] Proceeding with custom conversion...\n[2026-02-11 16:09:25] Found assays: Spatial \n[2026-02-11 16:09:25] Processing assay: Spatial\nLoading required package: SeuratObject\nLoading required package: sp\n\nAttaching package: ‘SeuratObject’\n\nThe following objects are masked from ‘package:base’:\n\n    intersect, t\n\nValidating object structure\nUpdating object slots\nEnsuring keys are in the proper structure\nUpdating matrix keys for DimReduc ‘pca’\nUpdating matrix keys for DimReduc ‘umap’\nWarning: Assay Spatial changing from Assay to Assay\nEnsuring keys are in the proper structure\nEnsuring feature names don't have underscores or pipes\nUpdating slots in Spatial\nUpdating slots in Spatial_nn\nSetting default assay of Spatial_nn to Spatial\nUpdating slots in Spatial_snn\nSetting default assay of Spatial_snn to Spatial\nUpdating slots in pca\nUpdating slots in umap\nSetting umap DimReduc to global\nUpdating slots in image\nSetting assay used for NormalizeData.Spatial to Spatial\nSetting assay used for FindVariableFeatures.Spatial to Spatial\nSetting assay used for ScaleData.Spatial to Spatial\nSetting assay used for RunPCA.Spatial to Spatial\nSetting assay used for FindNeighbors.Spatial.pca to Spatial\nNo assay information could be found for FindClusters\nSetting assay used for RunUMAP.Spatial.pca to Spatial\nValidating object structure for Assay ‘Spatial’\nValidating object structure for Graph ‘Spatial_nn’\nValidating object structure for Graph ‘Spatial_snn’\nValidating object structure for DimReduc ‘pca’\nValidating object structure for DimReduc ‘umap’\nValidating object structure for SlideSeq ‘image’\nObject representation is consistent with the most current Seurat version\nWarning message:\nAdding a command log without an assay associated with it \nError in value[[3L]](cond) : \n  Failed to retrieve counts matrix: The `slot` argument of `GetAssayData()` was deprecated in SeuratObject 5.0.0 and is now defunct.Please use the `layer` argument instead.\nCalls: convert_seurat_to_sce ... tryCatch -> tryCatchList -> tryCatchOne -> <Anonymous>\nExecution halted\nCommand exited with non-zero status 1",
+      "run": 1
+    },
+    {
+      "test_id": "v5_ssHippo_raw",
+      "dataset": "ssHippo",
+      "direction": "rds_to_h5ad",
+      "status": "failed",
+      "error": "[2026-02-11 16:09:40] Input object class: Seurat \n[2026-02-11 16:09:40] Converting Seurat object...\n[2026-02-11 16:09:40] Proceeding with custom conversion...\n[2026-02-11 16:09:40] Found assays: Spatial \n[2026-02-11 16:09:40] Processing assay: Spatial \n[2026-02-11 16:09:40] Found 1 layers: counts \n[2026-02-11 16:09:41] Custom conversion to SingleCellExperiment completed successfully.\n[2026-02-11 16:09:41] Summary of SingleCellExperiment object:\n\nclass: SingleCellExperiment \ndim: 23264 53173 \nmetadata(2): images version\nassays(1): Spatial_counts\nrownames(23264): 0610005C13RIK 0610007P14RIK ... N-R5S40 N-R5S95\nrowData names(0):\ncolnames(53173): AACGTCATAATCGT TACTTTAGCGCAGT ... GACTTTTCTTAAAG\n  GTCAATAAAGGGCG\ncolData names(3): orig.ident nCount_Spatial nFeature_Spatial\nreducedDimNames(0):\nmainExpName: NULL\naltExpNames(0):\n\n[2026-02-11 16:09:41] Checking for altExperiments...\n[2026-02-11 16:09:41] Processing assay 'counts' for anndata.X...\n[2026-02-11 16:09:41] WARNING: The specified assay 'counts' is not available. Using 'Spatial_counts' as active layer instead.\n[2026-02-11 16:09:42] Using 'Spatial_counts' assay as the main data matrix (converted to CsparseMatrix).\n[2026-02-11 16:09:42] Processing all assays...\n[2026-02-11 16:09:43] Assays processed and converted to CsparseMatrix format.\n[2026-02-11 16:09:43] Processing dimensional reductions...\n[2026-02-11 16:09:43] No dimensional reductions found.\n[2026-02-11 16:09:43] Successfully extracted obs/colData with internal=TRUE.\n[2026-02-11 16:09:43] Successfully extracted var/rowData with internal=TRUE.\n[2026-02-11 16:09:43] Column Pairs : No pairwise data found.\n[2026-02-11 16:09:43] Row Pairs : No pairwise data found.\n[2026-02-11 16:09:43] No colPairs data extracted.\n[2026-02-11 16:09:43] No rowPairs data extracted.\n[2026-02-11 16:09:43] Gathering metadata and pairwise matrices...\n[2026-02-11 16:09:43] Metadata and pairwise data organized.\n[2026-02-11 16:09:46] Summary of the AnnData object:\n\nAnnData object with n_obs × n_vars = 53173 × 23264\n    obs: 'orig.ident', 'nCount_Spatial', 'nFeature_Spatial'\n    uns: 'images', 'version'\n    layers: 'Spatial_counts'\nLoading required package: SeuratObject\nLoading required package: sp\n\nAttaching package: ‘SeuratObject’\n\nThe following objects are masked from ‘package:base’:\n\n    intersect, t\n\nValidating object structure\nUpdating object slots\nEnsuring keys are in the proper structure\nEnsuring keys are in the proper structure\nEnsuring feature names don't have underscores or pipes\nUpdating slots in Spatial\nUpdating slots in image\nValidating object structure for Assay5 ‘Spatial’\nValidating object structure for SlideSeq ‘image’\nObject representation is consistent with the most current Seurat version\nError in py_call_impl(callable, call_args$unnamed, call_args$named) : \n  anndata._io.specs.registry.IORegistryError: No method registered for writing <class 'PyCapsule'> into <class 'h5py._hl.group.Group'>\nError raised while writing key 'image' of <class 'h5py._hl.group",
+      "run": 1
+    },
+    {
+      "test_id": "v5_ssHippo_processed",
+      "dataset": "ssHippo",
+      "direction": "rds_to_h5ad",
+      "status": "failed",
+      "error": "[2026-02-11 16:10:10] Input object class: Seurat \n[2026-02-11 16:10:10] Converting Seurat object...\n[2026-02-11 16:10:10] Proceeding with custom conversion...\n[2026-02-11 16:10:10] Found assays: Spatial \n[2026-02-11 16:10:10] Processing assay: Spatial \n[2026-02-11 16:10:10] Found 3 layers: counts, data, scale.data \n[2026-02-11 16:10:13] Moved layer scale.data to altExp due to mismatched features: Spatial_scale.data \n[2026-02-11 16:10:13] Attempting to preserve dimensional reductions.\n[2026-02-11 16:10:13] Updated reduction ' pca ' to match combined cells.\n[2026-02-11 16:10:13] Updated reduction ' umap ' to match combined cells.\n[2026-02-11 16:10:13] Found 2 graphs. Moving to colPair.\n[2026-02-11 16:10:14] Custom conversion to SingleCellExperiment completed successfully.\n[2026-02-11 16:10:14] Summary of SingleCellExperiment object:\n\nclass: SingleCellExperiment \ndim: 23264 53173 \nmetadata(3): images version commands\nassays(2): Spatial_counts Spatial_data\nrownames(23264): 0610005C13RIK 0610007P14RIK ... N-R5S40 N-R5S95\nrowData names(0):\ncolnames(53173): AACGTCATAATCGT TACTTTAGCGCAGT ... GACTTTTCTTAAAG\n  GTCAATAAAGGGCG\ncolData names(5): orig.ident nCount_Spatial nFeature_Spatial\n  Spatial_snn_res.0.8 seurat_clusters\nreducedDimNames(2): pca umap\nmainExpName: NULL\naltExpNames(1): Spatial_scale.data\n\n[2026-02-11 16:10:14] Checking for altExperiments...\n[2026-02-11 16:10:14] WARNING: The SingleCellExperiment object contains alternative experiments (altExps) which cannot ideally be reflected in the AnnData object.\n[2026-02-11 16:10:14] The following altExps will be processed and stored in uns['altExperiments']:  Spatial_scale.data \n[2026-02-11 16:10:14] Starting processing of altExp 'Spatial_scale.data'...\n[2026-02-11 16:10:14] Summary of SingleCellExperiment object:\n\nclass: SingleCellExperiment \ndim: 2000 53173 \nmetadata(0):\nassays(1): counts\nrownames(2000): 1110002J07RIK 1110017D15RIK ... ZPLD1 ZSWIM5\nrowData names(0):\ncolnames(53173): AACGTCATAATCGT TACTTTAGCGCAGT ... GACTTTTCTTAAAG\n  GTCAATAAAGGGCG\ncolData names(0):\nreducedDimNames(0):\nmainExpName: NULL\naltExpNames(0):\n\n[2026-02-11 16:10:14] Checking for altExperiments...\n[2026-02-11 16:10:14] Processing assay 'counts' for anndata.X...\n[2026-02-11 16:10:20] Using 'counts' assay as the main data matrix (converted to CsparseMatrix).\n[2026-02-11 16:10:20] Processing all assays...\n[2026-02-11 16:10:27] Assays processed and converted to CsparseMatrix format.\n[2026-02-11 16:10:27] Processing dimensional reductions...\n[2026-02-11 16:10:27] No dimensional reductions found.\n[2026-02-11 16:10:27] Successfully extracted obs/colData with internal=TRUE.\n[2026-02-11 16:10:27] Successfully extracted var/rowData with internal=TRUE.\n[2026-02-11 16:10:27] Column Pairs : No pairwise data found.\n[2026-02-11 16:10:27] Row Pairs : No pairwise data found.\n[2026-02-11 16:10:27] No colPairs data extracted.\n[2026-02-11 16:10:27] No rowPairs data extracted.\n[2026-02-11 16:10:27] Gathering metadata and pairwise matrices...\n[2026",
+      "run": 1
+    }
+  ],
+  "h5ad_to_rds": [],
+  "summary": {
+    "total": 42,
+    "success": 15,
+    "failed": 27,
+    "skipped": 0
+  }
+}

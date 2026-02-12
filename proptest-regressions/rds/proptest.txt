@@ -1,0 +1,10 @@
+# Seeds for failure cases proptest has generated in the past. It is
+# automatically read and these particular cases re-run before any
+# novel cases are generated.
+#
+# It is recommended to check this file in to source control so that
+# everyone who runs the test benefits from these saved cases.
+cc 78fba31c5b65128ac27546378887c0284182708daded9378f624c949af7422af # shrinks to s4 = S4Object { class_name: "", class_encoding: Utf8, package_name: "", package_encoding: Utf8, attributes: Attributes { names: [], encodings: [], values: [] } }
+cc 8edd04808814276afe7e06e3ece5b6301ba6ae23271da00e31265ad64d363385 # shrinks to object = RawVector(RawVector { data: [], attributes: Attributes { names: [""], encodings: [Utf8], values: [IntegerVector(IntegerVector { data: [1], attributes: Attributes { names: [], encodings: [], values: [] } })] } })
+cc 615bf3f207113fe652c4fd61a617e145af2c4454c922429a2cf1c0ecd276c5dc # shrinks to pairlist = PairList { data: [], has_tag: [], tag_names: [], tag_encodings: [], attributes: Attributes { names: [], encodings: [], values: [] } }
+cc 90f7925ab810534ea098be60be1f2bcb7bf0a75d4e2426f3116a8352b9171ed5 # shrinks to vec = GenericVector { data: [], attributes: Attributes { names: [""], encodings: [Utf8], values: [IntegerVector(IntegerVector { data: [1], attributes: Attributes { names: [], encodings: [], values: [] } })] } }

@@ -1,0 +1,58 @@
+{
+  "timestamp": "2026-02-07",
+  "environment": {
+    "os": "Ubuntu 22.04 (Docker)",
+    "R": "4.5.2",
+    "Python": "3.12.12"
+  },
+  "tools": {
+    "crosscell": {
+      "version": "0.1.0",
+      "language": "Rust",
+      "type": "cli"
+    },
+    "zellkonverter": {
+      "version": "1.20.1",
+      "language": "R (Bioconductor)",
+      "type": "r_package"
+    },
+    "anndataR": {
+      "version": "1.0.0",
+      "language": "R (scverse)",
+      "type": "r_package"
+    },
+    "convert2anndata": {
+      "version": "0.2.0",
+      "language": "R",
+      "type": "r_package"
+    },
+    "easySCFr": {
+      "version": "0.2.2.7",
+      "language": "R",
+      "type": "r_package"
+    },
+    "easySCFpy": {
+      "version": "0.2.5",
+      "language": "Python",
+      "type": "python_package"
+    },
+    "seurat": {
+      "version": "5.4.0",
+      "language": "R",
+      "type": "r_package",
+      "note": "dependency, not a conversion tool"
+    },
+    "anndata": {
+      "version": "0.12.9",
+      "language": "Python",
+      "type": "python_package",
+      "note": "dependency for validation"
+    },
+    "scanpy": {
+      "version": "1.11.5",
+      "language": "Python",
+      "type": "python_package",
+      "note": "dependency for validation"
+    }
+  }
+}

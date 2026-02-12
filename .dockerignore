@@ -1,0 +1,47 @@
+# Rust 构建产物
+target/
+**/*.rs.bk
+Cargo.lock
+
+# Python 缓存
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+*.egg-info/
+dist/
+build/
+
+# R 缓存
+.Rhistory
+.RData
+.Rproj.user/
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# 测试数据（大文件）
+tests/data/large/
+benchmarks/data/
+
+# 文档
+docs/
+*.md
+!README.md
+
+# 临时文件
+*.tmp
+*.log
+
+# OS
+.DS_Store
+Thumbs.db

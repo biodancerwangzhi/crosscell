@@ -1,0 +1,1162 @@
+{
+  "tool": "anndataR",
+  "timestamp": "2026-02-11T13:51:42Z",
+  "config": {
+    "runs_per_test": 3,
+    "timeout_seconds": 600
+  },
+  "rds_to_h5ad": [
+    {
+      "test_id": "v4_pbmc3k_raw",
+      "dataset": "pbmc3k",
+      "direction": "rds_to_h5ad",
+      "status": "success",
+      "conversion_time_seconds": 5.72,
+      "peak_memory_mb": 646.6,
+      "output_file_size_mb": 53.49,
+      "all_times": [
+        5.568,
+        5.72,
+        6.929
+      ],
+      "all_mems": [
+        646.5,
+        646.6,
+        646.8
+      ],
+      "n_cells": 2700,
+      "n_genes": 13714,
+      "scale": "small",
+      "seurat_version": "V4",
+      "type": "raw"
+    },
+    {
+      "test_id": "v4_pbmc3k_processed",
+      "dataset": "pbmc3k",
+      "direction": "rds_to_h5ad",
+      "status": "success",
+      "conversion_time_seconds": 7.025,
+      "peak_memory_mb": 712.3,
+      "output_file_size_mb": 57.98,
+      "all_times": [
+        7.016,
+        7.025,
+        9.111
+      ],
+      "all_mems": [
+        712.2,
+        712.3,
+        712.5
+      ],
+      "n_cells": 2700,
+      "n_genes": 13714,
+      "scale": "small",
+      "seurat_version": "V4",
+      "type": "processed"
+    },
+    {
+      "test_id": "v5_pbmc3k_raw",
+      "dataset": "pbmc3k",
+      "direction": "rds_to_h5ad",
+      "status": "success",
+      "conversion_time_seconds": 5.27,
+      "peak_memory_mb": 586.0,
+      "output_file_size_mb": 27.34,
+      "all_times": [
+        5.112,
+        5.27,
+        6.504
+      ],
+      "all_mems": [
+        585.8,
+        586.0,
+        586.2
+      ],
+      "n_cells": 2700,
+      "n_genes": 13714,
+      "scale": "small",
+      "seurat_version": "V5",
+      "type": "raw"
+    },
+    {
+      "test_id": "v5_pbmc3k_processed",
+      "dataset": "pbmc3k",
+      "direction": "rds_to_h5ad",
+      "status": "success",
+      "conversion_time_seconds": 7.05,
+      "peak_memory_mb": 706.1,
+      "output_file_size_mb": 58.75,
+      "all_times": [
+        6.875,
+        7.05,
+        7.391
+      ],
+      "all_mems": [
+        705.9,
+        706.1,
+        706.1
+      ],
+      "n_cells": 2700,
+      "n_genes": 13714,
+      "scale": "small",
+      "seurat_version": "V5",
+      "type": "processed"
+    },
+    {
+      "test_id": "v4_stxKidney_raw",
+      "dataset": "stxKidney",
+      "direction": "rds_to_h5ad",
+      "status": "failed",
+      "error": "Loading required package: SeuratObject\nLoading required package: sp\n\nAttaching package: ‘SeuratObject’\n\nThe following objects are masked from ‘package:base’:\n\n    intersect, t\n\nValidating object structure\nUpdating object slots\nEnsuring keys are in the proper structure\nWarning: Assay Spatial changing from Assay to Assay\nError in slot(object = object, name = \"key\") : \n  no slot of name \"key\" for this object of class \"SliceImage\"\nCalls: UpdateSeuratObject\nExecution halted\nCommand exited with non-zero status 1",
+      "run": 1
+    },
+    {
+      "test_id": "v5_stxKidney_raw",
+      "dataset": "stxKidney",
+      "direction": "rds_to_h5ad",
+      "status": "success",
+      "conversion_time_seconds": 6.846,
+      "peak_memory_mb": 939.1,
+      "output_file_size_mb": 94.05,
+      "all_times": [
+        6.813,
+        6.846,
+        8.37
+      ],
+      "all_mems": [
+        939.1,
+        939.1,
+        939.3
+      ],
+      "n_cells": 1438,
+      "n_genes": 31053,
+      "scale": "small",
+      "seurat_version": "V5",
+      "type": "raw"
+    },
+    {
+      "test_id": "v4_celegans_raw",
+      "dataset": "celegans.embryo",
+      "direction": "rds_to_h5ad",
+      "status": "success",
+      "conversion_time_seconds": 7.948,
+      "peak_memory_mb": 861.8,
+      "output_file_size_mb": 120.01,
+      "all_times": [
+        7.905,
+        7.948,
+        8.687
+      ],
+      "all_mems": [
+        861.3,
+        861.8,
+        861.9
+      ],
+      "n_cells": 6188,
+      "n_genes": 20222,
+      "scale": "medium",
+      "seurat_version": "V4",
+      "type": "raw"
+    },
+    {
+      "test_id": "v4_celegans_processed",
+      "dataset": "celegans.embryo",
+      "direction": "rds_to_h5ad",
+      "status": "success",
+      "conversion_time_seconds": 10.327,
+      "peak_memory_mb": 1028.3,
+      "output_file_size_mb": 128.87,
+      "all_times": [
+        10.197,
+        10.327,
+        10.486
+      ],
+      "all_mems": [
+        1028.2,
+        1028.3,
+        1028.6
+      ],
+      "n_cells": 6188,
+      "n_genes": 20222,
+      "scale": "medium",
+      "seurat_version": "V4",
+      "type": "processed"
+    },
+    {
+      "test_id": "v5_celegans_raw",
+      "dataset": "celegans.embryo",
+      "direction": "rds_to_h5ad",
+      "status": "success",
+      "conversion_time_seconds": 6.792,
+      "peak_memory_mb": 792.7,
+      "output_file_size_mb": 61.07,
+      "all_times": [
+        6.475,
+        6.792,
+        7.626
+      ],
+      "all_mems": [
+        792.6,
+        792.7,
+        792.8
+      ],
+      "n_cells": 6188,
+      "n_genes": 20222,
+      "scale": "medium",
+      "seurat_version": "V5",
+      "type": "raw"
+    },
+    {
+      "test_id": "v5_celegans_processed",
+      "dataset": "celegans.embryo",
+      "direction": "rds_to_h5ad",
+      "status": "success",
+      "conversion_time_seconds": 9.606,
+      "peak_memory_mb": 1027.7,
+      "output_file_size_mb": 128.13,
+      "all_times": [
+        9.581,
+        9.606,
+        10.61
+      ],
+      "all_mems": [
+        1027.4,
+        1027.7,
+        1027.9
+      ],
+      "n_cells": 6188,
+      "n_genes": 20222,
+      "scale": "medium",
+      "seurat_version": "V5",
+      "type": "processed"
+    },
+    {
+      "test_id": "v4_cbmc_raw",
+      "dataset": "cbmc",
+      "direction": "rds_to_h5ad",
+      "status": "success",
+      "conversion_time_seconds": 10.422,
+      "peak_memory_mb": 1134.0,
+      "output_file_size_mb": 191.33,
+      "all_times": [
+        9.919,
+        10.422,
+        10.913
+      ],
+      "all_mems": [
+        1133.5,
+        1134.0,
+        1134.4
+      ],
+      "n_cells": 8617,
+      "n_genes": 20501,
+      "scale": "medium",
+      "seurat_version": "V4",
+      "type": "raw"
+    },
+    {
+      "test_id": "v4_cbmc_processed",
+      "dataset": "cbmc",
+      "direction": "rds_to_h5ad",
+      "status": "success",
+      "conversion_time_seconds": 13.954,
+      "peak_memory_mb": 1399.1,
+      "output_file_size_mb": 204.19,
+      "all_times": [
+        13.755,
+        13.954,
+        14.549
+      ],
+      "all_mems": [
+        1399.0,
+        1399.1,
+        1399.4
+      ],
+      "n_cells": 8617,
+      "n_genes": 20501,
+      "scale": "medium",
+      "seurat_version": "V4",
+      "type": "processed"
+    },
+    {
+      "test_id": "v5_cbmc_raw",
+      "dataset": "cbmc",
+      "direction": "rds_to_h5ad",
+      "status": "success",
+      "conversion_time_seconds": 8.133,
+      "peak_memory_mb": 985.4,
+      "output_file_size_mb": 96.91,
+      "all_times": [
+        7.729,
+        8.133,
+        9.71
+      ],
+      "all_mems": [
+        985.2,
+        985.4,
+        985.7
+      ],
+      "n_cells": 8617,
+      "n_genes": 20501,
+      "scale": "medium",
+      "seurat_version": "V5",
+      "type": "raw"
+    },
+    {
+      "test_id": "v5_cbmc_processed",
+      "dataset": "cbmc",
+      "direction": "rds_to_h5ad",
+      "status": "success",
+      "conversion_time_seconds": 12.464,
+      "peak_memory_mb": 1278.9,
+      "output_file_size_mb": 205.35,
+      "all_times": [
+        11.166,
+        12.464,
+        12.88
+      ],
+      "all_mems": [
+        1278.7,
+        1278.9,
+        1279.1
+      ],
+      "n_cells": 8617,
+      "n_genes": 20501,
+      "scale": "medium",
+      "seurat_version": "V5",
+      "type": "processed"
+    },
+    {
+      "test_id": "v4_ifnb_raw",
+      "dataset": "ifnb",
+      "direction": "rds_to_h5ad",
+      "status": "success",
+      "conversion_time_seconds": 9.91,
+      "peak_memory_mb": 1136.9,
+      "output_file_size_mb": 227.64,
+      "all_times": [
+        9.051,
+        9.91,
+        11.381
+      ],
+      "all_mems": [
+        1136.8,
+        1136.9,
+        1137.2
+      ],
+      "n_cells": 13999,
+      "n_genes": 14053,
+      "scale": "medium",
+      "seurat_version": "V4",
+      "type": "raw"
+    },
+    {
+      "test_id": "v4_ifnb_processed",
+      "dataset": "ifnb",
+      "direction": "rds_to_h5ad",
+      "status": "success",
+      "conversion_time_seconds": 13.35,
+      "peak_memory_mb": 1605.1,
+      "output_file_size_mb": 248.1,
+      "all_times": [
+        13.029,
+        13.35,
+        15.795
+      ],
+      "all_mems": [
+        1605.0,
+        1605.1,
+        1605.2
+      ],
+      "n_cells": 13999,
+      "n_genes": 14053,
+      "scale": "medium",
+      "seurat_version": "V4",
+      "type": "processed"
+    },
+    {
+      "test_id": "v5_ifnb_raw",
+      "dataset": "ifnb",
+      "direction": "rds_to_h5ad",
+      "status": "success",
+      "conversion_time_seconds": 9.039,
+      "peak_memory_mb": 1054.4,
+      "output_file_size_mb": 115.57,
+      "all_times": [
+        7.104,
+        9.039,
+        9.949
+      ],
+      "all_mems": [
+        1054.4,
+        1054.4,
+        1054.4
+      ],
+      "n_cells": 13999,
+      "n_genes": 14053,
+      "scale": "medium",
+      "seurat_version": "V5",
+      "type": "raw"
+    },
+    {
+      "test_id": "v5_ifnb_processed",
+      "dataset": "ifnb",
+      "direction": "rds_to_h5ad",
+      "status": "success",
+      "conversion_time_seconds": 12.577,
+      "peak_memory_mb": 1497.5,
+      "output_file_size_mb": 248.9,
+      "all_times": [
+        11.826,
+        12.577,
+        12.976
+      ],
+      "all_mems": [
+        1497.3,
+        1497.5,
+        1497.9
+      ],
+      "n_cells": 13999,
+      "n_genes": 14053,
+      "scale": "medium",
+      "seurat_version": "V5",
+      "type": "processed"
+    },
+    {
+      "test_id": "v4_panc8_raw",
+      "dataset": "panc8",
+      "direction": "rds_to_h5ad",
+      "status": "success",
+      "conversion_time_seconds": 31.189,
+      "peak_memory_mb": 4832.5,
+      "output_file_size_mb": 1192.42,
+      "all_times": [
+        30.54,
+        31.189,
+        31.54
+      ],
+      "all_mems": [
+        4832.2,
+        4832.5,
+        4832.9
+      ],
+      "n_cells": 14890,
+      "n_genes": 34363,
+      "scale": "medium",
+      "seurat_version": "V4",
+      "type": "raw"
+    },
+    {
+      "test_id": "v4_panc8_processed",
+      "dataset": "panc8",
+      "direction": "rds_to_h5ad",
+      "status": "success",
+      "conversion_time_seconds": 36.773,
+      "peak_memory_mb": 5122.6,
+      "output_file_size_mb": 1214.47,
+      "all_times": [
+        36.618,
+        36.773,
+        38.419
+      ],
+      "all_mems": [
+        5122.2,
+        5122.6,
+        5123.1
+      ],
+      "n_cells": 14890,
+      "n_genes": 34363,
+      "scale": "medium",
+      "seurat_version": "V4",
+      "type": "processed"
+    },
+    {
+      "test_id": "v5_panc8_raw",
+      "dataset": "panc8",
+      "direction": "rds_to_h5ad",
+      "status": "success",
+      "conversion_time_seconds": 24.583,
+      "peak_memory_mb": 3627.8,
+      "output_file_size_mb": 599.92,
+      "all_times": [
+        21.22,
+        24.583,
+        27.258
+      ],
+      "all_mems": [
+        3627.7,
+        3627.8,
+        3628.4
+      ],
+      "n_cells": 14890,
+      "n_genes": 34363,
+      "scale": "medium",
+      "seurat_version": "V5",
+      "type": "raw"
+    },
+    {
+      "test_id": "v5_panc8_processed",
+      "dataset": "panc8",
+      "direction": "rds_to_h5ad",
+      "status": "success",
+      "conversion_time_seconds": 48.336,
+      "peak_memory_mb": 5136.4,
+      "output_file_size_mb": 1216.38,
+      "all_times": [
+        44.589,
+        48.336,
+        50.194
+      ],
+      "all_mems": [
+        5135.9,
+        5136.4,
+        5136.9
+      ],
+      "n_cells": 14890,
+      "n_genes": 34363,
+      "scale": "medium",
+      "seurat_version": "V5",
+      "type": "processed"
+    },
+    {
+      "test_id": "v4_thp1_raw",
+      "dataset": "thp1.eccite",
+      "direction": "rds_to_h5ad",
+      "status": "success",
+      "conversion_time_seconds": 55.113,
+      "peak_memory_mb": 5474.3,
+      "output_file_size_mb": 1598.63,
+      "all_times": [
+        51.74,
+        55.113,
+        57.678
+      ],
+      "all_mems": [
+        5474.1,
+        5474.3,
+        5474.4
+      ],
+      "n_cells": 20729,
+      "n_genes": 18649,
+      "scale": "large",
+      "seurat_version": "V4",
+      "type": "raw"
+    },
+    {
+      "test_id": "v4_thp1_processed",
+      "dataset": "thp1.eccite",
+      "direction": "rds_to_h5ad",
+      "status": "success",
+      "conversion_time_seconds": 66.458,
+      "peak_memory_mb": 6180.1,
+      "output_file_size_mb": 1626.62,
+      "all_times": [
+        60.902,
+        66.458,
+        70.654
+      ],
+      "all_mems": [
+        6179.7,
+        6180.1,
+        6180.2
+      ],
+      "n_cells": 20729,
+      "n_genes": 18649,
+      "scale": "large",
+      "seurat_version": "V4",
+      "type": "processed"
+    },
+    {
+      "test_id": "v5_thp1_raw",
+      "dataset": "thp1.eccite",
+      "direction": "rds_to_h5ad",
+      "status": "success",
+      "conversion_time_seconds": 26.687,
+      "peak_memory_mb": 4739.1,
+      "output_file_size_mb": 802.84,
+      "all_times": [
+        24.556,
+        26.687,
+        26.881
+      ],
+      "all_mems": [
+        4738.8,
+        4739.1,
+        4739.4
+      ],
+      "n_cells": 20729,
+      "n_genes": 18649,
+      "scale": "large",
+      "seurat_version": "V5",
+      "type": "raw"
+    },
+    {
+      "test_id": "v5_thp1_processed",
+      "dataset": "thp1.eccite",
+      "direction": "rds_to_h5ad",
+      "status": "success",
+      "conversion_time_seconds": 46.173,
+      "peak_memory_mb": 5951.5,
+      "output_file_size_mb": 1627.66,
+      "all_times": [
+        46.009,
+        46.173,
+        47.732
+      ],
+      "all_mems": [
+        5951.4,
+        5951.5,
+        5951.8
+      ],
+      "n_cells": 20729,
+      "n_genes": 18649,
+      "scale": "large",
+      "seurat_version": "V5",
+      "type": "processed"
+    },
+    {
+      "test_id": "v4_bmcite_raw",
+      "dataset": "bmcite",
+      "direction": "rds_to_h5ad",
+      "status": "success",
+      "conversion_time_seconds": 23.811,
+      "peak_memory_mb": 3024.1,
+      "output_file_size_mb": 683.42,
+      "all_times": [
+        22.625,
+        23.811,
+        24.049
+      ],
+      "all_mems": [
+        3023.8,
+        3024.1,
+        3024.3
+      ],
+      "n_cells": 30672,
+      "n_genes": 17009,
+      "scale": "large",
+      "seurat_version": "V4",
+      "type": "raw"
+    },
+    {
+      "test_id": "v4_bmcite_processed",
+      "dataset": "bmcite",
+      "direction": "rds_to_h5ad",
+      "status": "success",
+      "conversion_time_seconds": 29.325,
+      "peak_memory_mb": 4046.1,
+      "output_file_size_mb": 724.33,
+      "all_times": [
+        29.131,
+        29.325,
+        29.638
+      ],
+      "all_mems": [
+        4045.9,
+        4046.1,
+        4046.1
+      ],
+      "n_cells": 30672,
+      "n_genes": 17009,
+      "scale": "large",
+      "seurat_version": "V4",
+      "type": "processed"
+    },
+    {
+      "test_id": "v5_bmcite_raw",
+      "dataset": "bmcite",
+      "direction": "rds_to_h5ad",
+      "status": "success",
+      "conversion_time_seconds": 14.05,
+      "peak_memory_mb": 2128.6,
+      "output_file_size_mb": 322.77,
+      "all_times": [
+        13.601,
+        14.05,
+        14.494
+      ],
+      "all_mems": [
+        2128.5,
+        2128.6,
+        2128.7
+      ],
+      "n_cells": 30672,
+      "n_genes": 17009,
+      "scale": "large",
+      "seurat_version": "V5",
+      "type": "raw"
+    },
+    {
+      "test_id": "v5_bmcite_processed",
+      "dataset": "bmcite",
+      "direction": "rds_to_h5ad",
+      "status": "success",
+      "conversion_time_seconds": 25.931,
+      "peak_memory_mb": 3070.3,
+      "output_file_size_mb": 676.59,
+      "all_times": [
+        24.727,
+        25.931,
+        26.365
+      ],
+      "all_mems": [
+        3070.1,
+        3070.3,
+        3070.5
+      ],
+      "n_cells": 30672,
+      "n_genes": 17009,
+      "scale": "large",
+      "seurat_version": "V5",
+      "type": "processed"
+    },
+    {
+      "test_id": "v4_pbmcsca_raw",
+      "dataset": "pbmcsca",
+      "direction": "rds_to_h5ad",
+      "status": "success",
+      "conversion_time_seconds": 20.507,
+      "peak_memory_mb": 2833.6,
+      "output_file_size_mb": 646.54,
+      "all_times": [
+        18.708,
+        20.507,
+        23.197
+      ],
+      "all_mems": [
+        2833.5,
+        2833.6,
+        2833.8
+      ],
+      "n_cells": 31021,
+      "n_genes": 33694,
+      "scale": "large",
+      "seurat_version": "V4",
+      "type": "raw"
+    },
+    {
+      "test_id": "v4_pbmcsca_processed",
+      "dataset": "pbmcsca",
+      "direction": "rds_to_h5ad",
+      "status": "success",
+      "conversion_time_seconds": 26.936,
+      "peak_memory_mb": 3569.4,
+      "output_file_size_mb": 690.36,
+      "all_times": [
+        24.397,
+        26.936,
+        28.265
+      ],
+      "all_mems": [
+        3569.4,
+        3569.4,
+        3569.5
+      ],
+      "n_cells": 31021,
+      "n_genes": 33694,
+      "scale": "large",
+      "seurat_version": "V4",
+      "type": "processed"
+    },
+    {
+      "test_id": "v5_pbmcsca_raw",
+      "dataset": "pbmcsca",
+      "direction": "rds_to_h5ad",
+      "status": "success",
+      "conversion_time_seconds": 14.996,
+      "peak_memory_mb": 2157.2,
+      "output_file_size_mb": 331.04,
+      "all_times": [
+        13.641,
+        14.996,
+        15.854
+      ],
+      "all_mems": [
+        2156.9,
+        2157.2,
+        2157.4
+      ],
+      "n_cells": 31021,
+      "n_genes": 33694,
+      "scale": "large",
+      "seurat_version": "V5",
+      "type": "raw"
+    },
+    {
+      "test_id": "v5_pbmcsca_processed",
+      "dataset": "pbmcsca",
+      "direction": "rds_to_h5ad",
+      "status": "success",
+      "conversion_time_seconds": 25.532,
+      "peak_memory_mb": 3113.4,
+      "output_file_size_mb": 692.21,
+      "all_times": [
+        24.953,
+        25.532,
+        26.965
+      ],
+      "all_mems": [
+        3113.1,
+        3113.4,
+        3113.8
+      ],
+      "n_cells": 31021,
+      "n_genes": 33694,
+      "scale": "large",
+      "seurat_version": "V5",
+      "type": "processed"
+    },
+    {
+      "test_id": "v4_hcabm40k_raw",
+      "dataset": "hcabm40k",
+      "direction": "rds_to_h5ad",
+      "status": "success",
+      "conversion_time_seconds": 26.449,
+      "peak_memory_mb": 3882.5,
+      "output_file_size_mb": 930.23,
+      "all_times": [
+        25.522,
+        26.449,
+        29.597
+      ],
+      "all_mems": [
+        3882.3,
+        3882.5,
+        3882.8
+      ],
+      "n_cells": 40000,
+      "n_genes": 17369,
+      "scale": "large",
+      "seurat_version": "V4",
+      "type": "raw"
+    },
+    {
+      "test_id": "v4_hcabm40k_processed",
+      "dataset": "hcabm40k",
+      "direction": "rds_to_h5ad",
+      "status": "success",
+      "conversion_time_seconds": 33.814,
+      "peak_memory_mb": 4603.8,
+      "output_file_size_mb": 983.96,
+      "all_times": [
+        32.688,
+        33.814,
+        37.689
+      ],
+      "all_mems": [
+        4603.6,
+        4603.8,
+        4604.1
+      ],
+      "n_cells": 40000,
+      "n_genes": 17369,
+      "scale": "large",
+      "seurat_version": "V4",
+      "type": "processed"
+    },
+    {
+      "test_id": "v5_hcabm40k_raw",
+      "dataset": "hcabm40k",
+      "direction": "rds_to_h5ad",
+      "status": "success",
+      "conversion_time_seconds": 16.799,
+      "peak_memory_mb": 2909.9,
+      "output_file_size_mb": 468.59,
+      "all_times": [
+        16.715,
+        16.799,
+        18.739
+      ],
+      "all_mems": [
+        2909.8,
+        2909.9,
+        2909.9
+      ],
+      "n_cells": 40000,
+      "n_genes": 17369,
+      "scale": "large",
+      "seurat_version": "V5",
+      "type": "raw"
+    },
+    {
+      "test_id": "v5_hcabm40k_processed",
+      "dataset": "hcabm40k",
+      "direction": "rds_to_h5ad",
+      "status": "success",
+      "conversion_time_seconds": 33.185,
+      "peak_memory_mb": 4157.5,
+      "output_file_size_mb": 984.94,
+      "all_times": [
+        32.923,
+        33.185,
+        33.882
+      ],
+      "all_mems": [
+        4157.4,
+        4157.5,
+        4157.8
+      ],
+      "n_cells": 40000,
+      "n_genes": 17369,
+      "scale": "large",
+      "seurat_version": "V5",
+      "type": "processed"
+    },
+    {
+      "test_id": "v4_ssHippo_raw",
+      "dataset": "ssHippo",
+      "direction": "rds_to_h5ad",
+      "status": "success",
+      "conversion_time_seconds": 18.398,
+      "peak_memory_mb": 2385.4,
+      "output_file_size_mb": 519.02,
+      "all_times": [
+        16.957,
+        18.398,
+        18.53
+      ],
+      "all_mems": [
+        2385.2,
+        2385.4,
+        2385.4
+      ],
+      "n_cells": 53173,
+      "n_genes": 23264,
+      "scale": "large",
+      "seurat_version": "V4",
+      "type": "raw"
+    },
+    {
+      "test_id": "v4_ssHippo_processed",
+      "dataset": "ssHippo",
+      "direction": "rds_to_h5ad",
+      "status": "success",
+      "conversion_time_seconds": 26.968,
+      "peak_memory_mb": 4109.0,
+      "output_file_size_mb": 592.52,
+      "all_times": [
+        25.468,
+        26.968,
+        27.891
+      ],
+      "all_mems": [
+        4109.0,
+        4109.0,
+        4109.1
+      ],
+      "n_cells": 53173,
+      "n_genes": 23264,
+      "scale": "large",
+      "seurat_version": "V4",
+      "type": "processed"
+    },
+    {
+      "test_id": "v5_ssHippo_raw",
+      "dataset": "ssHippo",
+      "direction": "rds_to_h5ad",
+      "status": "success",
+      "conversion_time_seconds": 12.035,
+      "peak_memory_mb": 1813.0,
+      "output_file_size_mb": 262.9,
+      "all_times": [
+        11.378,
+        12.035,
+        13.906
+      ],
+      "all_mems": [
+        1812.6,
+        1813.0,
+        1813.2
+      ],
+      "n_cells": 53173,
+      "n_genes": 23264,
+      "scale": "large",
+      "seurat_version": "V5",
+      "type": "raw"
+    },
+    {
+      "test_id": "v5_ssHippo_processed",
+      "dataset": "ssHippo",
+      "direction": "rds_to_h5ad",
+      "status": "success",
+      "conversion_time_seconds": 28.502,
+      "peak_memory_mb": 3665.3,
+      "output_file_size_mb": 593.82,
+      "all_times": [
+        26.045,
+        28.502,
+        30.523
+      ],
+      "all_mems": [
+        3664.6,
+        3665.3,
+        3665.5
+      ],
+      "n_cells": 53173,
+      "n_genes": 23264,
+      "scale": "large",
+      "seurat_version": "V5",
+      "type": "processed"
+    }
+  ],
+  "h5ad_to_rds": [
+    {
+      "test_id": "scanpy_pbmc3k",
+      "dataset": "scanpy_pbmc3k",
+      "direction": "h5ad_to_rds",
+      "status": "failed",
+      "error": "Loading required package: SeuratObject\nLoading required package: sp\n\nAttaching package: ‘SeuratObject’\n\nThe following objects are masked from ‘package:base’:\n\n    intersect, t\n\nError in `initialize()`:\n! File '/benchmark/data/generated/scanpy_pbmc3k.h5ad' is not a valid\n  H5AD file.\nℹ Either the file is not an H5AD file or it was created with anndata<0.8.0.\nBacktrace:\n    ▆\n 1. └─anndataR::read_h5ad(\"/benchmark/data/generated/scanpy_pbmc3k.h5ad\")\n 2.   └─HDF5AnnData$new(path, mode = mode)\n 3.     └─anndataR (local) initialize(...)\n 4.       └─cli::cli_abort(...)\n 5.         └─rlang::abort(...)\nExecution halted\nCommand exited with non-zero status 1",
+      "run": 1
+    },
+    {
+      "test_id": "scanpy_pbmc3k_processed",
+      "dataset": "scanpy_pbmc3k_processed",
+      "direction": "h5ad_to_rds",
+      "status": "failed",
+      "error": "Loading required package: SeuratObject\nLoading required package: sp\n\nAttaching package: ‘SeuratObject’\n\nThe following objects are masked from ‘package:base’:\n\n    intersect, t\n\nError in `initialize()`:\n! File '/benchmark/data/generated/scanpy_pbmc3k_processed.h5ad' is not a\n  valid H5AD file.\nℹ Either the file is not an H5AD file or it was created with anndata<0.8.0.\nBacktrace:\n    ▆\n 1. └─anndataR::read_h5ad(\"/benchmark/data/generated/scanpy_pbmc3k_processed.h5ad\")\n 2.   └─HDF5AnnData$new(path, mode = mode)\n 3.     └─anndataR (local) initialize(...)\n 4.       └─cli::cli_abort(...)\n 5.         └─rlang::abort(...)\nExecution halted\nCommand exited with non-zero status 1",
+      "run": 1
+    },
+    {
+      "test_id": "scvelo_pancreas",
+      "dataset": "scvelo_pancreas",
+      "direction": "h5ad_to_rds",
+      "status": "failed",
+      "error": "Loading required package: SeuratObject\nLoading required package: sp\n\nAttaching package: ‘SeuratObject’\n\nThe following objects are masked from ‘package:base’:\n\n    intersect, t\n\nError in `initialize()`:\n! File '/benchmark/data/generated/scvelo_pancreas.h5ad' is not a valid\n  H5AD file.\nℹ Either the file is not an H5AD file or it was created with anndata<0.8.0.\nBacktrace:\n    ▆\n 1. └─anndataR::read_h5ad(\"/benchmark/data/generated/scvelo_pancreas.h5ad\")\n 2.   └─HDF5AnnData$new(path, mode = mode)\n 3.     └─anndataR (local) initialize(...)\n 4.       └─cli::cli_abort(...)\n 5.         └─rlang::abort(...)\nExecution halted\nCommand exited with non-zero status 1",
+      "run": 1
+    },
+    {
+      "test_id": "scvelo_dentategyrus",
+      "dataset": "scvelo_dentategyrus",
+      "direction": "h5ad_to_rds",
+      "status": "failed",
+      "error": "Loading required package: SeuratObject\nLoading required package: sp\n\nAttaching package: ‘SeuratObject’\n\nThe following objects are masked from ‘package:base’:\n\n    intersect, t\n\nError in `initialize()`:\n! File '/benchmark/data/generated/scvelo_dentategyrus.h5ad' is not a\n  valid H5AD file.\nℹ Either the file is not an H5AD file or it was created with anndata<0.8.0.\nBacktrace:\n    ▆\n 1. └─anndataR::read_h5ad(\"/benchmark/data/generated/scvelo_dentategyrus.h5ad\")\n 2.   └─HDF5AnnData$new(path, mode = mode)\n 3.     └─anndataR (local) initialize(...)\n 4.       └─cli::cli_abort(...)\n 5.         └─rlang::abort(...)\nExecution halted\nCommand exited with non-zero status 1",
+      "run": 1
+    },
+    {
+      "test_id": "squidpy_imc",
+      "dataset": "squidpy_imc",
+      "direction": "h5ad_to_rds",
+      "status": "failed",
+      "error": "Loading required package: SeuratObject\nLoading required package: sp\n\nAttaching package: ‘SeuratObject’\n\nThe following objects are masked from ‘package:base’:\n\n    intersect, t\n\nError in `initialize()`:\n! File '/benchmark/data/generated/squidpy_imc.h5ad' is not a valid H5AD\n  file.\nℹ Either the file is not an H5AD file or it was created with anndata<0.8.0.\nBacktrace:\n    ▆\n 1. └─anndataR::read_h5ad(\"/benchmark/data/generated/squidpy_imc.h5ad\")\n 2.   └─HDF5AnnData$new(path, mode = mode)\n 3.     └─anndataR (local) initialize(...)\n 4.       └─cli::cli_abort(...)\n 5.         └─rlang::abort(...)\nExecution halted\nCommand exited with non-zero status 1",
+      "run": 1
+    },
+    {
+      "test_id": "squidpy_mibitof",
+      "dataset": "squidpy_mibitof",
+      "direction": "h5ad_to_rds",
+      "status": "failed",
+      "error": "Loading required package: SeuratObject\nLoading required package: sp\n\nAttaching package: ‘SeuratObject’\n\nThe following objects are masked from ‘package:base’:\n\n    intersect, t\n\nError in `initialize()`:\n! File '/benchmark/data/generated/squidpy_mibitof.h5ad' is not a valid\n  H5AD file.\nℹ Either the file is not an H5AD file or it was created with anndata<0.8.0.\nBacktrace:\n    ▆\n 1. └─anndataR::read_h5ad(\"/benchmark/data/generated/squidpy_mibitof.h5ad\")\n 2.   └─HDF5AnnData$new(path, mode = mode)\n 3.     └─anndataR (local) initialize(...)\n 4.       └─cli::cli_abort(...)\n 5.         └─rlang::abort(...)\nExecution halted\nCommand exited with non-zero status 1",
+      "run": 1
+    },
+    {
+      "test_id": "squidpy_visium_hne",
+      "dataset": "squidpy_visium_hne",
+      "direction": "h5ad_to_rds",
+      "status": "failed",
+      "error": "Loading required package: SeuratObject\nLoading required package: sp\n\nAttaching package: ‘SeuratObject’\n\nThe following objects are masked from ‘package:base’:\n\n    intersect, t\n\nError in `initialize()`:\n! File '/benchmark/data/generated/squidpy_visium_hne.h5ad' is not a\n  valid H5AD file.\nℹ Either the file is not an H5AD file or it was created with anndata<0.8.0.\nBacktrace:\n    ▆\n 1. └─anndataR::read_h5ad(\"/benchmark/data/generated/squidpy_visium_hne.h5ad\")\n 2.   └─HDF5AnnData$new(path, mode = mode)\n 3.     └─anndataR (local) initialize(...)\n 4.       └─cli::cli_abort(...)\n 5.         └─rlang::abort(...)\nExecution halted\nCommand exited with non-zero status 1",
+      "run": 1
+    },
+    {
+      "test_id": "cellxgene_pbmc_15k",
+      "dataset": "cellxgene_pbmc_15k",
+      "direction": "h5ad_to_rds",
+      "status": "success",
+      "conversion_time_seconds": 23.103,
+      "peak_memory_mb": 1498.0,
+      "output_file_size_mb": 36.45,
+      "all_times": [
+        22.591,
+        23.103,
+        25.552
+      ],
+      "all_mems": [
+        1497.9,
+        1498.0,
+        1498.2
+      ],
+      "n_cells": 14783,
+      "n_genes": 17222,
+      "scale": "medium",
+      "seurat_version": "",
+      "type": ""
+    },
+    {
+      "test_id": "squidpy_seqfish",
+      "dataset": "squidpy_seqfish",
+      "direction": "h5ad_to_rds",
+      "status": "failed",
+      "error": "Loading required package: SeuratObject\nLoading required package: sp\n\nAttaching package: ‘SeuratObject’\n\nThe following objects are masked from ‘package:base’:\n\n    intersect, t\n\nError in `initialize()`:\n! File '/benchmark/data/generated/squidpy_seqfish.h5ad' is not a valid\n  H5AD file.\nℹ Either the file is not an H5AD file or it was created with anndata<0.8.0.\nBacktrace:\n    ▆\n 1. └─anndataR::read_h5ad(\"/benchmark/data/generated/squidpy_seqfish.h5ad\")\n 2.   └─HDF5AnnData$new(path, mode = mode)\n 3.     └─anndataR (local) initialize(...)\n 4.       └─cli::cli_abort(...)\n 5.         └─rlang::abort(...)\nExecution halted\nCommand exited with non-zero status 1",
+      "run": 1
+    },
+    {
+      "test_id": "cellxgene_heart_23k",
+      "dataset": "cellxgene_heart_23k",
+      "direction": "h5ad_to_rds",
+      "status": "success",
+      "conversion_time_seconds": 46.584,
+      "peak_memory_mb": 2919.3,
+      "output_file_size_mb": 83.9,
+      "all_times": [
+        45.865,
+        46.584,
+        48.337
+      ],
+      "all_mems": [
+        2919.3,
+        2919.3,
+        2919.4
+      ],
+      "n_cells": 23483,
+      "n_genes": 32330,
+      "scale": "large",
+      "seurat_version": "",
+      "type": ""
+    },
+    {
+      "test_id": "cellxgene_brain_40k",
+      "dataset": "cellxgene_brain_40k",
+      "direction": "h5ad_to_rds",
+      "status": "success",
+      "conversion_time_seconds": 257.287,
+      "peak_memory_mb": 14265.4,
+      "output_file_size_mb": 499.87,
+      "all_times": [
+        245.982,
+        257.287,
+        265.495
+      ],
+      "all_mems": [
+        14202.6,
+        14265.4,
+        14267.3
+      ],
+      "n_cells": 40165,
+      "n_genes": 58232,
+      "scale": "large",
+      "seurat_version": "",
+      "type": ""
+    },
+    {
+      "test_id": "squidpy_slideseqv2",
+      "dataset": "squidpy_slideseqv2",
+      "direction": "h5ad_to_rds",
+      "status": "failed",
+      "error": "Loading required package: SeuratObject\nLoading required package: sp\n\nAttaching package: ‘SeuratObject’\n\nThe following objects are masked from ‘package:base’:\n\n    intersect, t\n\nError in `initialize()`:\n! File '/benchmark/data/generated/squidpy_slideseqv2.h5ad' is not a\n  valid H5AD file.\nℹ Either the file is not an H5AD file or it was created with anndata<0.8.0.\nBacktrace:\n    ▆\n 1. └─anndataR::read_h5ad(\"/benchmark/data/generated/squidpy_slideseqv2.h5ad\")\n 2.   └─HDF5AnnData$new(path, mode = mode)\n 3.     └─anndataR (local) initialize(...)\n 4.       └─cli::cli_abort(...)\n 5.         └─rlang::abort(...)\nExecution halted\nCommand exited with non-zero status 1",
+      "run": 1
+    },
+    {
+      "test_id": "squidpy_merfish",
+      "dataset": "squidpy_merfish",
+      "direction": "h5ad_to_rds",
+      "status": "failed",
+      "error": "Loading required package: SeuratObject\nLoading required package: sp\n\nAttaching package: ‘SeuratObject’\n\nThe following objects are masked from ‘package:base’:\n\n    intersect, t\n\nError in `initialize()`:\n! File '/benchmark/data/generated/squidpy_merfish.h5ad' is not a valid\n  H5AD file.\nℹ Either the file is not an H5AD file or it was created with anndata<0.8.0.\nBacktrace:\n    ▆\n 1. └─anndataR::read_h5ad(\"/benchmark/data/generated/squidpy_merfish.h5ad\")\n 2.   └─HDF5AnnData$new(path, mode = mode)\n 3.     └─anndataR (local) initialize(...)\n 4.       └─cli::cli_abort(...)\n 5.         └─rlang::abort(...)\nExecution halted\nCommand exited with non-zero status 1",
+      "run": 1
+    }
+  ],
+  "summary": {
+    "total": 55,
+    "success": 44,
+    "failed": 11,
+    "skipped": 0
+  }
+}

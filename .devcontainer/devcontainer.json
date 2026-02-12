@@ -1,0 +1,58 @@
+{
+  "name": "CrossCell Development",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": ".."
+  },
+  
+  // 挂载配置
+  "mounts": [
+    "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached"
+  ],
+  
+  // 容器启动后执行的命令
+  "postCreateCommand": "cargo --version && python3 --version && R --version",
+  
+  // VS Code 设置
+  "customizations": {
+    "vscode": {
+      // 推荐的扩展
+      "extensions": [
+        "rust-lang.rust-analyzer",
+        "tamasfe.even-better-toml",
+        "serayuzgur.crates",
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "REditorSupport.r",
+        "ms-vscode.cpptools"
+      ],
+      
+      // 编辑器设置
+      "settings": {
+        "rust-analyzer.checkOnSave.command": "clippy",
+        "rust-analyzer.cargo.features": "all",
+        "python.defaultInterpreterPath": "/opt/conda/bin/python3",
+        "python.linting.enabled": true,
+        "python.linting.pylintEnabled": true,
+        "python.formatting.provider": "black",
+        "files.watcherExclude": {
+          "**/target/**": true
+        }
+      }
+    }
+  },
+  
+  // 环境变量
+  "containerEnv": {
+    "RUST_BACKTRACE": "1",
+    "CARGO_INCREMENTAL": "1",
+    "PYTHONPATH": "/workspace/python",
+    "R_LIBS_USER": "/workspace/R/library"
+  },
+  
+  // 转发端口（如果需要）
+  "forwardPorts": [],
+  
+  // 容器用户
+  "remoteUser": "root"
+}

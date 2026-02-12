@@ -1,0 +1,41 @@
+# Seurat 数据生成
+services:
+  seurat-v4:
+    build:
+      context: .
+      dockerfile: Dockerfile.seurat-v4
+    image: crosscell-seurat-v4:latest
+    volumes:
+      - ./generated:/workspace/output
+      - seurat-v4-libs:/usr/local/lib/R/site-library
+      - ./seurat-packages:/workspace/packages
+      - ./02_generate_seurat_data.R:/workspace/generate_seurat_data.R:ro
+      - ./01_export_download_links.R:/workspace/export_download_links.R:ro
+      - ./03_inspect_seurat_data.R:/workspace/inspect_seurat_data.R:ro
+      - ./04_convert_stxKidney_v5.R:/workspace/convert_stxKidney_v5.R:ro
+    working_dir: /workspace
+    stdin_open: true
+    tty: true
+
+  seurat-v5:
+    build:
+      context: .
+      dockerfile: Dockerfile.seurat-v5
+    image: crosscell-seurat-v5:latest
+    volumes:
+      - ./generated:/workspace/output
+      - seurat-v5-libs:/usr/local/lib/R/site-library
+      - ./seurat-packages:/workspace/packages
+      - ./02_generate_seurat_data.R:/workspace/generate_seurat_data.R:ro
+      - ./01_export_download_links.R:/workspace/export_download_links.R:ro
+      - ./03_inspect_seurat_data.R:/workspace/inspect_seurat_data.R:ro
+      - ./04_convert_stxKidney_v5.R:/workspace/convert_stxKidney_v5.R:ro
+    working_dir: /workspace
+    stdin_open: true
+    tty: true
+
+volumes:
+  seurat-v4-libs:
+    name: crosscell-seurat-v4-libs
+  seurat-v5-libs:
+    name: crosscell-seurat-v5-libs

@@ -1,0 +1,75 @@
+[package]
+name = "crosscell"
+version = "0.1.0"
+edition = "2021"
+authors = ["CrossCell Contributors"]
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/yourusername/crosscell"
+description = "High-performance H5AD and RDS format converter for single-cell transcriptomics data"
+
+[lib]
+name = "crosscell"
+crate-type = ["rlib"]
+
+[[bin]]
+name = "crosscell"
+path = "src/bin/main.rs"
+
+[dependencies]
+# 核心依赖
+arrow = { version = "48.0", features = ["ipc", "csv", "json"] }
+# 锁定 chrono 版本以避免 quarter() 方法冲突
+chrono = "=0.4.31"
+nalgebra-sparse = "0.9"
+rayon = "1.8"
+thiserror = "1.0"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+
+# RDS 文件格式支持
+byteorder = "1.5"
+flate2 = "1.0"
+num-complex = "0.4"
+
+# HDF5 文件格式支持（用于 .h5ad 文件）
+# 通过 hdf5-sys/static 启用静态链接，生成独立可执行文件
+# zlib 支持 deflate 压缩过滤器（旧版 anndata 文件使用 gzip 压缩）
+hdf5 = "0.8"
+hdf5-sys = { version = "0.8", features = ["static", "zlib"] }
+libz-sys = { version = "1", features = ["libc"], default-features = false }
+
+# CLI 依赖
+clap = { version = "4.4", features = ["derive", "cargo"] }
+env_logger = "0.11"
+log = "0.4"
+indicatif = "0.17"
+anyhow = "1.0"
+num_cpus = "1.16"
+
+# 磁盘支持的矩阵操作
+memmap2 = "0.9"
+lz4_flex = "0.11"
+tempfile = "3.8"
+
+[dev-dependencies]
+proptest = "1.4"
+criterion = { version = "0.5", features = ["html_reports"] }
+approx = "0.5"
+tempfile = "3.8"
+rand = "0.8"
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+
+[profile.bench]
+inherits = "release"
+
+[[bench]]
+name = "sparse_conversion"
+harness = false
+
+[[bench]]
+name = "streaming_conversion"
+harness = false

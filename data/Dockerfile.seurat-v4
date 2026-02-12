@@ -1,0 +1,5 @@
+FROM satijalab/seurat:4.3.0
+RUN R -e "install.packages('remotes', repos='https://cloud.r-project.org')" && \
+    R -e "remotes::install_url('https://github.com/satijalab/seurat-data/archive/refs/heads/main.tar.gz', upgrade='never')"
+WORKDIR /workspace
+CMD ["bash"]

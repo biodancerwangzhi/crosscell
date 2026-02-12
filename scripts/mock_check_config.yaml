@@ -1,0 +1,148 @@
+# Mock 数据检查配置文件
+
+# 扫描目录
+scan_directories:
+  - src
+  - tests
+
+# 排除目录
+exclude_directories:
+  - target
+  - node_modules
+  - .git
+  - __pycache__
+  - archive
+  - .kiro
+
+# 排除文件
+exclude_files:
+  - check_no_mock_data.py
+  - mock_check_config.yaml
+
+# 文件扩展名
+file_extensions:
+  - .py
+  - .rs
+  - .R
+
+# 检查模式（正则表达式）
+patterns:
+  # Python mock 库（严重）
+  mock_import:
+    severity: CRITICAL
+    patterns:
+      - 'from\s+unittest\.mock\s+import'
+      - 'from\s+mock\s+import'
+      - 'import\s+unittest\.mock'
+      - 'import\s+mock\b'
+      - 'from\s+pytest_mock\s+import'
+    message: "使用了 mock 库，应该使用真实数据"
+  
+  # Mock 对象使用（严重）
+  mock_usage:
+    severity: CRITICAL
+    patterns:
+      - '@mock\.'
+      - '@patch\('
+      - 'Mock\(\)'
+      - 'MagicMock\(\)'
+      - '\.mock\('
+      - 'mocker\.'
+    message: "使用了 mock 对象，应该使用真实对象"
+  
+  # 假数据生成器（严重）
+  fake_data:
+    severity: CRITICAL
+    patterns:
+      - 'from\s+faker\s+import'
+      - 'import\s+faker'
+      - 'Faker\(\)'
+      - 'factory\.Factory'
+      - 'FactoryBoy'
+    message: "使用了假数据生成器，应该使用真实数据集"
+  
+  # 硬编码测试数据（警告）
+  hardcoded_data:
+    severity: WARNING
+    patterns:
+      - 'test_data\s*=\s*\['
+      - 'mock_data\s*='
+      - 'fake_data\s*='
+      - 'dummy_data\s*='
+      - 'sample_data\s*=\s*\{'
+      - 'MOCK_\w+\s*='
+      - 'FAKE_\w+\s*='
+    message: "硬编码测试数据，建议从文件加载"
+  
+  # 跳过的测试（信息）
+  skipped_tests:
+    severity: INFO
+    patterns:
+      - '@pytest\.skip'
+      - '@unittest\.skip'
+      - '\.skip\('
+      - 'skipIf\('
+      - '#\s*TODO.*mock'
+      - '#\s*FIXME.*mock'
+    message: "跳过的测试可能隐藏 mock 使用"
+
+# Rust 特定模式
+rust_patterns:
+  mock_usage:
+    severity: CRITICAL
+    patterns:
+      - '#\[cfg\(test\)\].*mock'
+      - 'use\s+mockall'
+      - '#\[automock\]'
+      - 'mock!\{'
+      - 'MockStruct'
+    message: "Rust 代码中使用了 mock"
+
+# 允许的例外
+allowed_exceptions:
+  # 文件名例外
+  files:
+    - test_mock.py
+    - test_mocking.py
+    - mock_example.py
+  
+  # 目录例外
+  directories:
+    - docs/examples
+    - tutorials
+  
+  # 注释例外（这些模式在注释中是允许的）
+  in_comments: true
+
+# 报告设置
+report:
+  # 是否显示文件路径
+  show_file_path: true
+  
+  # 是否显示行号
+  show_line_number: true
+  
+  # 是否显示代码内容
+  show_code_content: true
+  
+  # 代码内容最大长度
+  max_content_length: 80
+  
+  # 是否按文件分组
+  group_by_file: true
+  
+  # 是否按严重程度排序
+  sort_by_severity: true
+
+# 修复建议
+fix_suggestions:
+  # 是否生成修复建议
+  enabled: true
+  
+  # 建议模板
+  templates:
+    mock_import: "移除 mock 导入，使用真实数据或从文件加载测试数据"
+    mock_usage: "移除 mock 对象使用，重构测试以使用真实对象"
+    fake_data: "移除假数据生成器，使用真实数据集"
+    hardcoded_data: "将硬编码数据移到配置文件或数据文件中"
+    skipped_tests: "取消跳过测试，确保测试能够通过"

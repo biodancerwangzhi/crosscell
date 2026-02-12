@@ -1,0 +1,139 @@
+[
+  {
+    "test": "A",
+    "id": "v5_pbmc3k_raw",
+    "status": "success",
+    "info": {
+      "n_obs": 2700,
+      "n_vars": 13714,
+      "obsm": [],
+      "ok": true
+    },
+    "t_r": 7.77,
+    "t_py": 2.54,
+    "paper": false
+  },
+  {
+    "test": "A",
+    "id": "v4_pbmc3k_proc",
+    "status": "success",
+    "info": {
+      "n_obs": 2700,
+      "n_vars": 2000,
+      "obsm": [
+        "pca",
+        "umap"
+      ],
+      "ok": true
+    },
+    "t_r": 11.9,
+    "t_py": 2.67,
+    "paper": false
+  },
+  {
+    "test": "A",
+    "id": "v5_ifnb_raw",
+    "status": "success",
+    "info": {
+      "n_obs": 13999,
+      "n_vars": 14053,
+      "obsm": [],
+      "ok": true
+    },
+    "t_r": 12.64,
+    "t_py": 2.9,
+    "paper": false
+  },
+  {
+    "test": "A",
+    "id": "v4_cbmc_raw",
+    "status": "success",
+    "info": {
+      "n_obs": 8617,
+      "n_vars": 20501,
+      "obsm": [],
+      "ok": true
+    },
+    "t_r": 10.52,
+    "t_py": 2.91,
+    "paper": false
+  },
+  {
+    "test": "A",
+    "id": "v5_bmcite_raw",
+    "status": "success",
+    "info": {
+      "n_obs": 30672,
+      "n_vars": 17009,
+      "obsm": [],
+      "ok": true
+    },
+    "t_r": 26.4,
+    "t_py": 4.17,
+    "paper": false
+  },
+  {
+    "test": "B",
+    "id": "cxg_pbmc15k",
+    "status": "failed",
+    "step": "r_load",
+    "error": "object 'sce' not found",
+    "paper": false
+  },
+  {
+    "test": "B",
+    "id": "scanpy_pbmc3k",
+    "status": "failed",
+    "step": "r_load",
+    "error": "object 'sce' not found",
+    "paper": false
+  },
+  {
+    "test": "B",
+    "id": "scvelo_panc",
+    "status": "failed",
+    "step": "r_load",
+    "error": "object 'sce' not found",
+    "paper": false
+  },
+  {
+    "test": "C",
+    "id": "v5_pbmc3k_raw",
+    "status": "failed",
+    "step": 3,
+    "error": "object 'sce' not found",
+    "paper": false
+  },
+  {
+    "test": "C",
+    "id": "v4_pbmc3k_proc",
+    "status": "failed",
+    "step": 3,
+    "error": "object 'sce' not found",
+    "paper": false
+  },
+  {
+    "test": "C",
+    "id": "v5_ifnb_raw",
+    "status": "failed",
+    "step": 3,
+    "error": "object 'sce' not found",
+    "paper": false
+  },
+  {
+    "test": "C",
+    "id": "v4_cbmc_raw",
+    "status": "failed",
+    "step": 3,
+    "error": "object 'sce' not found",
+    "paper": false
+  },
+  {
+    "test": "C",
+    "id": "v5_bmcite_raw",
+    "status": "failed",
+    "step": 3,
+    "error": "object 'sce' not found",
+    "paper": false
+  }
+]

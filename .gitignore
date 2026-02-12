@@ -1,0 +1,72 @@
+# Rust
+target/
+**/*.rs.bk
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+.pytest_cache/
+.coverage
+htmlcov/
+
+# R
+.Rhistory
+.RData
+.Rproj.user/
+*.Rproj
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# ============================================
+# Data files (distributed via Zenodo)
+# ============================================
+data/generated/*.rds
+data/generated/*.h5ad
+data/generated/*.json
+data/generated/*.csv
+data/generated/*.txt
+data/zenodo/
+data/seurat-packages/*.tar.gz
+
+# ============================================
+# Benchmark artifacts
+# ============================================
+benchmark/crosscell
+benchmark/results/*.rds
+benchmark/results/*.h5ad
+
+# ============================================
+# Test data
+# ============================================
+tests/data/*

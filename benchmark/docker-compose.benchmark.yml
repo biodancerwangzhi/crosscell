@@ -1,0 +1,63 @@
+# CrossCell Performance Benchmark
+# 用于运行性能对比测试
+#
+# 使用方法:
+#   1. 编译: docker-compose run --rm dev cargo build --release
+#   2. 复制: cp target/release/crosscell benchmark/
+#   3. 构建: docker-compose -f benchmark/docker-compose.benchmark.yml build
+#   4. 运行: docker-compose -f benchmark/docker-compose.benchmark.yml run --rm benchmark bash
+
+services:
+  benchmark:
+    build:
+      context: ..
+      dockerfile: benchmark/Dockerfile.benchmark
+    image: crosscell-benchmark:latest
+    volumes:
+      - ../data:/benchmark/data
+      - ../tests/data:/benchmark/test_data:ro
+      - ./results:/benchmark/results
+      - ./scripts:/benchmark/scripts:ro
+      - ./data:/benchmark/config:ro
+      # 挂载本地编译的 crosscell 二进制文件，覆盖镜像中的旧版本
+      - ./crosscell:/usr/local/bin/crosscell:ro
+    working_dir: /benchmark
+    stdin_open: true
+    tty: true
+
+  notebook:
+    image: crosscell-benchmark:latest
+    depends_on:
+      - benchmark
+    volumes:
+      - ../data:/benchmark/data
+      - ../tests/data:/benchmark/test_data:ro
+      - ./results:/benchmark/results
+      - ./scripts:/benchmark/scripts:ro
+      - ./data:/benchmark/config:ro
+      - ./crosscell:/usr/local/bin/crosscell:ro
+      - ./notebooks:/benchmark/notebooks
+    working_dir: /benchmark/notebooks
+    ports:
+      - "8888:8888"
+    command: ["jupyter", "notebook", "--ip=0.0.0.0", "--port=8888", "--no-browser", "--allow-root", "--NotebookApp.token=", "--NotebookApp.password="]
+
+  benchmark-limited:
+    image: crosscell-benchmark:latest
+    depends_on:
+      - benchmark
+    volumes:
+      - ../data:/benchmark/data:ro
+      - ../tests/data:/benchmark/test_data:ro
+      - ./results:/benchmark/results
+      - ./scripts:/benchmark/scripts:ro
+      - ./data:/benchmark/config:ro
+      # 挂载本地编译的 crosscell 二进制文件，覆盖镜像中的旧版本
+      - ./crosscell:/usr/local/bin/crosscell:ro
+    working_dir: /benchmark
+    stdin_open: true
+    tty: true
+    deploy:
+      resources:
+        limits:
+          memory: 8G
