@@ -1356,7 +1356,8 @@ mod tests {
         let ir = SingleCellData::new(expression, cell_metadata, gene_metadata, metadata)
             .expect("Failed to create IR");
 
-        let output_path = "tests/data/rust_generated_seurat.rds";
+        let tmp = tempfile::NamedTempFile::with_suffix(".rds").expect("Failed to create temp file");
+        let output_path = tmp.path().to_str().unwrap();
         let result = write_seurat_rds(&ir, output_path);
         assert!(
             result.is_ok(),
@@ -1364,8 +1365,10 @@ mod tests {
             result.err()
         );
 
-        use std::path::Path;
-        assert!(Path::new(output_path).exists(), "Output file not created");
+        assert!(
+            std::path::Path::new(output_path).exists(),
+            "Output file not created"
+        );
     }
 
     #[test]
