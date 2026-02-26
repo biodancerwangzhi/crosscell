@@ -4,15 +4,15 @@
 
 use extendr_api::prelude::*;
 
-use crosscell::ir::{
-    DataFrame, Embedding, ExpressionMatrix, SingleCellData,
-    SparseMatrixCSC, SparseMatrixCSR, DenseMatrix,
-};
 use crosscell::ir::unstructured::UnstructuredValue;
+use crosscell::ir::{
+    DataFrame, DenseMatrix, Embedding, ExpressionMatrix, SingleCellData, SparseMatrixCSC,
+    SparseMatrixCSR,
+};
 
 use arrow::array::{
-    Array, ArrayRef, BooleanArray, DictionaryArray, Float32Array, Float64Array,
-    Int32Array, Int64Array, LargeStringArray, StringArray,
+    Array, ArrayRef, BooleanArray, DictionaryArray, Float32Array, Float64Array, Int32Array,
+    Int64Array, LargeStringArray, StringArray,
 };
 use arrow::datatypes::{DataType, Int32Type};
 
@@ -26,9 +26,7 @@ pub fn expression_to_r(matrix: &ExpressionMatrix) -> Result<Robj> {
         ExpressionMatrix::SparseCSR(m) => csr_to_dgcmatrix(m),
         ExpressionMatrix::SparseCSC(m) => csc_to_dgcmatrix(m),
         ExpressionMatrix::Dense(m) => dense_to_matrix(m),
-        ExpressionMatrix::Lazy(_) => {
-            Err("Lazy matrices must be loaded before conversion".into())
-        }
+        ExpressionMatrix::Lazy(_) => Err("Lazy matrices must be loaded before conversion".into()),
     }
 }
 
@@ -37,24 +35,24 @@ fn csr_to_dgcmatrix(m: &SparseMatrixCSR) -> Result<Robj> {
     // dgCMatrix is CSC format, so we need to convert CSR to CSC
     let (n_rows, n_cols) = (m.n_rows, m.n_cols);
     let nnz = m.data.len();
-    
+
     // Count elements per column
     let mut col_counts = vec![0usize; n_cols];
     for &col in &m.indices {
         col_counts[col] += 1;
     }
-    
+
     // Build column pointers
     let mut col_ptr = vec![0i32; n_cols + 1];
     for i in 0..n_cols {
         col_ptr[i + 1] = col_ptr[i] + col_counts[i] as i32;
     }
-    
+
     // Build row indices and data in CSC order
     let mut row_indices = vec![0i32; nnz];
     let mut csc_data = vec![0.0f64; nnz];
     let mut col_pos = col_ptr[..n_cols].to_vec();
-    
+
     for row in 0..n_rows {
         let start = m.indptr[row];
         let end = m.indptr[row + 1];
@@ -66,7 +64,7 @@ fn csr_to_dgcmatrix(m: &SparseMatrixCSR) -> Result<Robj> {
             col_pos[col] += 1;
         }
     }
-    
+
     create_dgcmatrix(&csc_data, &row_indices, &col_ptr, n_rows, n_cols)
 }
 
@@ -90,7 +88,7 @@ fn create_dgcmatrix(
     let r_x = data.to_vec();
     let r_nrow = n_rows as i32;
     let r_ncol = n_cols as i32;
-    
+
     // Ensure Matrix package is loaded and create dgCMatrix using triplet format
     // Convert CSC (i, p, x) to triplet (i, j, x) format
     R!("
@@ -118,11 +116,11 @@ fn dense_to_matrix(m: &DenseMatrix) -> Result<Robj> {
             col_major[col * m.n_rows + row] = m.data[row * m.n_cols + col];
         }
     }
-    
+
     let r_data = col_major;
     let r_nrow = m.n_rows as i32;
     let r_ncol = m.n_cols as i32;
-    
+
     R!("matrix({{r_data}}, nrow = {{r_nrow}}, ncol = {{r_ncol}})")
 }
 
@@ -133,15 +131,15 @@ fn dense_to_matrix(m: &DenseMatrix) -> Result<Robj> {
 /// Convert DataFrame to R data.frame
 pub fn dataframe_to_r(df: &DataFrame) -> Result<Robj> {
     let mut columns: Vec<(&str, Robj)> = Vec::new();
-    
+
     for (col_name, col_data) in df.columns.iter().zip(df.data.iter()) {
         let r_col = arrow_array_to_r(col_data)?;
         columns.push((col_name.as_str(), r_col));
     }
-    
+
     let list = List::from_pairs(columns);
     let n_rows = df.n_rows as i32;
-    
+
     R!("
         df <- as.data.frame({{list}}, stringsAsFactors = FALSE)
         if (nrow(df) == 0 && {{n_rows}} > 0) {
@@ -158,8 +156,11 @@ fn arrow_array_to_r(array: &ArrayRef) -> Result<Robj> {
             let arr = array.as_any().downcast_ref::<Int64Array>().unwrap();
             let values: Vec<i32> = (0..arr.len())
                 .map(|i| {
-                    if arr.is_null(i) { i32::MIN }
-                    else { arr.value(i) as i32 }
+                    if arr.is_null(i) {
+                        i32::MIN
+                    } else {
+                        arr.value(i) as i32
+                    }
                 })
                 .collect();
             Ok(values.into_robj())
@@ -168,8 +169,11 @@ fn arrow_array_to_r(array: &ArrayRef) -> Result<Robj> {
             let arr = array.as_any().downcast_ref::<Int32Array>().unwrap();
             let values: Vec<i32> = (0..arr.len())
                 .map(|i| {
-                    if arr.is_null(i) { i32::MIN }
-                    else { arr.value(i) }
+                    if arr.is_null(i) {
+                        i32::MIN
+                    } else {
+                        arr.value(i)
+                    }
                 })
                 .collect();
             Ok(values.into_robj())
@@ -188,9 +192,13 @@ fn arrow_array_to_r(array: &ArrayRef) -> Result<Robj> {
             let arr = array.as_any().downcast_ref::<BooleanArray>().unwrap();
             let values: Vec<Rbool> = (0..arr.len())
                 .map(|i| {
-                    if arr.is_null(i) { Rbool::na_value() }
-                    else if arr.value(i) { Rbool::true_value() }
-                    else { Rbool::false_value() }
+                    if arr.is_null(i) {
+                        Rbool::na_value()
+                    } else if arr.value(i) {
+                        Rbool::true_value()
+                    } else {
+                        Rbool::false_value()
+                    }
                 })
                 .collect();
             Ok(values.into_robj())
@@ -198,22 +206,32 @@ fn arrow_array_to_r(array: &ArrayRef) -> Result<Robj> {
         DataType::Utf8 => {
             let arr = array.as_any().downcast_ref::<StringArray>().unwrap();
             let values: Vec<Option<&str>> = (0..arr.len())
-                .map(|i| if arr.is_null(i) { None } else { Some(arr.value(i)) })
+                .map(|i| {
+                    if arr.is_null(i) {
+                        None
+                    } else {
+                        Some(arr.value(i))
+                    }
+                })
                 .collect();
             Ok(values.into_robj())
         }
         DataType::LargeUtf8 => {
             let arr = array.as_any().downcast_ref::<LargeStringArray>().unwrap();
             let values: Vec<Option<&str>> = (0..arr.len())
-                .map(|i| if arr.is_null(i) { None } else { Some(arr.value(i)) })
+                .map(|i| {
+                    if arr.is_null(i) {
+                        None
+                    } else {
+                        Some(arr.value(i))
+                    }
+                })
                 .collect();
             Ok(values.into_robj())
         }
         DataType::Dictionary(_, _) => arrow_dict_to_factor(array),
         _ => {
-            let values: Vec<String> = (0..array.len())
-                .map(|_| "NA".to_string())
-                .collect();
+            let values: Vec<String> = (0..array.len()).map(|_| "NA".to_string()).collect();
             Ok(values.into_robj())
         }
     }
@@ -225,21 +243,22 @@ fn arrow_dict_to_factor(array: &ArrayRef) -> Result<Robj> {
         let keys = dict.keys();
         let values = dict.values();
         let values_str = values.as_any().downcast_ref::<StringArray>().unwrap();
-        
-        let levels: Vec<&str> = (0..values_str.len())
-            .map(|i| values_str.value(i))
-            .collect();
-        
+
+        let levels: Vec<&str> = (0..values_str.len()).map(|i| values_str.value(i)).collect();
+
         let codes: Vec<i32> = (0..keys.len())
             .map(|i| {
-                if keys.is_null(i) { i32::MIN }
-                else { keys.value(i) + 1 }
+                if keys.is_null(i) {
+                    i32::MIN
+                } else {
+                    keys.value(i) + 1
+                }
             })
             .collect();
-        
+
         let r_codes = codes;
         let r_levels = levels;
-        
+
         R!("
             f <- {{r_codes}}
             attr(f, 'levels') <- {{r_levels}}
@@ -263,12 +282,12 @@ pub fn embedding_to_matrix(emb: &Embedding) -> Result<Robj> {
             col_major[col * emb.n_rows + row] = emb.data[row * emb.n_cols + col];
         }
     }
-    
+
     let r_data = col_major;
     let r_nrow = emb.n_rows as i32;
     let r_ncol = emb.n_cols as i32;
     let r_name = emb.name.clone();
-    
+
     R!("
         m <- matrix({{r_data}}, nrow = {{r_nrow}}, ncol = {{r_ncol}})
         colnames(m) <- paste0({{r_name}}, '_', seq_len(ncol(m)))
@@ -281,7 +300,7 @@ pub fn embedding_to_dimreduc(emb: &Embedding, cell_names: &[String]) -> Result<R
     let mat = embedding_to_matrix(emb)?;
     let r_key = format!("{}_", emb.name.to_lowercase());
     let r_cell_names: Vec<String> = cell_names.to_vec();
-    
+
     R!("
         m <- {{mat}}
         rownames(m) <- {{r_cell_names}}
@@ -302,13 +321,13 @@ pub fn ir_to_seurat(data: &SingleCellData) -> Result<Robj> {
     // IR stores matrix as (n_cells, n_genes), but Seurat needs (n_genes, n_cells)
     // So we need to transpose the matrix
     let counts = expression_to_r(&data.expression)?;
-    
+
     let cell_names = get_row_names(data.metadata.n_cells);
     let gene_names = get_row_names(data.metadata.n_genes);
-    
+
     let r_cell_names: Vec<String> = cell_names.clone();
     let r_gene_names: Vec<String> = gene_names.clone();
-    
+
     // Transpose the matrix: IR is (cells x genes), Seurat needs (genes x cells)
     let mut seurat = R!("
         counts <- Matrix::t({{counts}})
@@ -316,7 +335,7 @@ pub fn ir_to_seurat(data: &SingleCellData) -> Result<Robj> {
         colnames(counts) <- {{r_cell_names}}
         Seurat::CreateSeuratObject(counts = counts, project = 'CrossCell')
     ")?;
-    
+
     // Add metadata if present
     if !data.cell_metadata.columns.is_empty() {
         let meta = dataframe_to_r(&data.cell_metadata)?;
@@ -329,7 +348,7 @@ pub fn ir_to_seurat(data: &SingleCellData) -> Result<Robj> {
             obj
         ")?;
     }
-    
+
     // Add embeddings
     if let Some(ref embeddings) = data.embeddings {
         for (name, emb) in embeddings {
@@ -342,7 +361,7 @@ pub fn ir_to_seurat(data: &SingleCellData) -> Result<Robj> {
             ")?;
         }
     }
-    
+
     Ok(seurat)
 }
 
@@ -350,19 +369,19 @@ pub fn ir_to_seurat(data: &SingleCellData) -> Result<Robj> {
 pub fn ir_to_sce(data: &SingleCellData) -> Result<Robj> {
     // IR stores matrix as (n_cells, n_genes), but SCE needs (n_genes, n_cells)
     let counts = expression_to_r(&data.expression)?;
-    
+
     let cell_names = get_row_names(data.metadata.n_cells);
     let gene_names = get_row_names(data.metadata.n_genes);
-    
+
     let col_data = dataframe_to_r(&data.cell_metadata)?;
     let row_data = dataframe_to_r(&data.gene_metadata)?;
-    
+
     // Clone for R! macro which moves values
     let r_cell_names1: Vec<String> = cell_names.clone();
     let r_gene_names1: Vec<String> = gene_names.clone();
     let r_cell_names2: Vec<String> = cell_names.clone();
     let r_gene_names2: Vec<String> = gene_names.clone();
-    
+
     // Transpose the matrix: IR is (cells x genes), SCE needs (genes x cells)
     let mut sce = R!("
         counts <- Matrix::t({{counts}})
@@ -381,7 +400,7 @@ pub fn ir_to_sce(data: &SingleCellData) -> Result<Robj> {
             rowData = row_data
         )
     ")?;
-    
+
     // Add reducedDims
     if let Some(ref embeddings) = data.embeddings {
         for (name, emb) in embeddings {
@@ -397,7 +416,7 @@ pub fn ir_to_sce(data: &SingleCellData) -> Result<Robj> {
             ")?;
         }
     }
-    
+
     Ok(sce)
 }
 
@@ -419,13 +438,12 @@ pub fn unstructured_to_r(value: &UnstructuredValue) -> Result<Robj> {
         UnstructuredValue::Float(f) => Ok((*f).into_robj()),
         UnstructuredValue::String(s) => Ok(s.as_str().into_robj()),
         UnstructuredValue::Array(arr) => {
-            let items: Result<Vec<Robj>> = arr.iter()
-                .map(|v| unstructured_to_r(v))
-                .collect();
+            let items: Result<Vec<Robj>> = arr.iter().map(|v| unstructured_to_r(v)).collect();
             Ok(List::from_values(items?).into_robj())
         }
         UnstructuredValue::Dict(map) => {
-            let pairs: Result<Vec<(&str, Robj)>> = map.iter()
+            let pairs: Result<Vec<(&str, Robj)>> = map
+                .iter()
                 .map(|(k, v)| Ok((k.as_str(), unstructured_to_r(v)?)))
                 .collect();
             Ok(List::from_pairs(pairs?).into_robj())

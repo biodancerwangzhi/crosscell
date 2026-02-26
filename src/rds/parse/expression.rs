@@ -1,21 +1,28 @@
 //! 表达式解析
-use std::io::Read;
+use super::shared_info::SharedParseInfo;
+use super::utils::read_length;
 use crate::rds::error::Result;
 use crate::rds::r_object::{ExpressionVector, RObject};
-use super::utils::read_length;
-use super::shared_info::SharedParseInfo;
+use std::io::Read;
 
 /// 解析表达式向量体
 pub fn parse_expression_body<R: Read, F>(
-    reader: &mut R, shared: &mut SharedParseInfo, parse_fn: &mut F,
+    reader: &mut R,
+    shared: &mut SharedParseInfo,
+    parse_fn: &mut F,
 ) -> Result<ExpressionVector>
-where F: FnMut(&mut R, &mut SharedParseInfo) -> Result<RObject> {
+where
+    F: FnMut(&mut R, &mut SharedParseInfo) -> Result<RObject>,
+{
     let length = read_length(reader)?;
     let mut data = Vec::with_capacity(length);
     for _ in 0..length {
         data.push(parse_fn(reader, shared)?);
     }
-    Ok(ExpressionVector { data, attributes: Default::default() })
+    Ok(ExpressionVector {
+        data,
+        attributes: Default::default(),
+    })
 }
 
 #[cfg(test)]

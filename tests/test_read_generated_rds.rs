@@ -4,7 +4,7 @@
 
 use crosscell::rds::{
     parse::{parse_rds_file, ParseRdsOptions},
-    RdsFile, RObject,
+    RObject, RdsFile,
 };
 use std::path::Path;
 use std::time::Instant;
@@ -43,8 +43,7 @@ fn print_rds_summary(rds: &RdsFile, filename: &str) {
 /// 读取单个 RDS 文件
 fn read_rds_file(path: &Path) -> Result<RdsFile, String> {
     let options = ParseRdsOptions::default();
-    parse_rds_file(path, &options)
-        .map_err(|e| format!("{}", e))
+    parse_rds_file(path, &options).map_err(|e| format!("{}", e))
 }
 
 #[test]
@@ -71,7 +70,7 @@ fn test_read_all_generated_rds() {
         .filter_map(|e| e.ok())
         .filter(|e| e.path().extension().map_or(false, |ext| ext == "rds"))
         .collect();
-    
+
     // 按文件名排序
     rds_files.sort_by_key(|e| e.file_name());
 
@@ -120,7 +119,11 @@ fn test_read_all_generated_rds() {
 
     // 计算通过率
     let total = passed + failed;
-    let pass_rate = if total > 0 { (passed as f64 / total as f64) * 100.0 } else { 100.0 };
+    let pass_rate = if total > 0 {
+        (passed as f64 / total as f64) * 100.0
+    } else {
+        100.0
+    };
     println!("\n📈 通过率: {:.1}%", pass_rate);
 }
 
@@ -135,7 +138,7 @@ fn test_read_seurat_v4_pbmc3k() {
 
     println!("\n测试读取 Seurat V4 pbmc3k...");
     let start = Instant::now();
-    
+
     match read_rds_file(path) {
         Ok(rds) => {
             let elapsed = start.elapsed();
@@ -159,7 +162,7 @@ fn test_read_seurat_v5_pbmc3k() {
 
     println!("\n测试读取 Seurat V5 pbmc3k...");
     let start = Instant::now();
-    
+
     match read_rds_file(path) {
         Ok(rds) => {
             let elapsed = start.elapsed();
@@ -183,7 +186,7 @@ fn test_read_seurat_v5_pbmc3k_processed() {
 
     println!("\n测试读取 Seurat V5 pbmc3k processed...");
     let start = Instant::now();
-    
+
     match read_rds_file(path) {
         Ok(rds) => {
             let elapsed = start.elapsed();
@@ -207,7 +210,7 @@ fn test_read_seurat_v4_pbmc3k_processed() {
 
     println!("\n测试读取 Seurat V4 pbmc3k processed...");
     let start = Instant::now();
-    
+
     match read_rds_file(path) {
         Ok(rds) => {
             let elapsed = start.elapsed();
@@ -220,7 +223,6 @@ fn test_read_seurat_v4_pbmc3k_processed() {
     }
 }
 
-
 /// 单独测试 Seurat V4 bmcite processed 文件（用于调试）
 #[test]
 fn test_read_seurat_v4_bmcite_processed() {
@@ -232,7 +234,7 @@ fn test_read_seurat_v4_bmcite_processed() {
 
     println!("\n测试读取 Seurat V4 bmcite processed...");
     let start = Instant::now();
-    
+
     match read_rds_file(path) {
         Ok(rds) => {
             let elapsed = start.elapsed();
@@ -256,7 +258,7 @@ fn test_read_seurat_v4_bmcite_raw() {
 
     println!("\n测试读取 Seurat V4 bmcite raw...");
     let start = Instant::now();
-    
+
     match read_rds_file(path) {
         Ok(rds) => {
             let elapsed = start.elapsed();

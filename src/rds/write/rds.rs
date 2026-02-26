@@ -3,16 +3,16 @@
 //! 提供 RDS 文件的主要写入入口函数。
 //! 对应 rds2cpp 的 write_rds 函数。
 
+use super::object::write_object;
+use super::shared_info::SharedWriteInfo;
+use super::utils::{write_bytes, write_i32, write_length};
+use crate::rds::error::Result;
+use crate::rds::rds_file::RdsFile;
+use flate2::write::GzEncoder;
+use flate2::Compression;
 use std::fs::File;
 use std::io::{BufWriter, Write};
 use std::path::Path;
-use flate2::write::GzEncoder;
-use flate2::Compression;
-use crate::rds::error::Result;
-use crate::rds::rds_file::RdsFile;
-use super::utils::{write_i32, write_length, write_bytes};
-use super::shared_info::SharedWriteInfo;
-use super::object::write_object;
 
 /// RDS 文件魔数（XDR 格式）
 const RDS_MAGIC_XDR: &[u8] = b"X\n";
@@ -65,11 +65,7 @@ pub fn write_rds<W: Write>(rds: &RdsFile, writer: &mut W) -> Result<()> {
     }
 
     // 创建共享写入信息
-    let mut shared = SharedWriteInfo::new(
-        &rds.symbols,
-        &rds.environments,
-        &rds.external_pointers,
-    );
+    let mut shared = SharedWriteInfo::new(&rds.symbols, &rds.environments, &rds.external_pointers);
 
     // 写入根对象
     write_object(&rds.object, writer, &mut shared)?;
@@ -136,10 +132,10 @@ pub fn write_rds_file_default<P: AsRef<Path>>(rds: &RdsFile, path: P) -> Result<
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::io::Cursor;
-    use crate::rds::r_object::{RObject, IntegerVector, StringVector};
-    use crate::rds::string_encoding::StringEncoding;
     use crate::rds::parse::rds::{parse_rds, ParseRdsOptions};
+    use crate::rds::r_object::{IntegerVector, RObject, StringVector};
+    use crate::rds::string_encoding::StringEncoding;
+    use std::io::Cursor;
 
     fn make_rds_v3(object: RObject) -> RdsFile {
         RdsFile {
@@ -244,7 +240,11 @@ mod tests {
     fn test_roundtrip_string_vector() {
         let vec = StringVector {
             data: vec!["hello".to_string(), "world".to_string(), "".to_string()],
-            encodings: vec![StringEncoding::Utf8, StringEncoding::Utf8, StringEncoding::Utf8],
+            encodings: vec![
+                StringEncoding::Utf8,
+                StringEncoding::Utf8,
+                StringEncoding::Utf8,
+            ],
             missing: vec![false, false, true],
             attributes: Default::default(),
         };

@@ -297,11 +297,8 @@ mod tests {
         let err = CrossCellError::missing_field("X");
         assert_eq!(err.to_string(), "Missing required field: X");
 
-        let err = CrossCellError::dimension_mismatch_detailed(
-            "expression_matrix",
-            "100x50",
-            "100x60",
-        );
+        let err =
+            CrossCellError::dimension_mismatch_detailed("expression_matrix", "100x50", "100x60");
         assert_eq!(
             err.to_string(),
             "Dimension mismatch: expected 100x50, got 100x60 for expression_matrix"

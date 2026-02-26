@@ -4,11 +4,11 @@ use std::path::Path;
 #[test]
 fn test_list_with_null() {
     let path = Path::new("tests/data/list_with_null.rds");
-    
+
     println!("\n========================================");
     println!("Reading list with NULL value");
     println!("========================================\n");
-    
+
     match read_rds(path) {
         Ok(robj) => {
             println!("✅ Successfully read RDS object");

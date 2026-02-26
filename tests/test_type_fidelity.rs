@@ -3,15 +3,15 @@
 //! 验证 crosscell_original_dtype 属性的写入和读取，
 //! 以及启发式类型恢复功能。
 
-use crosscell::anndata::{write_h5ad, read_h5ad};
-use crosscell::ir::{
-    SingleCellData, ExpressionMatrix, SparseMatrixCSR, DataFrame, DatasetMetadata,
-};
 use arrow::array::{
-    ArrayRef, Float64Array, Int32Array, Int64Array, BooleanArray, StringArray,
-    DictionaryArray, Array,
+    Array, ArrayRef, BooleanArray, DictionaryArray, Float64Array, Int32Array, Int64Array,
+    StringArray,
 };
 use arrow::datatypes::{DataType, Int32Type};
+use crosscell::anndata::{read_h5ad, write_h5ad};
+use crosscell::ir::{
+    DataFrame, DatasetMetadata, ExpressionMatrix, SingleCellData, SparseMatrixCSR,
+};
 use std::sync::Arc;
 use tempfile::NamedTempFile;
 
@@ -64,11 +64,7 @@ fn test_int32_roundtrip_with_attribute() {
     let int_values: Vec<i32> = vec![1, 2, 3, 42, 100];
     let int_array: ArrayRef = Arc::new(Int32Array::from(int_values.clone()));
 
-    let data = make_test_data(
-        5,
-        vec!["nCount_RNA".to_string()],
-        vec![int_array],
-    );
+    let data = make_test_data(5, vec!["nCount_RNA".to_string()], vec![int_array]);
 
     let result = roundtrip_h5ad(&data);
 
@@ -91,11 +87,7 @@ fn test_int64_roundtrip_with_attribute() {
     let int_values: Vec<i64> = vec![100000, 200000, 300000];
     let int_array: ArrayRef = Arc::new(Int64Array::from(int_values.clone()));
 
-    let data = make_test_data(
-        3,
-        vec!["big_count".to_string()],
-        vec![int_array],
-    );
+    let data = make_test_data(3, vec!["big_count".to_string()], vec![int_array]);
 
     let result = roundtrip_h5ad(&data);
 
@@ -114,11 +106,7 @@ fn test_float64_roundtrip_with_attribute() {
     let float_values: Vec<f64> = vec![1.5, 2.7, 3.14];
     let float_array: ArrayRef = Arc::new(Float64Array::from(float_values.clone()));
 
-    let data = make_test_data(
-        3,
-        vec!["score".to_string()],
-        vec![float_array],
-    );
+    let data = make_test_data(3, vec!["score".to_string()], vec![float_array]);
 
     let result = roundtrip_h5ad(&data);
 
@@ -137,11 +125,7 @@ fn test_boolean_roundtrip_with_attribute() {
     let bool_values = vec![true, false, true];
     let bool_array: ArrayRef = Arc::new(BooleanArray::from(bool_values.clone()));
 
-    let data = make_test_data(
-        3,
-        vec!["is_primary".to_string()],
-        vec![bool_array],
-    );
+    let data = make_test_data(3, vec!["is_primary".to_string()], vec![bool_array]);
 
     let result = roundtrip_h5ad(&data);
 
@@ -160,11 +144,7 @@ fn test_string_roundtrip_with_attribute() {
     let str_values = vec!["hello", "world", "test"];
     let str_array: ArrayRef = Arc::new(StringArray::from(str_values.clone()));
 
-    let data = make_test_data(
-        3,
-        vec!["label".to_string()],
-        vec![str_array],
-    );
+    let data = make_test_data(3, vec!["label".to_string()], vec![str_array]);
 
     let result = roundtrip_h5ad(&data);
 
@@ -183,15 +163,10 @@ fn test_categorical_roundtrip_with_attribute() {
     // Dictionary<Int32, Utf8> 列
     let keys = Int32Array::from(vec![0, 1, 0, 1, 2]);
     let values = Arc::new(StringArray::from(vec!["A", "B", "C"]));
-    let dict_array: ArrayRef = Arc::new(
-        DictionaryArray::<Int32Type>::try_new(keys, values).unwrap()
-    );
+    let dict_array: ArrayRef =
+        Arc::new(DictionaryArray::<Int32Type>::try_new(keys, values).unwrap());
 
-    let data = make_test_data(
-        5,
-        vec!["cell_type".to_string()],
-        vec![dict_array],
-    );
+    let data = make_test_data(5, vec!["cell_type".to_string()], vec![dict_array]);
 
     let result = roundtrip_h5ad(&data);
 
@@ -212,11 +187,7 @@ fn test_mixed_types_roundtrip() {
 
     let data = make_test_data(
         3,
-        vec![
-            "count".to_string(),
-            "score".to_string(),
-            "name".to_string(),
-        ],
+        vec!["count".to_string(), "score".to_string(), "name".to_string()],
         vec![int32_col, float64_col, str_col],
     );
 
@@ -224,15 +195,27 @@ fn test_mixed_types_roundtrip() {
 
     // Int32 应该保持
     let count_col = result.cell_metadata.column("count").unwrap();
-    assert_eq!(*count_col.data_type(), DataType::Int32, "Int32 should be preserved");
+    assert_eq!(
+        *count_col.data_type(),
+        DataType::Int32,
+        "Int32 should be preserved"
+    );
 
     // Float64 应该保持
     let score_col = result.cell_metadata.column("score").unwrap();
-    assert_eq!(*score_col.data_type(), DataType::Float64, "Float64 should be preserved");
+    assert_eq!(
+        *score_col.data_type(),
+        DataType::Float64,
+        "Float64 should be preserved"
+    );
 
     // String 应该保持
     let name_col = result.cell_metadata.column("name").unwrap();
-    assert_eq!(*name_col.data_type(), DataType::Utf8, "Utf8 should be preserved");
+    assert_eq!(
+        *name_col.data_type(),
+        DataType::Utf8,
+        "Utf8 should be preserved"
+    );
 
     println!("✓ Mixed types roundtrip: passed");
 }

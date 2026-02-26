@@ -3,11 +3,13 @@
 //! 解析 RDS 对象的 4 字节头部。
 //! 对应 rds2cpp 的头部解析逻辑。
 
-use std::io::Read;
+use super::utils::{
+    get_flags, get_gp_high, get_sexp_type, read_header as read_header_bytes, Header,
+};
 use crate::rds::error::Result;
 use crate::rds::sexp_type::SEXPType;
 use crate::rds::string_encoding::StringEncoding;
-use super::utils::{Header, read_header as read_header_bytes, get_sexp_type, get_flags, get_gp_high};
+use std::io::Read;
 
 /// 头部标志位常量
 pub mod flags {
@@ -49,7 +51,7 @@ impl ParsedHeader {
     pub fn from_raw(raw: Header) -> Option<Self> {
         let sexp_type = SEXPType::from_u8(get_sexp_type(&raw))?;
         let flags = get_flags(&raw);
-        
+
         Some(Self {
             raw,
             sexp_type,
@@ -62,7 +64,7 @@ impl ParsedHeader {
     /// 获取字符串编码（用于 CHAR 类型）
     pub fn get_encoding(&self) -> StringEncoding {
         let gp = get_gp_high(&self.raw);
-        
+
         if (gp & encoding_flags::UTF8) != 0 {
             StringEncoding::Utf8
         } else if (gp & encoding_flags::LATIN1) != 0 {
@@ -74,7 +76,6 @@ impl ParsedHeader {
         }
     }
 }
-
 
 /// 从 reader 解析头部
 ///
@@ -88,9 +89,8 @@ impl ParsedHeader {
 /// 如果读取失败或类型无效返回错误
 pub fn parse_header<R: Read>(reader: &mut R) -> Result<ParsedHeader> {
     let raw = read_header_bytes(reader)?;
-    ParsedHeader::from_raw(raw).ok_or_else(|| {
-        crate::rds::error::RdsError::UnsupportedType(get_sexp_type(&raw))
-    })
+    ParsedHeader::from_raw(raw)
+        .ok_or_else(|| crate::rds::error::RdsError::UnsupportedType(get_sexp_type(&raw)))
 }
 
 /// 检查头部是否有属性标记
@@ -247,7 +247,7 @@ mod tests {
     fn test_has_attributes() {
         let header: Header = [0x00, 0x00, 0x02, 0x00];
         assert!(has_attributes(&header));
-        
+
         let header: Header = [0x00, 0x00, 0x00, 0x00];
         assert!(!has_attributes(&header));
     }
@@ -256,7 +256,7 @@ mod tests {
     fn test_has_tag() {
         let header: Header = [0x00, 0x00, 0x04, 0x00];
         assert!(has_tag(&header));
-        
+
         let header: Header = [0x00, 0x00, 0x00, 0x00];
         assert!(!has_tag(&header));
     }
@@ -265,7 +265,7 @@ mod tests {
     fn test_is_object() {
         let header: Header = [0x00, 0x00, 0x01, 0x00];
         assert!(is_object(&header));
-        
+
         let header: Header = [0x00, 0x00, 0x00, 0x00];
         assert!(!is_object(&header));
     }
@@ -275,13 +275,13 @@ mod tests {
         // 测试引用索引提取（大端序：header[0] 是高字节）
         let header: Header = [0x00, 0x00, 0x01, 0xFF]; // index = 1
         assert_eq!(get_reference_index(&header), 1);
-        
+
         let header: Header = [0x00, 0x01, 0x00, 0xFF]; // index = 256
         assert_eq!(get_reference_index(&header), 256);
-        
+
         let header: Header = [0x01, 0x00, 0x00, 0xFF]; // index = 65536
         assert_eq!(get_reference_index(&header), 65536);
-        
+
         let header: Header = [0x56, 0x34, 0x12, 0xFF]; // index = 0x563412
         assert_eq!(get_reference_index(&header), 0x563412);
     }

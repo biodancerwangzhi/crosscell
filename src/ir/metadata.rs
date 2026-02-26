@@ -81,7 +81,7 @@ impl DataFrame {
     pub fn column(&self, name: &str) -> Option<&ArrayRef> {
         self.column_index(name).and_then(|i| self.data.get(i))
     }
-    
+
     /// 获取所有列的迭代器
     pub fn columns(&self) -> impl Iterator<Item = (&String, &ArrayRef)> {
         self.columns.iter().zip(self.data.iter())

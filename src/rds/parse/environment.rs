@@ -11,21 +11,21 @@
 //! 4. hashtab (header) - 哈希表（如果 frame 是 NILVALUE_，则这里是 VEC）
 //! 5. attributes (header) - 属性（LIST 或 NILVALUE_）
 
-use std::io::Read;
-use crate::rds::error::{Result, RdsError};
-use crate::rds::sexp_type::SEXPType;
-use crate::rds::r_object::{EnvironmentIndex, RObject};
-use crate::rds::environment::Environment;
-use super::utils::{read_header, read_i32};
 use super::header::ParsedHeader;
 use super::shared_info::SharedParseInfo;
+use super::utils::{read_header, read_i32};
+use crate::rds::environment::Environment;
+use crate::rds::error::{RdsError, Result};
+use crate::rds::r_object::{EnvironmentIndex, RObject};
+use crate::rds::sexp_type::SEXPType;
+use std::io::Read;
 
 fn parse_header_from_bytes(h: &[u8; 4]) -> Result<ParsedHeader> {
     ParsedHeader::from_raw(*h).ok_or_else(|| RdsError::UnsupportedType(h[3]))
 }
 
 /// 解析新环境体
-/// 
+///
 /// 参考 rds2cpp parse_environment.hpp
 pub fn parse_new_environment_body<R: Read, F>(
     reader: &mut R,
@@ -39,14 +39,14 @@ where
     // 预先分配环境索引，以便内部引用有效
     let index = shared.request_environment();
     let mut env = Environment::new();
-    
+
     // 1. 读取 locked 标志 (4 bytes)
     env.locked = read_i32(reader)? != 0;
-    
+
     // 2. 读取父环境头部
     let parent_header = read_header(reader)?;
     let parent_type = parent_header[3];
-    
+
     match parent_type {
         t if t == SEXPType::Ref as u8 => {
             // 引用到之前的环境
@@ -80,17 +80,17 @@ where
             });
         }
     }
-    
+
     // 3. 读取 frame/unhashed 头部
     let unhashed_header = read_header(reader)?;
     let unhashed_type = unhashed_header[3];
-    
+
     if unhashed_type == SEXPType::List as u8 {
         // 未哈希的变量存储为 pairlist
         let parsed = parse_header_from_bytes(&unhashed_header)?;
         use super::pairlist::parse_pairlist_body;
         let plist = parse_pairlist_body(reader, &parsed, shared, parse_fn)?;
-        
+
         // 提取变量
         for i in 0..plist.data.len() {
             if plist.has_tag[i] {
@@ -99,31 +99,37 @@ where
                 env.variable_values.push(plist.data[i].clone());
             }
         }
-        
+
         // 读取哈希表头部（应该是 NILVALUE_）
         let hashed_header = read_header(reader)?;
         if hashed_header[3] != SEXPType::NilValue as u8 {
             return Err(RdsError::ParseError {
                 context: "environment".to_string(),
-                message: format!("Unhashed environment should not contain a non-NULL hash table, got type {}", hashed_header[3]),
+                message: format!(
+                    "Unhashed environment should not contain a non-NULL hash table, got type {}",
+                    hashed_header[3]
+                ),
             });
         }
     } else if unhashed_type == SEXPType::NilValue as u8 {
         // 哈希环境 - 读取哈希表
         env.hashed = true;
-        
+
         let hash_header = read_header(reader)?;
         if hash_header[3] != SEXPType::Vec as u8 {
             return Err(RdsError::ParseError {
                 context: "environment".to_string(),
-                message: format!("Environment's hash table should be a list (VEC), got type {}", hash_header[3]),
+                message: format!(
+                    "Environment's hash table should be a list (VEC), got type {}",
+                    hash_header[3]
+                ),
             });
         }
-        
+
         // 解析哈希表（VEC）
         use super::list::parse_list_body;
         let vec = parse_list_body(reader, shared, parse_fn)?;
-        
+
         // 从哈希表中提取变量
         for item in vec.data {
             match item {
@@ -145,14 +151,17 @@ where
     } else {
         return Err(RdsError::ParseError {
             context: "environment".to_string(),
-            message: format!("Environment's frame should be LIST or NILVALUE_, got type {}", unhashed_type),
+            message: format!(
+                "Environment's frame should be LIST or NILVALUE_, got type {}",
+                unhashed_type
+            ),
         });
     }
-    
+
     // 5. 读取属性头部
     let attr_header = read_header(reader)?;
     let attr_type = attr_header[3];
-    
+
     if attr_type == SEXPType::List as u8 {
         // 有属性
         let parsed = parse_header_from_bytes(&attr_header)?;
@@ -161,24 +170,39 @@ where
     } else if attr_type != SEXPType::NilValue as u8 {
         return Err(RdsError::ParseError {
             context: "environment".to_string(),
-            message: format!("Environment should be terminated by NULL, got type {}", attr_type),
+            message: format!(
+                "Environment should be terminated by NULL, got type {}",
+                attr_type
+            ),
         });
     }
-    
+
     shared.update_environment(index, env);
-    Ok(EnvironmentIndex { index, env_type: SEXPType::Env })
+    Ok(EnvironmentIndex {
+        index,
+        env_type: SEXPType::Env,
+    })
 }
 
 pub fn parse_global_environment_body() -> EnvironmentIndex {
-    EnvironmentIndex { index: usize::MAX, env_type: SEXPType::GlobalEnv }
+    EnvironmentIndex {
+        index: usize::MAX,
+        env_type: SEXPType::GlobalEnv,
+    }
 }
 
 pub fn parse_base_environment_body() -> EnvironmentIndex {
-    EnvironmentIndex { index: usize::MAX, env_type: SEXPType::BaseEnv }
+    EnvironmentIndex {
+        index: usize::MAX,
+        env_type: SEXPType::BaseEnv,
+    }
 }
 
 pub fn parse_empty_environment_body() -> EnvironmentIndex {
-    EnvironmentIndex { index: usize::MAX, env_type: SEXPType::EmptyEnv }
+    EnvironmentIndex {
+        index: usize::MAX,
+        env_type: SEXPType::EmptyEnv,
+    }
 }
 
 #[cfg(test)]

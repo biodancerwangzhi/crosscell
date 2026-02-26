@@ -1,6 +1,6 @@
 //! Simple RDS roundtrip tests
 
-use crosscell::rds::{IntegerVector, DoubleVector, StringVector, GenericVector, StringEncoding};
+use crosscell::rds::{DoubleVector, GenericVector, IntegerVector, StringEncoding, StringVector};
 use crosscell::{read_rds, write_rds, RObject};
 use std::path::Path;
 
@@ -19,13 +19,20 @@ fn make_named_list(items: Vec<(&str, RObject)>) -> RObject {
         gv.data.push(val);
         names_sv.add(name.to_string(), StringEncoding::Utf8);
     }
-    gv.attributes.add("names".to_string(), RObject::StringVector(names_sv), StringEncoding::Utf8);
+    gv.attributes.add(
+        "names".to_string(),
+        RObject::StringVector(names_sv),
+        StringEncoding::Utf8,
+    );
     RObject::GenericVector(gv)
 }
 
 #[test]
 fn test_simple_integer_roundtrip() {
-    let original = RObject::IntegerVector(IntegerVector { data: vec![1, 2, 3, 4, 5], ..Default::default() });
+    let original = RObject::IntegerVector(IntegerVector {
+        data: vec![1, 2, 3, 4, 5],
+        ..Default::default()
+    });
     let temp_path = Path::new("tests/data/temp_simple_int.rds");
     write_rds(temp_path, &original).expect("Failed to write");
     let roundtrip = read_rds(temp_path).expect("Failed to read");
@@ -40,7 +47,10 @@ fn test_simple_integer_roundtrip() {
 
 #[test]
 fn test_simple_real_roundtrip() {
-    let original = RObject::DoubleVector(DoubleVector { data: vec![1.1, 2.2, 3.3, 4.4, 5.5], ..Default::default() });
+    let original = RObject::DoubleVector(DoubleVector {
+        data: vec![1.1, 2.2, 3.3, 4.4, 5.5],
+        ..Default::default()
+    });
     let temp_path = Path::new("tests/data/temp_simple_real.rds");
     write_rds(temp_path, &original).expect("Failed to write");
     let roundtrip = read_rds(temp_path).expect("Failed to read");
@@ -71,8 +81,20 @@ fn test_simple_string_roundtrip() {
 #[test]
 fn test_named_list_roundtrip() {
     let original = make_named_list(vec![
-        ("a", RObject::IntegerVector(IntegerVector { data: vec![1, 2, 3], ..Default::default() })),
-        ("b", RObject::DoubleVector(DoubleVector { data: vec![1.1, 2.2], ..Default::default() })),
+        (
+            "a",
+            RObject::IntegerVector(IntegerVector {
+                data: vec![1, 2, 3],
+                ..Default::default()
+            }),
+        ),
+        (
+            "b",
+            RObject::DoubleVector(DoubleVector {
+                data: vec![1.1, 2.2],
+                ..Default::default()
+            }),
+        ),
         ("c", make_string_vec(&["test"])),
     ]);
     let temp_path = Path::new("tests/data/temp_named_list.rds");

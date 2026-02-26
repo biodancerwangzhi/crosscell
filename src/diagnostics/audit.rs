@@ -13,7 +13,11 @@ pub enum Modification {
     /// Column was dropped
     ColumnDropped { name: String, reason: String },
     /// Data type was converted
-    TypeConverted { column: String, from: String, to: String },
+    TypeConverted {
+        column: String,
+        from: String,
+        to: String,
+    },
     /// Empty column was removed
     EmptyColumnRemoved { name: String },
 }
@@ -124,7 +128,7 @@ mod tests {
             from: "cell/type".to_string(),
             to: "cell_type".to_string(),
         });
-        
+
         assert!(!log.is_empty());
         assert_eq!(log.len(), 1);
     }
@@ -140,11 +144,11 @@ mod tests {
             name: "empty_col".to_string(),
             reason: "All null values".to_string(),
         });
-        
+
         let json = log.to_json().unwrap();
         assert!(json.contains("ColumnRenamed"));
         assert!(json.contains("cell/type"));
-        
+
         let parsed = AuditLog::from_json(&json).unwrap();
         assert_eq!(parsed.len(), 2);
     }
@@ -156,7 +160,7 @@ mod tests {
             from: "cell/type".to_string(),
             to: "cell_type".to_string(),
         });
-        
+
         let summary = log.summary();
         assert!(summary.contains("Renamed"));
         assert!(summary.contains("cell/type"));
@@ -170,7 +174,7 @@ mod tests {
             to: "b".to_string(),
         };
         assert_eq!(format!("{}", m1), "Renamed: 'a' → 'b'");
-        
+
         let m2 = Modification::ColumnDropped {
             name: "col".to_string(),
             reason: "empty".to_string(),

@@ -1,8 +1,8 @@
 //! 内置函数解析
-use std::io::Read;
+use super::utils::{quick_extract, read_length};
 use crate::rds::error::Result;
 use crate::rds::r_object::BuiltInFunction;
-use super::utils::{read_length, quick_extract};
+use std::io::Read;
 
 /// 解析内置函数体
 pub fn parse_builtin_body<R: Read>(reader: &mut R) -> Result<BuiltInFunction> {

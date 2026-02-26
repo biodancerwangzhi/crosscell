@@ -3,19 +3,19 @@
 //! 将 CrossCell IR (SingleCellData) 转换为 Python AnnData 对象。
 
 use arrow::array::{
-    Array, ArrayRef, BooleanArray, DictionaryArray, Float32Array, Float64Array,
-    Int32Array, Int64Array, LargeStringArray, StringArray,
+    Array, ArrayRef, BooleanArray, DictionaryArray, Float32Array, Float64Array, Int32Array,
+    Int64Array, LargeStringArray, StringArray,
 };
 use arrow::datatypes::{DataType, Int32Type, Int8Type};
 use pyo3::prelude::*;
 use pyo3::types::{PyDict, PyList, PyTuple};
 use std::collections::HashMap;
 
-use crosscell::ir::{
-    DataFrame, DenseMatrix, Embedding, ExpressionMatrix,
-    SingleCellData, SparseMatrixCSC, SparseMatrixCSR,
-};
 use crosscell::ir::unstructured::UnstructuredValue;
+use crosscell::ir::{
+    DataFrame, DenseMatrix, Embedding, ExpressionMatrix, SingleCellData, SparseMatrixCSC,
+    SparseMatrixCSR,
+};
 
 /// 将 SingleCellData 转换为 Python AnnData 对象
 pub fn ir_to_anndata(py: Python<'_>, data: &SingleCellData) -> PyResult<PyObject> {
@@ -62,10 +62,7 @@ pub fn ir_to_anndata(py: Python<'_>, data: &SingleCellData) -> PyResult<PyObject
         let d = PyDict::new_bound(py);
         for (name, loading) in gene_loadings {
             let numpy = py.import_bound("numpy")?;
-            let arr = numpy.call_method1(
-                "array",
-                (loading.data.clone(),),
-            )?;
+            let arr = numpy.call_method1("array", (loading.data.clone(),))?;
             let reshaped = arr.call_method1("reshape", ((loading.n_rows, loading.n_cols),))?;
             d.set_item(name, reshaped)?;
         }
@@ -111,7 +108,9 @@ fn csr_to_scipy(py: Python<'_>, m: &SparseMatrixCSR) -> PyResult<PyObject> {
     let kwargs = PyDict::new_bound(py);
     kwargs.set_item("shape", shape)?;
 
-    let result = scipy_sparse.getattr("csr_matrix")?.call((tuple,), Some(&kwargs))?;
+    let result = scipy_sparse
+        .getattr("csr_matrix")?
+        .call((tuple,), Some(&kwargs))?;
     Ok(result.into())
 }
 
@@ -134,7 +133,9 @@ fn csc_to_scipy(py: Python<'_>, m: &SparseMatrixCSC) -> PyResult<PyObject> {
     let kwargs = PyDict::new_bound(py);
     kwargs.set_item("shape", shape)?;
 
-    let result = scipy_sparse.getattr("csc_matrix")?.call((tuple,), Some(&kwargs))?;
+    let result = scipy_sparse
+        .getattr("csc_matrix")?
+        .call((tuple,), Some(&kwargs))?;
     Ok(result.into())
 }
 
@@ -162,7 +163,9 @@ pub fn dataframe_to_pandas(py: Python<'_>, df: &DataFrame) -> PyResult<PyObject>
     // When DataFrame has no columns, we still need the correct number of rows
     // so AnnData's obs/var dimension checks pass.
     if df.columns.is_empty() && df.n_rows > 0 {
-        let range = py.import_bound("builtins")?.call_method1("range", (df.n_rows,))?;
+        let range = py
+            .import_bound("builtins")?
+            .call_method1("range", (df.n_rows,))?;
         kwargs.set_item("index", range)?;
     }
     let result = pandas.getattr("DataFrame")?.call((), Some(&kwargs))?;
@@ -180,14 +183,26 @@ fn arrow_array_to_python(
         DataType::Int64 => {
             let arr = array.as_any().downcast_ref::<Int64Array>().unwrap();
             let values: Vec<Option<i64>> = (0..arr.len())
-                .map(|i| if arr.is_null(i) { None } else { Some(arr.value(i)) })
+                .map(|i| {
+                    if arr.is_null(i) {
+                        None
+                    } else {
+                        Some(arr.value(i))
+                    }
+                })
                 .collect();
             Ok(values.into_py(py))
         }
         DataType::Int32 => {
             let arr = array.as_any().downcast_ref::<Int32Array>().unwrap();
             let values: Vec<Option<i64>> = (0..arr.len())
-                .map(|i| if arr.is_null(i) { None } else { Some(arr.value(i) as i64) })
+                .map(|i| {
+                    if arr.is_null(i) {
+                        None
+                    } else {
+                        Some(arr.value(i) as i64)
+                    }
+                })
                 .collect();
             Ok(values.into_py(py))
         }
@@ -206,27 +221,43 @@ fn arrow_array_to_python(
         DataType::Boolean => {
             let arr = array.as_any().downcast_ref::<BooleanArray>().unwrap();
             let values: Vec<Option<bool>> = (0..arr.len())
-                .map(|i| if arr.is_null(i) { None } else { Some(arr.value(i)) })
+                .map(|i| {
+                    if arr.is_null(i) {
+                        None
+                    } else {
+                        Some(arr.value(i))
+                    }
+                })
                 .collect();
             Ok(values.into_py(py))
         }
         DataType::Utf8 => {
             let arr = array.as_any().downcast_ref::<StringArray>().unwrap();
             let values: Vec<Option<&str>> = (0..arr.len())
-                .map(|i| if arr.is_null(i) { None } else { Some(arr.value(i)) })
+                .map(|i| {
+                    if arr.is_null(i) {
+                        None
+                    } else {
+                        Some(arr.value(i))
+                    }
+                })
                 .collect();
             Ok(values.into_py(py))
         }
         DataType::LargeUtf8 => {
             let arr = array.as_any().downcast_ref::<LargeStringArray>().unwrap();
             let values: Vec<Option<&str>> = (0..arr.len())
-                .map(|i| if arr.is_null(i) { None } else { Some(arr.value(i)) })
+                .map(|i| {
+                    if arr.is_null(i) {
+                        None
+                    } else {
+                        Some(arr.value(i))
+                    }
+                })
                 .collect();
             Ok(values.into_py(py))
         }
-        DataType::Dictionary(_, _) => {
-            arrow_dict_to_categorical(py, array, pandas)
-        }
+        DataType::Dictionary(_, _) => arrow_dict_to_categorical(py, array, pandas),
         _ => {
             // Fallback: convert each element to string
             let values: Vec<String> = (0..array.len())
@@ -267,17 +298,28 @@ where
     let keys = dict_arr.keys();
     let values = dict_arr.values();
 
-    let categories: Vec<String> = if let Some(str_arr) = values.as_any().downcast_ref::<StringArray>() {
-        (0..str_arr.len())
-            .map(|i| if str_arr.is_null(i) { String::new() } else { str_arr.value(i).to_string() })
-            .collect()
-    } else {
-        (0..values.len()).map(|i| format!("{}", i)).collect()
-    };
+    let categories: Vec<String> =
+        if let Some(str_arr) = values.as_any().downcast_ref::<StringArray>() {
+            (0..str_arr.len())
+                .map(|i| {
+                    if str_arr.is_null(i) {
+                        String::new()
+                    } else {
+                        str_arr.value(i).to_string()
+                    }
+                })
+                .collect()
+        } else {
+            (0..values.len()).map(|i| format!("{}", i)).collect()
+        };
 
     let codes: Vec<i64> = (0..keys.len())
         .map(|i| {
-            if keys.is_null(i) { -1i64 } else { keys.value(i).into() }
+            if keys.is_null(i) {
+                -1i64
+            } else {
+                keys.value(i).into()
+            }
         })
         .collect();
 

@@ -24,10 +24,9 @@
 use criterion::{black_box, criterion_group, criterion_main, BenchmarkId, Criterion, Throughput};
 use crosscell::ir::expression::SparseMatrixCSR;
 use crosscell::sparse::convert::{csr_to_csc, csr_to_csc_parallel};
-use crosscell::sparse::memory::{estimate_csr_matrix_memory, estimate_csc_matrix_memory};
+use crosscell::sparse::memory::{estimate_csc_matrix_memory, estimate_csr_matrix_memory};
 use crosscell::sparse::subset::{
-    subset_contiguous_columns_in_place, subset_rows_only_in_place,
-    subset_sparse_columns_in_place,
+    subset_contiguous_columns_in_place, subset_rows_only_in_place, subset_sparse_columns_in_place,
 };
 use rand::Rng;
 
@@ -127,7 +126,7 @@ fn bench_csc_to_csr_conversion(c: &mut Criterion) {
     // 直接生成 CSR 并转换为 CSC，然后测试 CSC → CSR
     // 注意：由于当前实现的限制，我们跳过这个基准测试
     // TODO: 修复 CSC → CSR 转换后重新启用
-    
+
     group.finish();
 }
 

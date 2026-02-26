@@ -113,7 +113,7 @@ pub fn format_duration(duration: Duration) -> String {
 }
 
 /// Stage-based progress tracker
-/// 
+///
 /// Shows honest progress by displaying stages rather than misleading percentages.
 /// This is more appropriate for operations where we can't predict exact progress.
 pub struct StageProgress {
@@ -133,7 +133,7 @@ impl StageProgress {
     pub fn new(stages: Vec<&str>, verbose: bool) -> Self {
         let total_stages = stages.len();
         let stage_names: Vec<String> = stages.into_iter().map(|s| s.to_string()).collect();
-        
+
         let spinner = ProgressBar::new_spinner();
         spinner.set_style(
             ProgressStyle::default_spinner()
@@ -181,11 +181,11 @@ impl StageProgress {
     pub fn complete_stage(&mut self, details: Option<&str>) {
         self.memory_tracker.update();
         let elapsed = self.stage_start.elapsed();
-        
+
         if self.current_stage <= self.total_stages {
             let stage_name = &self.stage_names[self.current_stage - 1];
             let time_str = format_duration(elapsed);
-            
+
             let msg = if let Some(detail) = details {
                 format!(
                     "[{}/{}] ✓ {} ({}) [{}]",
@@ -197,7 +197,7 @@ impl StageProgress {
                     self.current_stage, self.total_stages, stage_name, time_str
                 )
             };
-            
+
             self.spinner.suspend(|| {
                 println!("{}", msg);
             });
@@ -210,7 +210,7 @@ impl StageProgress {
             let stage_name = &self.stage_names[self.current_stage - 1];
             let elapsed = self.stage_start.elapsed();
             let time_str = format_duration(elapsed);
-            
+
             let msg = format!(
                 "[{}/{}] ⏳ {} - {} [{}]",
                 self.current_stage, self.total_stages, stage_name, sub_message, time_str
@@ -250,19 +250,24 @@ impl StageProgress {
         let peak_mem = self.memory_tracker.peak_formatted();
 
         println!();
-        println!("✅ Completed in {} | Peak memory: {}", 
-            format_duration(total_time), peak_mem);
+        println!(
+            "✅ Completed in {} | Peak memory: {}",
+            format_duration(total_time),
+            peak_mem
+        );
     }
 
     /// Finish with error
     #[allow(dead_code)]
     pub fn finish_with_error(&mut self, error: &str) {
         self.spinner.finish_and_clear();
-        
+
         let total_time = self.start_time.elapsed();
         println!();
-        println!("❌ Failed at stage {}/{}: {}", 
-            self.current_stage, self.total_stages, error);
+        println!(
+            "❌ Failed at stage {}/{}: {}",
+            self.current_stage, self.total_stages, error
+        );
         println!("   Elapsed time: {}", format_duration(total_time));
     }
 
@@ -308,16 +313,17 @@ impl SimpleSpinner {
 
     pub fn set_message(&self, message: &str) {
         let elapsed = format_duration(self.start_time.elapsed());
-        self.spinner.set_message(format!("{} [{}]", message, elapsed));
+        self.spinner
+            .set_message(format!("{} [{}]", message, elapsed));
     }
 
     pub fn finish(&mut self, message: &str) {
         self.memory_tracker.update();
         self.spinner.finish_and_clear();
-        
+
         let elapsed = format_duration(self.start_time.elapsed());
         let peak_mem = self.memory_tracker.peak_formatted();
-        
+
         println!("{} [{}] | Peak memory: {}", message, elapsed, peak_mem);
     }
 

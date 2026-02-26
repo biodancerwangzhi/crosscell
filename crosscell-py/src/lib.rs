@@ -2,7 +2,7 @@ use pyo3::prelude::*;
 use pyo3::types::PyDict;
 use std::path::Path;
 
-use arrow::array::{Array, StringArray, LargeStringArray, DictionaryArray};
+use arrow::array::{Array, DictionaryArray, LargeStringArray, StringArray};
 use arrow::datatypes::Int32Type;
 
 pub mod convert_from_anndata;
@@ -60,9 +60,10 @@ fn read_rds(
 ) -> PyResult<PyObject> {
     let p = Path::new(path);
     if !p.exists() {
-        return Err(pyo3::exceptions::PyFileNotFoundError::new_err(
-            format!("File not found: {}", path),
-        ));
+        return Err(pyo3::exceptions::PyFileNotFoundError::new_err(format!(
+            "File not found: {}",
+            path
+        )));
     }
 
     let result = crosscell::seurat::read_seurat_direct(p, keep_layers).map_err(|e| {
@@ -73,18 +74,22 @@ fn read_rds(
 
     // Apply AI-Ready transforms in the same order as CLI
     if normalize {
-        data.expression = crosscell::transform::normalize_library_size(&data.expression)
-            .map_err(|e| pyo3::exceptions::PyValueError::new_err(format!("Normalization failed: {}", e)))?;
+        data.expression =
+            crosscell::transform::normalize_library_size(&data.expression).map_err(|e| {
+                pyo3::exceptions::PyValueError::new_err(format!("Normalization failed: {}", e))
+            })?;
     }
 
     if let Some(n) = top_genes {
-        crosscell::transform::select_top_variable_genes(&mut data, n)
-            .map_err(|e| pyo3::exceptions::PyValueError::new_err(format!("Gene selection failed: {}", e)))?;
+        crosscell::transform::select_top_variable_genes(&mut data, n).map_err(|e| {
+            pyo3::exceptions::PyValueError::new_err(format!("Gene selection failed: {}", e))
+        })?;
     }
 
     if let Some(ref col) = gene_id_column {
-        crosscell::transform::apply_gene_id_column(&mut data, col)
-            .map_err(|e| pyo3::exceptions::PyValueError::new_err(format!("Gene ID replacement failed: {}", e)))?;
+        crosscell::transform::apply_gene_id_column(&mut data, col).map_err(|e| {
+            pyo3::exceptions::PyValueError::new_err(format!("Gene ID replacement failed: {}", e))
+        })?;
     }
 
     convert_to_anndata::ir_to_anndata(py, &data)
@@ -125,9 +130,10 @@ fn read_h5ad(
 ) -> PyResult<PyObject> {
     let p = Path::new(path);
     if !p.exists() {
-        return Err(pyo3::exceptions::PyFileNotFoundError::new_err(
-            format!("File not found: {}", path),
-        ));
+        return Err(pyo3::exceptions::PyFileNotFoundError::new_err(format!(
+            "File not found: {}",
+            path
+        )));
     }
 
     let mut data = crosscell::anndata::read_h5ad(p).map_err(|e| {
@@ -136,18 +142,22 @@ fn read_h5ad(
 
     // Apply transforms
     if normalize {
-        data.expression = crosscell::transform::normalize_library_size(&data.expression)
-            .map_err(|e| pyo3::exceptions::PyValueError::new_err(format!("Normalization failed: {}", e)))?;
+        data.expression =
+            crosscell::transform::normalize_library_size(&data.expression).map_err(|e| {
+                pyo3::exceptions::PyValueError::new_err(format!("Normalization failed: {}", e))
+            })?;
     }
 
     if let Some(n) = top_genes {
-        crosscell::transform::select_top_variable_genes(&mut data, n)
-            .map_err(|e| pyo3::exceptions::PyValueError::new_err(format!("Gene selection failed: {}", e)))?;
+        crosscell::transform::select_top_variable_genes(&mut data, n).map_err(|e| {
+            pyo3::exceptions::PyValueError::new_err(format!("Gene selection failed: {}", e))
+        })?;
     }
 
     if let Some(ref col) = gene_id_column {
-        crosscell::transform::apply_gene_id_column(&mut data, col)
-            .map_err(|e| pyo3::exceptions::PyValueError::new_err(format!("Gene ID replacement failed: {}", e)))?;
+        crosscell::transform::apply_gene_id_column(&mut data, col).map_err(|e| {
+            pyo3::exceptions::PyValueError::new_err(format!("Gene ID replacement failed: {}", e))
+        })?;
     }
 
     convert_to_anndata::ir_to_anndata(py, &data)
@@ -226,9 +236,10 @@ fn write_rds(py: Python<'_>, adata: &Bound<'_, PyAny>, path: &str) -> PyResult<(
 fn inspect(py: Python<'_>, path: &str) -> PyResult<PyObject> {
     let p = Path::new(path);
     if !p.exists() {
-        return Err(pyo3::exceptions::PyFileNotFoundError::new_err(
-            format!("File not found: {}", path),
-        ));
+        return Err(pyo3::exceptions::PyFileNotFoundError::new_err(format!(
+            "File not found: {}",
+            path
+        )));
     }
 
     let ext = p
@@ -288,14 +299,16 @@ fn validate(
 ) -> PyResult<PyObject> {
     // Check files exist
     if !Path::new(original).exists() {
-        return Err(pyo3::exceptions::PyFileNotFoundError::new_err(
-            format!("Original file not found: {}", original),
-        ));
+        return Err(pyo3::exceptions::PyFileNotFoundError::new_err(format!(
+            "Original file not found: {}",
+            original
+        )));
     }
     if !Path::new(converted).exists() {
-        return Err(pyo3::exceptions::PyFileNotFoundError::new_err(
-            format!("Converted file not found: {}", converted),
-        ));
+        return Err(pyo3::exceptions::PyFileNotFoundError::new_err(format!(
+            "Converted file not found: {}",
+            converted
+        )));
     }
 
     let orig_ext = Path::new(original)
@@ -314,9 +327,8 @@ fn validate(
     let conv_data = load_ir(converted, &conv_ext)?;
 
     // Run validation
-    let report = crosscell::validation::roundtrip::validate_roundtrip(
-        &orig_data, &conv_data, tolerance,
-    );
+    let report =
+        crosscell::validation::roundtrip::validate_roundtrip(&orig_data, &conv_data, tolerance);
 
     let dict = PyDict::new_bound(py);
     dict.set_item("passed", report.passed())?;
@@ -358,33 +370,47 @@ fn load_ir(path: &str, ext: &str) -> PyResult<crosscell::ir::SingleCellData> {
     }
 }
 
-fn extract_labels(
-    data: &crosscell::ir::SingleCellData,
-    column: &str,
-) -> PyResult<Vec<String>> {
-    let col_idx = data
-        .cell_metadata
-        .column_index(column)
-        .ok_or_else(|| {
-            pyo3::exceptions::PyValueError::new_err(format!(
-                "Column '{}' not found in obs. Available: {:?}",
-                column, data.cell_metadata.columns
-            ))
-        })?;
+fn extract_labels(data: &crosscell::ir::SingleCellData, column: &str) -> PyResult<Vec<String>> {
+    let col_idx = data.cell_metadata.column_index(column).ok_or_else(|| {
+        pyo3::exceptions::PyValueError::new_err(format!(
+            "Column '{}' not found in obs. Available: {:?}",
+            column, data.cell_metadata.columns
+        ))
+    })?;
 
     let col_data = &data.cell_metadata.data[col_idx];
 
     if let Some(arr) = col_data.as_any().downcast_ref::<StringArray>() {
         Ok((0..arr.len())
-            .map(|i| if arr.is_null(i) { String::new() } else { arr.value(i).to_string() })
+            .map(|i| {
+                if arr.is_null(i) {
+                    String::new()
+                } else {
+                    arr.value(i).to_string()
+                }
+            })
             .collect())
     } else if let Some(arr) = col_data.as_any().downcast_ref::<LargeStringArray>() {
         Ok((0..arr.len())
-            .map(|i| if arr.is_null(i) { String::new() } else { arr.value(i).to_string() })
+            .map(|i| {
+                if arr.is_null(i) {
+                    String::new()
+                } else {
+                    arr.value(i).to_string()
+                }
+            })
             .collect())
-    } else if let Some(arr) = col_data.as_any().downcast_ref::<DictionaryArray<Int32Type>>() {
-        let values = arr.values().as_any().downcast_ref::<StringArray>()
-            .ok_or_else(|| pyo3::exceptions::PyValueError::new_err("Dictionary values are not strings"))?;
+    } else if let Some(arr) = col_data
+        .as_any()
+        .downcast_ref::<DictionaryArray<Int32Type>>()
+    {
+        let values = arr
+            .values()
+            .as_any()
+            .downcast_ref::<StringArray>()
+            .ok_or_else(|| {
+                pyo3::exceptions::PyValueError::new_err("Dictionary values are not strings")
+            })?;
         Ok((0..arr.len())
             .map(|i| {
                 if arr.is_null(i) {
@@ -439,7 +465,10 @@ fn inspect_rds_file(py: Python<'_>, path: &Path) -> PyResult<PyObject> {
     dict.set_item("seurat_version", result.version.to_string())?;
 
     let (n_rows, n_cols) = result.data.expression.shape();
-    let is_sparse = !matches!(result.data.expression, crosscell::ir::ExpressionMatrix::Dense(_));
+    let is_sparse = !matches!(
+        result.data.expression,
+        crosscell::ir::ExpressionMatrix::Dense(_)
+    );
     dict.set_item("is_sparse", is_sparse)?;
     dict.set_item("matrix_shape", (n_rows, n_cols))?;
 

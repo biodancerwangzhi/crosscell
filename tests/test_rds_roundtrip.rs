@@ -21,7 +21,12 @@ fn compare_robjects(a: &RObject, b: &RObject, path: &str) -> Vec<String> {
 
         (RObject::IntegerVector(va), RObject::IntegerVector(vb)) => {
             if va.data != vb.data {
-                diffs.push(format!("{}: IntegerVector data mismatch ({} vs {} elements)", path, va.data.len(), vb.data.len()));
+                diffs.push(format!(
+                    "{}: IntegerVector data mismatch ({} vs {} elements)",
+                    path,
+                    va.data.len(),
+                    vb.data.len()
+                ));
             }
         }
         (RObject::LogicalVector(va), RObject::LogicalVector(vb)) => {
@@ -31,12 +36,22 @@ fn compare_robjects(a: &RObject, b: &RObject, path: &str) -> Vec<String> {
         }
         (RObject::DoubleVector(va), RObject::DoubleVector(vb)) => {
             if va.data.len() != vb.data.len() {
-                diffs.push(format!("{}: DoubleVector length mismatch ({} vs {})", path, va.data.len(), vb.data.len()));
+                diffs.push(format!(
+                    "{}: DoubleVector length mismatch ({} vs {})",
+                    path,
+                    va.data.len(),
+                    vb.data.len()
+                ));
             } else {
                 for (i, (x, y)) in va.data.iter().zip(vb.data.iter()).enumerate() {
-                    if x.is_nan() && y.is_nan() { continue; }
+                    if x.is_nan() && y.is_nan() {
+                        continue;
+                    }
                     if x != y {
-                        diffs.push(format!("{}: DoubleVector[{}] mismatch ({} vs {})", path, i, x, y));
+                        diffs.push(format!(
+                            "{}: DoubleVector[{}] mismatch ({} vs {})",
+                            path, i, x, y
+                        ));
                         break;
                     }
                 }
@@ -55,14 +70,22 @@ fn compare_robjects(a: &RObject, b: &RObject, path: &str) -> Vec<String> {
         (RObject::StringVector(va), RObject::StringVector(vb)) => {
             if va.data != vb.data {
                 let max_show = 3;
-                let mismatches: Vec<_> = va.data.iter().zip(vb.data.iter())
+                let mismatches: Vec<_> = va
+                    .data
+                    .iter()
+                    .zip(vb.data.iter())
                     .enumerate()
                     .filter(|(_, (a, b))| a != b)
                     .take(max_show)
                     .map(|(i, (a, b))| format!("[{}]: {:?} vs {:?}", i, a, b))
                     .collect();
-                diffs.push(format!("{}: StringVector data mismatch ({} vs {} elements, first diffs: {})",
-                    path, va.data.len(), vb.data.len(), mismatches.join(", ")));
+                diffs.push(format!(
+                    "{}: StringVector data mismatch ({} vs {} elements, first diffs: {})",
+                    path,
+                    va.data.len(),
+                    vb.data.len(),
+                    mismatches.join(", ")
+                ));
             }
             if va.missing != vb.missing {
                 diffs.push(format!("{}: StringVector missing flags mismatch", path));
@@ -71,28 +94,46 @@ fn compare_robjects(a: &RObject, b: &RObject, path: &str) -> Vec<String> {
 
         (RObject::GenericVector(va), RObject::GenericVector(vb)) => {
             if va.data.len() != vb.data.len() {
-                diffs.push(format!("{}: GenericVector length mismatch ({} vs {})", path, va.data.len(), vb.data.len()));
+                diffs.push(format!(
+                    "{}: GenericVector length mismatch ({} vs {})",
+                    path,
+                    va.data.len(),
+                    vb.data.len()
+                ));
             } else {
                 for (i, (ca, cb)) in va.data.iter().zip(vb.data.iter()).enumerate() {
                     let child_path = format!("{}[{}]", path, i);
                     diffs.extend(compare_robjects(ca, cb, &child_path));
-                    if diffs.len() > 20 { break; } // 限制差异数量
+                    if diffs.len() > 20 {
+                        break;
+                    } // 限制差异数量
                 }
             }
         }
 
         (RObject::PairList(va), RObject::PairList(vb)) => {
             if va.data.len() != vb.data.len() {
-                diffs.push(format!("{}: PairList length mismatch ({} vs {})", path, va.data.len(), vb.data.len()));
+                diffs.push(format!(
+                    "{}: PairList length mismatch ({} vs {})",
+                    path,
+                    va.data.len(),
+                    vb.data.len()
+                ));
             }
         }
 
         (RObject::S4Object(sa), RObject::S4Object(sb)) => {
             if sa.class_name != sb.class_name {
-                diffs.push(format!("{}: S4 class mismatch ({} vs {})", path, sa.class_name, sb.class_name));
+                diffs.push(format!(
+                    "{}: S4 class mismatch ({} vs {})",
+                    path, sa.class_name, sb.class_name
+                ));
             }
             if sa.package_name != sb.package_name {
-                diffs.push(format!("{}: S4 package mismatch ({} vs {})", path, sa.package_name, sb.package_name));
+                diffs.push(format!(
+                    "{}: S4 package mismatch ({} vs {})",
+                    path, sa.package_name, sb.package_name
+                ));
             }
         }
 
@@ -100,7 +141,10 @@ fn compare_robjects(a: &RObject, b: &RObject, path: &str) -> Vec<String> {
         (RObject::EnvironmentIndex(_), RObject::EnvironmentIndex(_)) => {}
         (RObject::BuiltInFunction(fa), RObject::BuiltInFunction(fb)) => {
             if fa.name != fb.name {
-                diffs.push(format!("{}: BuiltIn name mismatch ({} vs {})", path, fa.name, fb.name));
+                diffs.push(format!(
+                    "{}: BuiltIn name mismatch ({} vs {})",
+                    path, fa.name, fb.name
+                ));
             }
         }
         (RObject::LanguageObject(_), RObject::LanguageObject(_)) => {}
@@ -108,7 +152,12 @@ fn compare_robjects(a: &RObject, b: &RObject, path: &str) -> Vec<String> {
         (RObject::ExternalPointerIndex(_), RObject::ExternalPointerIndex(_)) => {}
 
         _ => {
-            diffs.push(format!("{}: type mismatch ({} vs {})", path, type_name(a), type_name(b)));
+            diffs.push(format!(
+                "{}: type mismatch ({} vs {})",
+                path,
+                type_name(a),
+                type_name(b)
+            ));
         }
     }
 
@@ -143,20 +192,18 @@ fn roundtrip_single_file(input_path: &Path) -> Result<Vec<String>, String> {
 
     // 1. 读取原始文件
     let options = ParseRdsOptions::default();
-    let original = parse_rds_file(input_path, &options)
-        .map_err(|e| format!("读取失败: {}", e))?;
+    let original = parse_rds_file(input_path, &options).map_err(|e| format!("读取失败: {}", e))?;
 
     // 2. 写入到新文件
     let write_opts = WriteRdsOptions {
         compress: true,
         compression_level: 6,
     };
-    write_rds_file(&original, &output_path, &write_opts)
-        .map_err(|e| format!("写入失败: {}", e))?;
+    write_rds_file(&original, &output_path, &write_opts).map_err(|e| format!("写入失败: {}", e))?;
 
     // 3. 重新读取写入的文件
-    let reloaded = parse_rds_file(&output_path, &options)
-        .map_err(|e| format!("重新读取失败: {}", e))?;
+    let reloaded =
+        parse_rds_file(&output_path, &options).map_err(|e| format!("重新读取失败: {}", e))?;
 
     // 4. 比较
     let diffs = compare_robjects(&original.object, &reloaded.object, &filename);
@@ -207,7 +254,12 @@ fn test_roundtrip_all_generated_rds() {
                     println!("✅ {} ({:.2?})", filename, elapsed);
                     passed += 1;
                 } else {
-                    println!("⚠️  {} ({:.2?}) - {} 个差异", filename, elapsed, diffs.len());
+                    println!(
+                        "⚠️  {} ({:.2?}) - {} 个差异",
+                        filename,
+                        elapsed,
+                        diffs.len()
+                    );
                     for d in &diffs {
                         println!("   {}", d);
                     }

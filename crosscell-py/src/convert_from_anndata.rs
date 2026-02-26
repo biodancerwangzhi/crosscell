@@ -6,11 +6,11 @@ use pyo3::prelude::*;
 use pyo3::types::PyDict;
 use std::collections::HashMap;
 
-use crosscell::ir::{
-    DataFrame, DatasetMetadata, DenseMatrix, Embedding, ExpressionMatrix,
-    PairwiseMatrix, SingleCellData, SparseMatrixCSC, SparseMatrixCSR,
-};
 use crosscell::ir::unstructured::UnstructuredValue;
+use crosscell::ir::{
+    DataFrame, DatasetMetadata, DenseMatrix, Embedding, ExpressionMatrix, PairwiseMatrix,
+    SingleCellData, SparseMatrixCSC, SparseMatrixCSR,
+};
 
 /// Convert a Python AnnData object to SingleCellData
 pub fn anndata_to_ir(py: Python<'_>, adata: &Bound<'_, PyAny>) -> PyResult<SingleCellData> {
@@ -74,7 +74,10 @@ pub fn anndata_to_ir(py: Python<'_>, adata: &Bound<'_, PyAny>) -> PyResult<Singl
             let matrix = python_to_expression(py, &mat)?;
             cell_pairwise.insert(
                 key.clone(),
-                PairwiseMatrix { name: key.clone(), matrix },
+                PairwiseMatrix {
+                    name: key.clone(),
+                    matrix,
+                },
             );
         }
         data.cell_pairwise = Some(cell_pairwise);
@@ -112,14 +115,9 @@ pub fn anndata_to_ir(py: Python<'_>, adata: &Bound<'_, PyAny>) -> PyResult<Singl
 }
 
 /// Convert scipy.sparse / numpy.ndarray to ExpressionMatrix
-pub fn python_to_expression(
-    py: Python<'_>,
-    obj: &Bound<'_, PyAny>,
-) -> PyResult<ExpressionMatrix> {
+pub fn python_to_expression(py: Python<'_>, obj: &Bound<'_, PyAny>) -> PyResult<ExpressionMatrix> {
     let scipy_sparse = py.import_bound("scipy.sparse")?;
-    let is_sparse: bool = scipy_sparse
-        .call_method1("issparse", (obj,))?
-        .extract()?;
+    let is_sparse: bool = scipy_sparse.call_method1("issparse", (obj,))?.extract()?;
 
     if is_sparse {
         sparse_to_expression(py, obj)
@@ -128,10 +126,7 @@ pub fn python_to_expression(
     }
 }
 
-fn sparse_to_expression(
-    py: Python<'_>,
-    obj: &Bound<'_, PyAny>,
-) -> PyResult<ExpressionMatrix> {
+fn sparse_to_expression(py: Python<'_>, obj: &Bound<'_, PyAny>) -> PyResult<ExpressionMatrix> {
     let format: String = obj.getattr("format")?.extract()?;
     match format.as_str() {
         "csr" => {
@@ -175,10 +170,7 @@ fn sparse_to_expression(
     }
 }
 
-fn dense_to_expression(
-    py: Python<'_>,
-    obj: &Bound<'_, PyAny>,
-) -> PyResult<ExpressionMatrix> {
+fn dense_to_expression(py: Python<'_>, obj: &Bound<'_, PyAny>) -> PyResult<ExpressionMatrix> {
     let numpy = py.import_bound("numpy")?;
     let arr = numpy.call_method1("asarray", (obj,))?;
     let flat = arr.call_method0("flatten")?.call_method0("tolist")?;
@@ -200,10 +192,7 @@ pub fn pandas_to_dataframe(
     use arrow::array::{BooleanArray, Float64Array, Int64Array, StringArray};
     use std::sync::Arc;
 
-    let col_names: Vec<String> = df
-        .getattr("columns")?
-        .call_method0("tolist")?
-        .extract()?;
+    let col_names: Vec<String> = df.getattr("columns")?.call_method0("tolist")?.extract()?;
     let mut columns = Vec::new();
     let mut arrow_data = Vec::new();
 
@@ -231,8 +220,7 @@ pub fn pandas_to_dataframe(
         } else {
             let str_series = series.call_method1("astype", ("str",))?;
             let values: Vec<String> = str_series.call_method0("tolist")?.extract()?;
-            let str_values: Vec<Option<&str>> =
-                values.iter().map(|s| Some(s.as_str())).collect();
+            let str_values: Vec<Option<&str>> = values.iter().map(|s| Some(s.as_str())).collect();
             Arc::new(StringArray::from(str_values))
         };
 
@@ -266,9 +254,7 @@ fn pandas_categorical_to_arrow(
     );
     let keys = Int32Array::from(codes);
     let dict_array = DictionaryArray::try_new(keys, Arc::new(cat_array))
-        .map_err(|e| {
-            pyo3::exceptions::PyValueError::new_err(format!("Arrow error: {}", e))
-        })?;
+        .map_err(|e| pyo3::exceptions::PyValueError::new_err(format!("Arrow error: {}", e)))?;
     Ok(Arc::new(dict_array))
 }
 

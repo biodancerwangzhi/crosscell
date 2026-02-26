@@ -25,7 +25,10 @@ impl Symbol {
 
     /// 使用 UTF-8 编码创建符号
     pub fn utf8(name: impl Into<String>) -> Self {
-        Self { name: name.into(), encoding: StringEncoding::Utf8 }
+        Self {
+            name: name.into(),
+            encoding: StringEncoding::Utf8,
+        }
     }
 }
 

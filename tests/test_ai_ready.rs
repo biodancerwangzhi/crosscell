@@ -6,7 +6,9 @@ use arrow::array::{ArrayRef, StringArray};
 use crosscell::ir::{
     DataFrame, DatasetMetadata, DenseMatrix, ExpressionMatrix, SingleCellData, SparseMatrixCSR,
 };
-use crosscell::transform::{apply_gene_id_column, normalize_library_size, select_top_variable_genes};
+use crosscell::transform::{
+    apply_gene_id_column, normalize_library_size, select_top_variable_genes,
+};
 use proptest::prelude::*;
 use std::sync::Arc;
 
@@ -194,7 +196,6 @@ fn test_normalize_then_select_order_consistency() {
     }
 }
 
-
 // ============================================================
 // Unit Tests (9.9)
 // ============================================================
@@ -255,14 +256,8 @@ fn test_normalize_all_zero_row() {
 #[test]
 fn test_normalize_csr() {
     // 2x3 CSR matrix: [[1, 0, 2], [0, 3, 0]]
-    let csr = SparseMatrixCSR::new(
-        vec![1.0, 2.0, 3.0],
-        vec![0, 2, 1],
-        vec![0, 2, 3],
-        2,
-        3,
-    )
-    .unwrap();
+    let csr =
+        SparseMatrixCSR::new(vec![1.0, 2.0, 3.0], vec![0, 2, 1], vec![0, 2, 3], 2, 3).unwrap();
     let matrix = ExpressionMatrix::SparseCSR(csr);
     let result = normalize_library_size(&matrix).unwrap();
 
@@ -362,7 +357,9 @@ fn test_gene_selection_filters_layers() {
     let mut scd = make_scd_dense(data.clone(), n_rows, n_cols);
 
     // Add a layer with same dimensions
-    let layer = ExpressionMatrix::Dense(DenseMatrix::new(vec![1.0; n_rows * n_cols], n_rows, n_cols).unwrap());
+    let layer = ExpressionMatrix::Dense(
+        DenseMatrix::new(vec![1.0; n_rows * n_cols], n_rows, n_cols).unwrap(),
+    );
     let mut layers = std::collections::HashMap::new();
     layers.insert("counts".to_string(), layer);
     scd.layers = Some(layers);

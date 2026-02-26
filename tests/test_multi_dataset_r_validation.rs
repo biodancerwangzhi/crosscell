@@ -10,15 +10,42 @@ use std::path::Path;
 
 /// Test datasets to convert
 const DATASETS: &[(&str, &str)] = &[
-    ("data/generated/scanpy_pbmc3k.h5ad", "tests/data/multi_val/scanpy_pbmc3k.rds"),
-    ("data/generated/scanpy_pbmc3k_processed.h5ad", "tests/data/multi_val/scanpy_pbmc3k_processed.rds"),
-    ("data/generated/scvelo_pancreas.h5ad", "tests/data/multi_val/scvelo_pancreas.rds"),
-    ("data/generated/scvelo_dentategyrus.h5ad", "tests/data/multi_val/scvelo_dentategyrus.rds"),
-    ("tests/data/small_sparse.h5ad", "tests/data/multi_val/small_sparse.rds"),
-    ("tests/data/small_dense.h5ad", "tests/data/multi_val/small_dense.rds"),
-    ("tests/data/medium_sparse.h5ad", "tests/data/multi_val/medium_sparse.rds"),
-    ("tests/data/single_column.h5ad", "tests/data/multi_val/single_column.rds"),
-    ("tests/data/single_row.h5ad", "tests/data/multi_val/single_row.rds"),
+    (
+        "data/generated/scanpy_pbmc3k.h5ad",
+        "tests/data/multi_val/scanpy_pbmc3k.rds",
+    ),
+    (
+        "data/generated/scanpy_pbmc3k_processed.h5ad",
+        "tests/data/multi_val/scanpy_pbmc3k_processed.rds",
+    ),
+    (
+        "data/generated/scvelo_pancreas.h5ad",
+        "tests/data/multi_val/scvelo_pancreas.rds",
+    ),
+    (
+        "data/generated/scvelo_dentategyrus.h5ad",
+        "tests/data/multi_val/scvelo_dentategyrus.rds",
+    ),
+    (
+        "tests/data/small_sparse.h5ad",
+        "tests/data/multi_val/small_sparse.rds",
+    ),
+    (
+        "tests/data/small_dense.h5ad",
+        "tests/data/multi_val/small_dense.rds",
+    ),
+    (
+        "tests/data/medium_sparse.h5ad",
+        "tests/data/multi_val/medium_sparse.rds",
+    ),
+    (
+        "tests/data/single_column.h5ad",
+        "tests/data/multi_val/single_column.rds",
+    ),
+    (
+        "tests/data/single_row.h5ad",
+        "tests/data/multi_val/single_row.rds",
+    ),
 ];
 
 #[test]
@@ -64,6 +91,9 @@ fn test_convert_multiple_h5ad_to_rds() {
     }
 
     println!("\n=== Summary ===");
-    println!("Success: {}, Skipped: {}, Failed: {}", success, skipped, failed);
+    println!(
+        "Success: {}, Skipped: {}, Failed: {}",
+        success, skipped, failed
+    );
     assert_eq!(failed, 0, "{} datasets failed conversion", failed);
 }

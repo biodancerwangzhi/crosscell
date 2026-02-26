@@ -6,15 +6,21 @@ use std::path::Path;
 /// 测试解析单个文件
 fn test_parse_file(path: &Path) -> Result<String, String> {
     let options = ParseRdsOptions::default();
-    
+
     match parse_rds_file(path, &options) {
         Ok(rds) => {
             let obj_type = format!("{:?}", rds.object.sexp_type());
-            Ok(format!("✅ {} - {}", path.file_name().unwrap().to_string_lossy(), obj_type))
+            Ok(format!(
+                "✅ {} - {}",
+                path.file_name().unwrap().to_string_lossy(),
+                obj_type
+            ))
         }
-        Err(e) => {
-            Err(format!("❌ {} - {}", path.file_name().unwrap().to_string_lossy(), e))
-        }
+        Err(e) => Err(format!(
+            "❌ {} - {}",
+            path.file_name().unwrap().to_string_lossy(),
+            e
+        )),
     }
 }
 
@@ -51,15 +57,15 @@ fn test_parse_all_generated_rds() {
 
     // 排序结果
     results.sort();
-    
+
     println!("\n========================================");
     println!("Parse Test Results for data/generated/");
     println!("========================================\n");
-    
+
     for result in &results {
         println!("{}", result);
     }
-    
+
     println!("\n========================================");
     println!("Summary: {} passed, {} failed", passed, failed);
     println!("========================================");

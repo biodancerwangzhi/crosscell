@@ -9,11 +9,9 @@ use crate::ir::{ExpressionMatrix, SingleCellData};
 use crate::seurat::seurat_to_ir::seurat_rds_to_ir;
 use std::path::Path;
 
-use super::ComparisonResult;
-use super::compare::{
-    compare_dataframe, compare_embeddings, compare_layers,
-};
 use super::accuracy::pearson_correlation;
+use super::compare::{compare_dataframe, compare_embeddings, compare_layers};
+use super::ComparisonResult;
 
 /// 跨格式比较报告
 #[derive(Debug)]
@@ -39,8 +37,12 @@ pub struct CrossFormatReport {
 impl CrossFormatReport {
     /// 生成摘要
     pub fn summary(&self) -> String {
-        let status = if self.passed { "✅ 通过" } else { "❌ 失败" };
-        
+        let status = if self.passed {
+            "✅ 通过"
+        } else {
+            "❌ 失败"
+        };
+
         let mut summary = format!(
             "跨格式验证报告 {}\n\n\
              📊 表达矩阵\n\
@@ -52,28 +54,36 @@ impl CrossFormatReport {
             self.expression_correlation,
             self.h5ad_sparsity * 100.0,
             self.rds_sparsity * 100.0,
-            if self.expression_match.passed { "✓" } else { "✗" }
+            if self.expression_match.passed {
+                "✓"
+            } else {
+                "✗"
+            }
         );
-        
+
         summary.push_str(&format!(
             "\n📋 元数据\n- 状态: {}\n",
-            if self.metadata_match.passed { "✓" } else { "✗" }
+            if self.metadata_match.passed {
+                "✓"
+            } else {
+                "✗"
+            }
         ));
-        
+
         if let Some(ref emb) = self.embeddings_match {
             summary.push_str(&format!(
                 "\n🎯 嵌入\n- 状态: {}\n",
                 if emb.passed { "✓" } else { "✗" }
             ));
         }
-        
+
         if let Some(ref layers) = self.layers_match {
             summary.push_str(&format!(
                 "\n📚 Layers\n- 状态: {}\n",
                 if layers.passed { "✓" } else { "✗" }
             ));
         }
-        
+
         summary
     }
 }
@@ -94,12 +104,14 @@ pub fn compare_h5ad_rds<P: AsRef<Path>>(
 ) -> Result<CrossFormatReport, CrossCellError> {
     // 读取 H5AD 文件
     let h5ad_ir = read_h5ad(h5ad_path.as_ref())?;
-    
+
     // 读取 RDS 文件
-    let rds_path_str = rds_path.as_ref().to_str()
+    let rds_path_str = rds_path
+        .as_ref()
+        .to_str()
         .ok_or_else(|| CrossCellError::InvalidFormat("Invalid RDS path".to_string()))?;
     let rds_ir = seurat_rds_to_ir(rds_path_str)?;
-    
+
     // 比较两个 IR
     compare_ir_cross_format(&h5ad_ir, &rds_ir, tolerance)
 }
@@ -115,32 +127,22 @@ pub fn compare_ir_cross_format(
     // 计算稀疏度
     let h5ad_sparsity = calculate_matrix_sparsity(&h5ad_ir.expression);
     let rds_sparsity = calculate_matrix_sparsity(&rds_ir.expression);
-    
+
     // 计算相关系数
-    let expression_correlation = calculate_expression_correlation(
-        &h5ad_ir.expression,
-        &rds_ir.expression,
-    )?;
-    
+    let expression_correlation =
+        calculate_expression_correlation(&h5ad_ir.expression, &rds_ir.expression)?;
+
     // 比较表达矩阵（考虑格式差异）
-    let expression_match = compare_expression_cross_format(
-        &h5ad_ir.expression,
-        &rds_ir.expression,
-        tolerance,
-    );
-    
+    let expression_match =
+        compare_expression_cross_format(&h5ad_ir.expression, &rds_ir.expression, tolerance);
+
     // 比较元数据
-    let metadata_match = compare_dataframe(
-        &h5ad_ir.cell_metadata,
-        &rds_ir.cell_metadata,
-        tolerance,
-    );
-    
+    let metadata_match =
+        compare_dataframe(&h5ad_ir.cell_metadata, &rds_ir.cell_metadata, tolerance);
+
     // 比较嵌入
     let embeddings_match = match (&h5ad_ir.embeddings, &rds_ir.embeddings) {
-        (Some(h5ad_emb), Some(rds_emb)) => {
-            Some(compare_embeddings(h5ad_emb, rds_emb, tolerance))
-        }
+        (Some(h5ad_emb), Some(rds_emb)) => Some(compare_embeddings(h5ad_emb, rds_emb, tolerance)),
         (None, None) => None,
         _ => Some(ComparisonResult {
             passed: false,
@@ -148,7 +150,7 @@ pub fn compare_ir_cross_format(
             max_difference: None,
         }),
     };
-    
+
     // 比较 layers
     let layers_match = match (&h5ad_ir.layers, &rds_ir.layers) {
         (Some(h5ad_layers), Some(rds_layers)) => {
@@ -161,14 +163,14 @@ pub fn compare_ir_cross_format(
             max_difference: None,
         }),
     };
-    
+
     // 判断总体是否通过
     let passed = expression_match.passed
         && metadata_match.passed
         && embeddings_match.as_ref().map_or(true, |e| e.passed)
         && layers_match.as_ref().map_or(true, |l| l.passed)
         && expression_correlation > 0.9999;
-    
+
     Ok(CrossFormatReport {
         expression_match,
         metadata_match,
@@ -192,7 +194,7 @@ fn compare_expression_cross_format(
     // 检查维度
     let (h5ad_rows, h5ad_cols) = h5ad_expr.shape();
     let (rds_rows, rds_cols) = rds_expr.shape();
-    
+
     if h5ad_rows != rds_rows || h5ad_cols != rds_cols {
         return ComparisonResult {
             passed: false,
@@ -203,7 +205,7 @@ fn compare_expression_cross_format(
             max_difference: None,
         };
     }
-    
+
     // 如果格式相同，直接比较
     match (h5ad_expr, rds_expr) {
         (ExpressionMatrix::SparseCSR(h5ad), ExpressionMatrix::SparseCSR(rds)) => {
@@ -244,15 +246,11 @@ fn compare_sparse_csr_values(
     if a.data.len() != b.data.len() {
         return ComparisonResult {
             passed: false,
-            message: format!(
-                "非零元素数量不匹配: {} vs {}",
-                a.data.len(),
-                b.data.len()
-            ),
+            message: format!("非零元素数量不匹配: {} vs {}", a.data.len(), b.data.len()),
             max_difference: None,
         };
     }
-    
+
     // 比较索引
     if a.indices != b.indices {
         return ComparisonResult {
@@ -261,7 +259,7 @@ fn compare_sparse_csr_values(
             max_difference: None,
         };
     }
-    
+
     if a.indptr != b.indptr {
         return ComparisonResult {
             passed: false,
@@ -269,7 +267,7 @@ fn compare_sparse_csr_values(
             max_difference: None,
         };
     }
-    
+
     // 比较数值
     let max_diff = a
         .data
@@ -277,9 +275,9 @@ fn compare_sparse_csr_values(
         .zip(b.data.iter())
         .map(|(x, y)| (x - y).abs())
         .fold(0.0, f64::max);
-    
+
     let passed = max_diff < tolerance;
-    
+
     ComparisonResult {
         passed,
         message: if passed {
@@ -304,15 +302,11 @@ fn compare_sparse_csc_values(
     if a.data.len() != b.data.len() {
         return ComparisonResult {
             passed: false,
-            message: format!(
-                "非零元素数量不匹配: {} vs {}",
-                a.data.len(),
-                b.data.len()
-            ),
+            message: format!("非零元素数量不匹配: {} vs {}", a.data.len(), b.data.len()),
             max_difference: None,
         };
     }
-    
+
     // 比较索引
     if a.indices != b.indices {
         return ComparisonResult {
@@ -321,7 +315,7 @@ fn compare_sparse_csc_values(
             max_difference: None,
         };
     }
-    
+
     if a.indptr != b.indptr {
         return ComparisonResult {
             passed: false,
@@ -329,7 +323,7 @@ fn compare_sparse_csc_values(
             max_difference: None,
         };
     }
-    
+
     // 比较数值
     let max_diff = a
         .data
@@ -337,9 +331,9 @@ fn compare_sparse_csc_values(
         .zip(b.data.iter())
         .map(|(x, y)| (x - y).abs())
         .fold(0.0, f64::max);
-    
+
     let passed = max_diff < tolerance;
-    
+
     ComparisonResult {
         passed,
         message: if passed {
@@ -363,24 +357,20 @@ fn compare_dense_values(
     if a.data.len() != b.data.len() {
         return ComparisonResult {
             passed: false,
-            message: format!(
-                "数据长度不匹配: {} vs {}",
-                a.data.len(),
-                b.data.len()
-            ),
+            message: format!("数据长度不匹配: {} vs {}", a.data.len(), b.data.len()),
             max_difference: None,
         };
     }
-    
+
     let max_diff = a
         .data
         .iter()
         .zip(b.data.iter())
         .map(|(x, y)| (x - y).abs())
         .fold(0.0, f64::max);
-    
+
     let passed = max_diff < tolerance;
-    
+
     ComparisonResult {
         passed,
         message: if passed {
@@ -404,31 +394,32 @@ fn calculate_expression_correlation(
 ) -> Result<f64, CrossCellError> {
     let (a_rows, a_cols) = a.shape();
     let (b_rows, b_cols) = b.shape();
-    
+
     if a_rows != b_rows || a_cols != b_cols {
-        return Err(CrossCellError::ValidationFailed(
-            format!("矩阵维度不匹配: ({}, {}) vs ({}, {})", a_rows, a_cols, b_rows, b_cols),
-        ));
+        return Err(CrossCellError::ValidationFailed(format!(
+            "矩阵维度不匹配: ({}, {}) vs ({}, {})",
+            a_rows, a_cols, b_rows, b_cols
+        )));
     }
-    
+
     if a_rows == 0 || a_cols == 0 {
         return Ok(1.0); // 空矩阵视为完全匹配
     }
-    
+
     // 将两个矩阵都转换为 CSC 格式，然后按位置提取数据
     let a_csc = to_csc(a);
     let b_csc = to_csc(b);
-    
+
     // 构建位置到值的映射
     let a_values = sparse_to_dense_vector(&a_csc);
     let b_values = sparse_to_dense_vector(&b_csc);
-    
+
     if a_values.len() != b_values.len() {
         return Err(CrossCellError::ValidationFailed(
             "转换后数据长度不匹配".to_string(),
         ));
     }
-    
+
     Ok(pearson_correlation(&a_values, &b_values))
 }
 
@@ -456,7 +447,7 @@ fn dense_to_csc(dense: &crate::ir::DenseMatrix) -> crate::ir::SparseMatrixCSC {
     let mut data = Vec::new();
     let mut indices = Vec::new();
     let mut indptr = vec![0usize];
-    
+
     // 按列遍历（CSC 是列优先）
     // DenseMatrix 是行优先存储
     for col in 0..dense.n_cols {
@@ -471,7 +462,7 @@ fn dense_to_csc(dense: &crate::ir::DenseMatrix) -> crate::ir::SparseMatrixCSC {
         }
         indptr.push(data.len());
     }
-    
+
     crate::ir::SparseMatrixCSC {
         n_rows: dense.n_rows,
         n_cols: dense.n_cols,
@@ -486,21 +477,21 @@ fn dense_to_csc(dense: &crate::ir::DenseMatrix) -> crate::ir::SparseMatrixCSC {
 /// 对于大矩阵，只采样部分数据以避免内存问题
 fn sparse_to_dense_vector(csc: &crate::ir::SparseMatrixCSC) -> Vec<f64> {
     let total_elements = csc.n_rows * csc.n_cols;
-    
+
     // 如果矩阵太大，使用采样方法
     if total_elements > 10_000_000 {
         // 对于大矩阵，只比较非零元素
         // 但需要确保两个矩阵的非零元素在相同位置
         return sample_sparse_values(csc, 1_000_000);
     }
-    
+
     // 对于小矩阵，转换为完整的稠密向量
     let mut dense = vec![0.0; total_elements];
-    
+
     for col in 0..csc.n_cols {
         let start = csc.indptr[col];
         let end = csc.indptr[col + 1];
-        
+
         for i in start..end {
             let row = csc.indices[i];
             let val = csc.data[i];
@@ -509,23 +500,23 @@ fn sparse_to_dense_vector(csc: &crate::ir::SparseMatrixCSC) -> Vec<f64> {
             dense[idx] = val;
         }
     }
-    
+
     dense
 }
 
 /// 从稀疏矩阵采样值（用于大矩阵）
 fn sample_sparse_values(csc: &crate::ir::SparseMatrixCSC, max_samples: usize) -> Vec<f64> {
     let nnz = csc.data.len();
-    
+
     if nnz <= max_samples {
         // 如果非零元素不多，直接返回所有值
         // 但需要按位置排序
         let mut indexed_values: Vec<(usize, f64)> = Vec::with_capacity(nnz);
-        
+
         for col in 0..csc.n_cols {
             let start = csc.indptr[col];
             let end = csc.indptr[col + 1];
-            
+
             for i in start..end {
                 let row = csc.indices[i];
                 let val = csc.data[i];
@@ -533,7 +524,7 @@ fn sample_sparse_values(csc: &crate::ir::SparseMatrixCSC, max_samples: usize) ->
                 indexed_values.push((idx, val));
             }
         }
-        
+
         // 按位置排序
         indexed_values.sort_by_key(|(idx, _)| *idx);
         indexed_values.into_iter().map(|(_, v)| v).collect()
@@ -548,21 +539,20 @@ fn sample_sparse_values(csc: &crate::ir::SparseMatrixCSC, max_samples: usize) ->
 fn calculate_matrix_sparsity(matrix: &ExpressionMatrix) -> f64 {
     let (rows, cols) = matrix.shape();
     let total = rows * cols;
-    
+
     if total == 0 {
         return 1.0;
     }
-    
+
     let nnz = match matrix {
         ExpressionMatrix::SparseCSR(m) => m.data.len(),
         ExpressionMatrix::SparseCSC(m) => m.data.len(),
         ExpressionMatrix::Dense(m) => m.data.iter().filter(|&&x| x != 0.0).count(),
         ExpressionMatrix::Lazy(_) => 0, // Lazy 矩阵暂不支持
     };
-    
+
     1.0 - (nnz as f64 / total as f64)
 }
-
 
 // ============================================================================
 // 跨格式验证函数
@@ -583,7 +573,7 @@ pub fn validate_h5ad_to_rds<P: AsRef<Path>>(
     tolerance: f64,
 ) -> Result<CrossFormatValidationResult, CrossCellError> {
     let report = compare_h5ad_rds(&original_h5ad, &converted_rds, tolerance)?;
-    
+
     Ok(CrossFormatValidationResult {
         direction: ConversionDirection::H5adToRds,
         original_path: original_h5ad.as_ref().to_string_lossy().to_string(),
@@ -608,7 +598,7 @@ pub fn validate_rds_to_h5ad<P: AsRef<Path>>(
 ) -> Result<CrossFormatValidationResult, CrossCellError> {
     // 注意：这里交换参数顺序，因为 compare_h5ad_rds 期望 h5ad 在前
     let report = compare_h5ad_rds(&converted_h5ad, &original_rds, tolerance)?;
-    
+
     Ok(CrossFormatValidationResult {
         direction: ConversionDirection::RdsToH5ad,
         original_path: original_rds.as_ref().to_string_lossy().to_string(),
@@ -635,15 +625,17 @@ pub fn validate_roundtrip<P: AsRef<Path>>(
 ) -> Result<RoundtripValidationResult, CrossCellError> {
     let original_path = original.as_ref();
     let roundtrip_path = roundtrip.as_ref();
-    
+
     // 根据文件扩展名确定格式
-    let original_ext = original_path.extension()
+    let original_ext = original_path
+        .extension()
         .and_then(|e| e.to_str())
         .unwrap_or("");
-    let roundtrip_ext = roundtrip_path.extension()
+    let roundtrip_ext = roundtrip_path
+        .extension()
         .and_then(|e| e.to_str())
         .unwrap_or("");
-    
+
     // 验证扩展名匹配
     if original_ext != roundtrip_ext {
         return Err(CrossCellError::InvalidFormat(format!(
@@ -651,7 +643,7 @@ pub fn validate_roundtrip<P: AsRef<Path>>(
             original_ext, roundtrip_ext
         )));
     }
-    
+
     // 读取两个文件
     let (original_ir, roundtrip_ir) = match original_ext {
         "h5ad" => {
@@ -660,9 +652,11 @@ pub fn validate_roundtrip<P: AsRef<Path>>(
             (orig, rt)
         }
         "rds" => {
-            let orig_str = original_path.to_str()
+            let orig_str = original_path
+                .to_str()
                 .ok_or_else(|| CrossCellError::InvalidFormat("Invalid path".to_string()))?;
-            let rt_str = roundtrip_path.to_str()
+            let rt_str = roundtrip_path
+                .to_str()
                 .ok_or_else(|| CrossCellError::InvalidFormat("Invalid path".to_string()))?;
             let orig = seurat_rds_to_ir(orig_str)?;
             let rt = seurat_rds_to_ir(rt_str)?;
@@ -675,10 +669,10 @@ pub fn validate_roundtrip<P: AsRef<Path>>(
             });
         }
     };
-    
+
     // 比较两个 IR
     let report = compare_ir_cross_format(&original_ir, &roundtrip_ir, tolerance)?;
-    
+
     Ok(RoundtripValidationResult {
         format: original_ext.to_string(),
         original_path: original_path.to_string_lossy().to_string(),
@@ -723,10 +717,14 @@ impl CrossFormatValidationResult {
     pub fn passed(&self) -> bool {
         self.report.passed
     }
-    
+
     /// 生成摘要
     pub fn summary(&self) -> String {
-        let status = if self.passed() { "✅ 通过" } else { "❌ 失败" };
+        let status = if self.passed() {
+            "✅ 通过"
+        } else {
+            "❌ 失败"
+        };
         format!(
             "跨格式验证 {} {}\n\
              原始文件: {}\n\
@@ -759,10 +757,14 @@ impl RoundtripValidationResult {
     pub fn passed(&self) -> bool {
         self.report.passed
     }
-    
+
     /// 生成摘要
     pub fn summary(&self) -> String {
-        let status = if self.passed() { "✅ 通过" } else { "❌ 失败" };
+        let status = if self.passed() {
+            "✅ 通过"
+        } else {
+            "❌ 失败"
+        };
         format!(
             "往返验证 (.{}) {}\n\
              原始文件: {}\n\

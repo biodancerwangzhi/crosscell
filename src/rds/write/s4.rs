@@ -3,13 +3,13 @@
 //! 写入 R 的 S4 对象。S4 对象以配对列表形式写入槽位，
 //! 第一个槽位是 class 属性（包含 package 子属性）。
 
-use std::io::Write;
-use crate::rds::error::Result;
-use crate::rds::r_object::{S4Object, RObject, Attributes, StringVector};
-use crate::rds::string_encoding::StringEncoding;
-use crate::rds::sexp_type::SEXPType;
-use super::utils::{write_header, write_pairlist_header};
 use super::shared_info::SharedWriteInfo;
+use super::utils::{write_header, write_pairlist_header};
+use crate::rds::error::Result;
+use crate::rds::r_object::{Attributes, RObject, S4Object, StringVector};
+use crate::rds::sexp_type::SEXPType;
+use crate::rds::string_encoding::StringEncoding;
+use std::io::Write;
 
 /// 写入 S4 对象体
 ///
@@ -40,7 +40,11 @@ where
             missing: vec![false],
             attributes: Default::default(),
         };
-        class_attrs.add("package".into(), RObject::StringVector(pkg_vec), StringEncoding::Utf8);
+        class_attrs.add(
+            "package".into(),
+            RObject::StringVector(pkg_vec),
+            StringEncoding::Utf8,
+        );
     }
 
     let class_vec = StringVector {
@@ -54,7 +58,12 @@ where
     // 写入其他槽位（作为属性）
     for i in 0..s4.attributes.names.len() {
         write_pairlist_header(true, writer)?;
-        let enc = s4.attributes.encodings.get(i).copied().unwrap_or(StringEncoding::Utf8);
+        let enc = s4
+            .attributes
+            .encodings
+            .get(i)
+            .copied()
+            .unwrap_or(StringEncoding::Utf8);
         shared.write_symbol(&s4.attributes.names[i], enc, writer)?;
         write_obj(&s4.attributes.values[i], writer, shared)?;
     }
@@ -67,12 +76,16 @@ where
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::io::Cursor;
-    use crate::rds::symbol::Symbol;
     use crate::rds::environment::Environment;
     use crate::rds::external_pointer::ExternalPointer;
+    use crate::rds::symbol::Symbol;
+    use std::io::Cursor;
 
-    fn mk<'a>(s: &'a [Symbol], e: &'a [Environment], p: &'a [ExternalPointer]) -> SharedWriteInfo<'a> {
+    fn mk<'a>(
+        s: &'a [Symbol],
+        e: &'a [Environment],
+        p: &'a [ExternalPointer],
+    ) -> SharedWriteInfo<'a> {
         SharedWriteInfo::new(s, e, p)
     }
     fn nw(_: &RObject, w: &mut Cursor<Vec<u8>>, _: &mut SharedWriteInfo) -> Result<()> {

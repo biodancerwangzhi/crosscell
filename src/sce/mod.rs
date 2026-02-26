@@ -19,11 +19,11 @@
 
 pub mod error;
 pub mod extract;
-pub mod sce_to_ir;
 pub mod ir_to_sce;
+pub mod sce_to_ir;
 
 // 重新导出核心类型和函数
 pub use error::SceError;
-pub use sce_to_ir::sce_rds_to_ir;
-pub use ir_to_sce::{ir_to_sce_rds, write_sce_rds};
 pub use extract::is_sce_object;
+pub use ir_to_sce::{ir_to_sce_rds, write_sce_rds};
+pub use sce_to_ir::sce_rds_to_ir;

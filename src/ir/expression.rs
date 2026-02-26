@@ -50,7 +50,7 @@ pub enum BackendType {
 }
 
 /// 延迟加载矩阵
-/// 
+///
 /// 支持按需加载数据，显著降低内存占用。
 /// 适用于超大数据集（100 万+ 细胞）。
 #[derive(Debug)]
@@ -333,9 +333,7 @@ impl ChunkedMatrix {
             ExpressionMatrix::Dense(_) => self.merge_dense_chunks(),
             ExpressionMatrix::SparseCSR(_) => self.merge_csr_chunks(),
             ExpressionMatrix::SparseCSC(_) => self.merge_csc_chunks(),
-            ExpressionMatrix::Lazy(_) => {
-                Err("Cannot merge lazy chunks directly".to_string())
-            }
+            ExpressionMatrix::Lazy(_) => Err("Cannot merge lazy chunks directly".to_string()),
         }
     }
 
@@ -352,7 +350,7 @@ impl ChunkedMatrix {
     /// 添加一个块
     pub fn add_chunk(&mut self, chunk: ExpressionMatrix) -> Result<(), String> {
         let (chunk_rows, chunk_cols) = chunk.shape();
-        
+
         // 验证列数一致
         if chunk_cols != self.total_cols {
             return Err(format!(
@@ -408,9 +406,7 @@ impl ChunkedMatrix {
                 let end_idx = end_row * m.n_cols;
                 let data = m.data[start_idx..end_idx].to_vec();
                 Ok(ExpressionMatrix::Dense(DenseMatrix::new(
-                    data,
-                    chunk_rows,
-                    m.n_cols,
+                    data, chunk_rows, m.n_cols,
                 )?))
             }
             ExpressionMatrix::SparseCSR(m) => {
@@ -426,11 +422,7 @@ impl ChunkedMatrix {
                     .collect();
 
                 Ok(ExpressionMatrix::SparseCSR(SparseMatrixCSR::new(
-                    data,
-                    indices,
-                    indptr,
-                    chunk_rows,
-                    m.n_cols,
+                    data, indices, indptr, chunk_rows, m.n_cols,
                 )?))
             }
             ExpressionMatrix::SparseCSC(m) => {
@@ -462,9 +454,7 @@ impl ChunkedMatrix {
                     m.n_cols,
                 )?))
             }
-            ExpressionMatrix::Lazy(_) => {
-                Err("Cannot extract rows from lazy matrix".to_string())
-            }
+            ExpressionMatrix::Lazy(_) => Err("Cannot extract rows from lazy matrix".to_string()),
         }
     }
 
@@ -1341,7 +1331,8 @@ mod tests {
             indptr.push(data.len());
         }
 
-        let csr = SparseMatrixCSR::new(data.clone(), indices.clone(), indptr.clone(), 10, 5).unwrap();
+        let csr =
+            SparseMatrixCSR::new(data.clone(), indices.clone(), indptr.clone(), 10, 5).unwrap();
         let original = ExpressionMatrix::SparseCSR(csr);
 
         // 分块
@@ -1404,7 +1395,7 @@ mod tests {
     fn test_chunked_matrix_display() {
         let chunked = ChunkedMatrix::new(5000, 10000, 500, true, Some(SparseFormat::CSR));
         let display = format!("{}", chunked);
-        
+
         assert!(display.contains("ChunkedMatrix"));
         assert!(display.contains("10000"));
         assert!(display.contains("500"));
@@ -1415,7 +1406,7 @@ mod tests {
     #[test]
     fn test_chunked_matrix_empty() {
         let chunked = ChunkedMatrix::new(5000, 0, 500, true, Some(SparseFormat::CSR));
-        
+
         let merged = chunked.to_matrix().unwrap();
         assert_eq!(merged.shape(), (0, 500));
     }

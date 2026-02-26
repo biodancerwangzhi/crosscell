@@ -2,11 +2,11 @@
 //!
 //! 写入 R 的通用列表（VEC 类型）。
 
-use std::io::Write;
+use super::shared_info::SharedWriteInfo;
+use super::utils::write_length;
 use crate::rds::error::Result;
 use crate::rds::r_object::{GenericVector, RObject};
-use super::utils::write_length;
-use super::shared_info::SharedWriteInfo;
+use std::io::Write;
 
 /// 写入列表体（不含头部）
 pub fn write_list_body<W, F>(
@@ -28,15 +28,19 @@ where
 
 #[cfg(test)]
 mod tests {
+    use super::super::utils::write_header;
     use super::*;
-    use std::io::Cursor;
-    use crate::rds::sexp_type::SEXPType;
-    use crate::rds::symbol::Symbol;
     use crate::rds::environment::Environment;
     use crate::rds::external_pointer::ExternalPointer;
-    use super::super::utils::write_header;
+    use crate::rds::sexp_type::SEXPType;
+    use crate::rds::symbol::Symbol;
+    use std::io::Cursor;
 
-    fn mk<'a>(s: &'a [Symbol], e: &'a [Environment], p: &'a [ExternalPointer]) -> SharedWriteInfo<'a> {
+    fn mk<'a>(
+        s: &'a [Symbol],
+        e: &'a [Environment],
+        p: &'a [ExternalPointer],
+    ) -> SharedWriteInfo<'a> {
         SharedWriteInfo::new(s, e, p)
     }
     fn nw(_: &RObject, w: &mut Cursor<Vec<u8>>, _: &mut SharedWriteInfo) -> Result<()> {
@@ -45,7 +49,10 @@ mod tests {
 
     #[test]
     fn test_empty_list() {
-        let v = GenericVector { data: vec![], attributes: Default::default() };
+        let v = GenericVector {
+            data: vec![],
+            attributes: Default::default(),
+        };
         let (s, e, p) = (vec![], vec![], vec![]);
         let mut sh = mk(&s, &e, &p);
         let mut buf = Cursor::new(Vec::new());

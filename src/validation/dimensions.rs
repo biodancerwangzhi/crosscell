@@ -125,8 +125,14 @@ pub fn dimension_report(data: &SingleCellData) -> String {
         n_cells, n_genes
     );
 
-    report.push_str(&format!("- Cell metadata: {} rows\n", data.cell_metadata.n_rows));
-    report.push_str(&format!("- Gene metadata: {} rows\n", data.gene_metadata.n_rows));
+    report.push_str(&format!(
+        "- Cell metadata: {} rows\n",
+        data.cell_metadata.n_rows
+    ));
+    report.push_str(&format!(
+        "- Gene metadata: {} rows\n",
+        data.gene_metadata.n_rows
+    ));
 
     if let Some(ref layers) = data.layers {
         if !layers.is_empty() {
@@ -164,7 +170,10 @@ pub fn dimension_report(data: &SingleCellData) -> String {
 
     if let Some(ref gene_loadings) = data.gene_loadings {
         if !gene_loadings.is_empty() {
-            report.push_str(&format!("- Gene loadings (varm): {}\n", gene_loadings.len()));
+            report.push_str(&format!(
+                "- Gene loadings (varm): {}\n",
+                gene_loadings.len()
+            ));
             for (name, loading) in gene_loadings {
                 report.push_str(&format!(
                     "  - {}: {} genes × {} components\n",
@@ -180,7 +189,7 @@ pub fn dimension_report(data: &SingleCellData) -> String {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::ir::{DatasetMetadata, DenseMatrix, DataFrame, ExpressionMatrix};
+    use crate::ir::{DataFrame, DatasetMetadata, DenseMatrix, ExpressionMatrix};
 
     fn create_test_data(n_cells: usize, n_genes: usize) -> SingleCellData {
         SingleCellData {

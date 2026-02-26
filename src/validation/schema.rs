@@ -23,9 +23,7 @@ pub const CELLXGENE_V5_OBS_REQUIRED: &[&str] = &[
 
 /// CELLxGENE Schema 5.0 Curator 必须标注的 var 字段
 /// feature_is_filtered 是唯一的 curator 必须标注的 var 列
-pub const CELLXGENE_V5_VAR_REQUIRED: &[&str] = &[
-    "feature_is_filtered",
-];
+pub const CELLXGENE_V5_VAR_REQUIRED: &[&str] = &["feature_is_filtered"];
 
 /// Schema 验证结果
 #[derive(Debug, Clone)]
@@ -132,9 +130,7 @@ mod tests {
         let columns: Vec<String> = col_names.iter().map(|s| s.to_string()).collect();
         let data: Vec<arrow::array::ArrayRef> = col_names
             .iter()
-            .map(|_| {
-                Arc::new(StringArray::from(vec!["x"; n_rows])) as arrow::array::ArrayRef
-            })
+            .map(|_| Arc::new(StringArray::from(vec!["x"; n_rows])) as arrow::array::ArrayRef)
             .collect();
         DataFrame::new(columns, data, n_rows).unwrap()
     }
@@ -164,7 +160,11 @@ mod tests {
         let data = SingleCellData::new(expr, obs, var, metadata).unwrap();
 
         let result = validate_cellxgene_schema(&data, "cellxgene-v5");
-        assert!(result.passed, "Should pass when all fields present: {:?}", result);
+        assert!(
+            result.passed,
+            "Should pass when all fields present: {:?}",
+            result
+        );
         assert!(result.missing_obs_fields.is_empty());
         assert!(result.missing_var_fields.is_empty());
     }
@@ -181,7 +181,10 @@ mod tests {
 
         let result = validate_cellxgene_schema(&data, "cellxgene-v5");
         assert!(!result.passed);
-        assert_eq!(result.missing_obs_fields.len(), CELLXGENE_V5_OBS_REQUIRED.len() - 3);
+        assert_eq!(
+            result.missing_obs_fields.len(),
+            CELLXGENE_V5_OBS_REQUIRED.len() - 3
+        );
         assert!(result.missing_var_fields.is_empty());
     }
 

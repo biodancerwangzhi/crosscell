@@ -4,11 +4,11 @@ use std::path::Path;
 #[test]
 fn test_read_seurat_simplified() {
     let path = Path::new("tests/data/seurat_minimal_simplified.rds");
-    
+
     println!("\n========================================");
     println!("Reading Seurat simplified RDS");
     println!("========================================\n");
-    
+
     match read_rds(path) {
         Ok(robj) => {
             println!("✅ Successfully read RDS object");

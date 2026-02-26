@@ -3,23 +3,23 @@
 //! 根据 RObject 类型分发到具体的写入器。
 //! 对应 rds2cpp 的 write_object 函数。
 
-use std::io::Write;
-use crate::rds::error::Result;
-use crate::rds::sexp_type::SEXPType;
-use crate::rds::r_object::RObject;
-use super::utils::{write_header, write_header_with_attributes};
-use super::shared_info::SharedWriteInfo;
 use super::atomic::{
-    write_integer_body, write_logical_body, write_double_body,
-    write_raw_body, write_complex_body, write_string_body,
+    write_complex_body, write_double_body, write_integer_body, write_logical_body, write_raw_body,
+    write_string_body,
 };
+use super::attributes::write_attributes;
+use super::builtin::write_builtin_body;
+use super::expression::write_expression_body;
+use super::language::write_language;
 use super::list::write_list_body;
 use super::pairlist::write_pairlist;
 use super::s4::write_s4;
-use super::builtin::write_builtin_body;
-use super::language::write_language;
-use super::expression::write_expression_body;
-use super::attributes::write_attributes;
+use super::shared_info::SharedWriteInfo;
+use super::utils::{write_header, write_header_with_attributes};
+use crate::rds::error::Result;
+use crate::rds::r_object::RObject;
+use crate::rds::sexp_type::SEXPType;
+use std::io::Write;
 
 /// 写入任意 R 对象
 ///
@@ -184,22 +184,20 @@ pub fn write_object<W: Write>(
     Ok(())
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::io::Cursor;
+    use crate::rds::environment::Environment;
+    use crate::rds::external_pointer::ExternalPointer;
     use crate::rds::r_object::{
-        IntegerVector, LogicalVector, DoubleVector, RawVector,
-        ComplexVector, StringVector, GenericVector, PairList,
-        BuiltInFunction, LanguageObject, S4Object, Attributes,
-        SymbolIndex, EnvironmentIndex,
+        Attributes, BuiltInFunction, ComplexVector, DoubleVector, EnvironmentIndex, GenericVector,
+        IntegerVector, LanguageObject, LogicalVector, PairList, RawVector, S4Object, StringVector,
+        SymbolIndex,
     };
     use crate::rds::string_encoding::StringEncoding;
     use crate::rds::symbol::Symbol;
-    use crate::rds::environment::Environment;
-    use crate::rds::external_pointer::ExternalPointer;
     use num_complex::Complex64;
+    use std::io::Cursor;
 
     fn make_shared<'a>(
         symbols: &'a [Symbol],
@@ -413,9 +411,7 @@ mod tests {
 
     #[test]
     fn test_write_symbol_ref() {
-        let symbols = vec![
-            Symbol::new("x".to_string(), StringEncoding::Utf8),
-        ];
+        let symbols = vec![Symbol::new("x".to_string(), StringEncoding::Utf8)];
         let (e, p) = (vec![], vec![]);
         let mut shared = make_shared(&symbols, &e, &p);
         let mut buffer = Cursor::new(Vec::new());
@@ -438,7 +434,12 @@ mod tests {
             index: usize::MAX,
             env_type: SEXPType::GlobalEnv,
         };
-        write_object(&RObject::EnvironmentIndex(env_idx), &mut buffer, &mut shared).unwrap();
+        write_object(
+            &RObject::EnvironmentIndex(env_idx),
+            &mut buffer,
+            &mut shared,
+        )
+        .unwrap();
 
         let data = buffer.into_inner();
         assert_eq!(data[3], SEXPType::GlobalEnv as u8);

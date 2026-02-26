@@ -2,7 +2,7 @@
 //!
 //! Detects potential problems in single-cell data that may cause conversion issues.
 
-use crate::ir::{SingleCellData, DataFrame};
+use crate::ir::{DataFrame, SingleCellData};
 use std::collections::HashSet;
 
 /// Severity level of detected issues
@@ -47,7 +47,11 @@ impl std::fmt::Display for IssueType {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             IssueType::SpecialCharInName { column, chars } => {
-                write!(f, "Column '{}' contains special characters: {:?}", column, chars)
+                write!(
+                    f,
+                    "Column '{}' contains special characters: {:?}",
+                    column, chars
+                )
             }
             IssueType::DuplicateColumnName { column, count } => {
                 write!(f, "Column '{}' appears {} times", column, count)
@@ -78,7 +82,12 @@ pub struct DataIssue {
 }
 
 impl DataIssue {
-    pub fn new(severity: IssueSeverity, issue_type: IssueType, auto_fixable: bool, suggestion: &str) -> Self {
+    pub fn new(
+        severity: IssueSeverity,
+        issue_type: IssueType,
+        auto_fixable: bool,
+        suggestion: &str,
+    ) -> Self {
         Self {
             severity,
             issue_type,
@@ -90,8 +99,16 @@ impl DataIssue {
 
 impl std::fmt::Display for DataIssue {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        let fix_status = if self.auto_fixable { "auto-fixable" } else { "manual fix required" };
-        write!(f, "[{}] {} ({})", self.severity, self.issue_type, fix_status)
+        let fix_status = if self.auto_fixable {
+            "auto-fixable"
+        } else {
+            "manual fix required"
+        };
+        write!(
+            f,
+            "[{}] {} ({})",
+            self.severity, self.issue_type, fix_status
+        )
     }
 }
 
@@ -158,39 +175,44 @@ impl Default for DiagnosticReport {
 }
 
 /// Special characters that may cause issues in column names
-const SPECIAL_CHARS: &[char] = &['/', ' ', ',', ';', ':', '\\', '|', '?', '*', '<', '>', '"', '\'', '`', '(', ')', '[', ']', '{', '}', '@', '#', '$', '%', '^', '&', '=', '+', '~'];
+const SPECIAL_CHARS: &[char] = &[
+    '/', ' ', ',', ';', ':', '\\', '|', '?', '*', '<', '>', '"', '\'', '`', '(', ')', '[', ']',
+    '{', '}', '@', '#', '$', '%', '^', '&', '=', '+', '~',
+];
 
 /// Detect issues in single-cell data
 pub fn detect_issues(data: &SingleCellData) -> DiagnosticReport {
     let mut report = DiagnosticReport::new();
-    
+
     // Check cell metadata
     detect_dataframe_issues(&data.cell_metadata, "obs", &mut report);
-    
+
     // Check gene metadata
     detect_dataframe_issues(&data.gene_metadata, "var", &mut report);
-    
+
     report
 }
 
 /// Detect issues in a DataFrame
 fn detect_dataframe_issues(df: &DataFrame, prefix: &str, report: &mut DiagnosticReport) {
     let mut seen_names: HashSet<String> = HashSet::new();
-    let mut name_counts: std::collections::HashMap<String, usize> = std::collections::HashMap::new();
-    
+    let mut name_counts: std::collections::HashMap<String, usize> =
+        std::collections::HashMap::new();
+
     // Count column name occurrences
     for col_name in &df.columns {
         *name_counts.entry(col_name.clone()).or_insert(0) += 1;
     }
-    
+
     for col_name in &df.columns {
         let full_name = format!("{}.{}", prefix, col_name);
-        
+
         // Check for special characters
-        let special_chars: Vec<char> = col_name.chars()
+        let special_chars: Vec<char> = col_name
+            .chars()
             .filter(|c| SPECIAL_CHARS.contains(c))
             .collect();
-        
+
         if !special_chars.is_empty() {
             let sanitized = sanitize_column_name(col_name);
             report.add_issue(DataIssue::new(
@@ -203,7 +225,7 @@ fn detect_dataframe_issues(df: &DataFrame, prefix: &str, report: &mut Diagnostic
                 &format!("Will sanitize to '{}'", sanitized),
             ));
         }
-        
+
         // Check for duplicate names
         if let Some(&count) = name_counts.get(col_name) {
             if count > 1 && !seen_names.contains(col_name) {
@@ -219,9 +241,14 @@ fn detect_dataframe_issues(df: &DataFrame, prefix: &str, report: &mut Diagnostic
                 seen_names.insert(col_name.clone());
             }
         }
-        
+
         // Check for column names starting with numbers
-        if col_name.chars().next().map(|c| c.is_ascii_digit()).unwrap_or(false) {
+        if col_name
+            .chars()
+            .next()
+            .map(|c| c.is_ascii_digit())
+            .unwrap_or(false)
+        {
             report.add_issue(DataIssue::new(
                 IssueSeverity::Info,
                 IssueType::NumericStartName {
@@ -231,7 +258,7 @@ fn detect_dataframe_issues(df: &DataFrame, prefix: &str, report: &mut Diagnostic
                 "Will prefix with 'X'",
             ));
         }
-        
+
         // Check for very long column names (R has 10000 char limit, but shorter is better)
         if col_name.len() > 256 {
             report.add_issue(DataIssue::new(
@@ -251,7 +278,7 @@ fn detect_dataframe_issues(df: &DataFrame, prefix: &str, report: &mut Diagnostic
 pub fn sanitize_column_name(name: &str) -> String {
     let mut result = String::with_capacity(name.len());
     let mut last_was_underscore = false;
-    
+
     for c in name.chars() {
         if SPECIAL_CHARS.contains(&c) {
             if !last_was_underscore {
@@ -263,22 +290,27 @@ pub fn sanitize_column_name(name: &str) -> String {
             last_was_underscore = false;
         }
     }
-    
+
     // Remove trailing underscore
     if result.ends_with('_') {
         result.pop();
     }
-    
+
     // Handle names starting with numbers
-    if result.chars().next().map(|c| c.is_ascii_digit()).unwrap_or(false) {
+    if result
+        .chars()
+        .next()
+        .map(|c| c.is_ascii_digit())
+        .unwrap_or(false)
+    {
         result = format!("X{}", result);
     }
-    
+
     // Handle empty result
     if result.is_empty() {
         result = "unnamed".to_string();
     }
-    
+
     result
 }
 
@@ -307,26 +339,34 @@ mod tests {
     fn test_diagnostic_report_scoring() {
         let mut report = DiagnosticReport::new();
         assert_eq!(report.compatibility_score, 100);
-        
+
         report.add_issue(DataIssue::new(
             IssueSeverity::Info,
-            IssueType::SpecialCharInName { column: "test".to_string(), chars: vec!['/'] },
+            IssueType::SpecialCharInName {
+                column: "test".to_string(),
+                chars: vec!['/'],
+            },
             true,
             "test",
         ));
         assert_eq!(report.compatibility_score, 99);
-        
+
         report.add_issue(DataIssue::new(
             IssueSeverity::Warning,
-            IssueType::DuplicateColumnName { column: "test".to_string(), count: 2 },
+            IssueType::DuplicateColumnName {
+                column: "test".to_string(),
+                count: 2,
+            },
             true,
             "test",
         ));
         assert_eq!(report.compatibility_score, 94);
-        
+
         report.add_issue(DataIssue::new(
             IssueSeverity::Critical,
-            IssueType::EmptyColumn { column: "test".to_string() },
+            IssueType::EmptyColumn {
+                column: "test".to_string(),
+            },
             false,
             "test",
         ));

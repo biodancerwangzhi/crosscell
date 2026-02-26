@@ -81,7 +81,7 @@ fn bench_chunk_size_memory(c: &mut Criterion) {
 
     for &chunk_size in &chunk_sizes {
         let estimated_memory = chunk_size * n_genes * 8 * 2; // f64 × 2 buffers
-        
+
         group.throughput(Throughput::Bytes(estimated_memory as u64));
         group.bench_with_input(
             BenchmarkId::new("estimate", format!("chunk_{}", chunk_size)),
@@ -158,7 +158,7 @@ fn bench_chunk_iteration(c: &mut Criterion) {
 
     for &chunk_size in &chunk_sizes {
         let _n_chunks = (n_cells + chunk_size - 1) / chunk_size;
-        
+
         group.throughput(Throughput::Elements(n_cells as u64));
         group.bench_with_input(
             BenchmarkId::new("iterate", format!("chunk_{}", chunk_size)),
@@ -167,14 +167,14 @@ fn bench_chunk_iteration(c: &mut Criterion) {
                 b.iter(|| {
                     let mut total_cells = 0usize;
                     let mut chunk_idx = 0;
-                    
+
                     while chunk_idx * cs < n_cells {
                         let start = chunk_idx * cs;
                         let end = std::cmp::min((chunk_idx + 1) * cs, n_cells);
                         total_cells += end - start;
                         chunk_idx += 1;
                     }
-                    
+
                     black_box(total_cells)
                 });
             },
@@ -192,11 +192,11 @@ fn bench_sparse_chunk_extraction(c: &mut Criterion) {
     let n_rows = 10000;
     let n_cols = 5000;
     let nnz_per_row = 250; // 5% 非零
-    
+
     let mut data = Vec::with_capacity(n_rows * nnz_per_row);
     let mut indices = Vec::with_capacity(n_rows * nnz_per_row);
     let mut indptr = Vec::with_capacity(n_rows + 1);
-    
+
     indptr.push(0);
     for row in 0..n_rows {
         for col in 0..nnz_per_row {
@@ -205,7 +205,7 @@ fn bench_sparse_chunk_extraction(c: &mut Criterion) {
         }
         indptr.push(data.len());
     }
-    
+
     let csr = SparseMatrixCSR {
         data,
         indices,
@@ -226,17 +226,17 @@ fn bench_sparse_chunk_extraction(c: &mut Criterion) {
                     // 模拟提取一个块
                     let start_row = 0;
                     let end_row = cs;
-                    
+
                     let data_start = csr.indptr[start_row];
                     let data_end = csr.indptr[end_row];
-                    
+
                     let chunk_data: Vec<f64> = csr.data[data_start..data_end].to_vec();
                     let chunk_indices: Vec<usize> = csr.indices[data_start..data_end].to_vec();
                     let chunk_indptr: Vec<usize> = csr.indptr[start_row..=end_row]
                         .iter()
                         .map(|&p| p - data_start)
                         .collect();
-                    
+
                     black_box((chunk_data, chunk_indices, chunk_indptr))
                 });
             },
@@ -264,13 +264,13 @@ fn bench_memory_estimation_accuracy(c: &mut Criterion) {
                 b.iter(|| {
                     // 估算流式模式内存
                     let streaming_mem = cs * genes * 8 * 2;
-                    
+
                     // 估算非流式模式内存
                     let full_mem = cells * genes * 8;
-                    
+
                     // 计算节省比例
                     let savings = 1.0 - (streaming_mem as f64 / full_mem as f64);
-                    
+
                     black_box((streaming_mem, full_mem, savings))
                 });
             },
@@ -285,7 +285,7 @@ fn bench_throughput_calculation(c: &mut Criterion) {
     let mut group = c.benchmark_group("throughput_calculation");
 
     let scenarios = [
-        (3000, 1.5, "small_3k"),      // 3k cells, 1.5 seconds
+        (3000, 1.5, "small_3k"),       // 3k cells, 1.5 seconds
         (100000, 15.0, "medium_100k"), // 100k cells, 15 seconds
         (1000000, 120.0, "large_1m"),  // 1M cells, 120 seconds
     ];

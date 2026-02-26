@@ -1,14 +1,20 @@
 //! RDS basic tests
 
-use crosscell::rds::{IntegerVector, DoubleVector, StringVector, StringEncoding};
+use crosscell::rds::{DoubleVector, IntegerVector, StringEncoding, StringVector};
 use crosscell::{read_rds, write_rds, RObject};
 use tempfile::TempDir;
 
 #[test]
 fn test_rds_module_imports() {
     let _obj = RObject::Null;
-    let _obj2 = RObject::IntegerVector(IntegerVector { data: vec![1, 2, 3], ..Default::default() });
-    let _obj3 = RObject::DoubleVector(DoubleVector { data: vec![1.0, 2.0, 3.0], ..Default::default() });
+    let _obj2 = RObject::IntegerVector(IntegerVector {
+        data: vec![1, 2, 3],
+        ..Default::default()
+    });
+    let _obj3 = RObject::DoubleVector(DoubleVector {
+        data: vec![1.0, 2.0, 3.0],
+        ..Default::default()
+    });
     let mut sv = StringVector::default();
     sv.add("hello".to_string(), StringEncoding::Utf8);
     let _obj4 = RObject::StringVector(sv);
@@ -18,7 +24,10 @@ fn test_rds_module_imports() {
 fn test_write_integer_vector() {
     let temp_dir = TempDir::new().unwrap();
     let file_path = temp_dir.path().join("test_int.rds");
-    let obj = RObject::IntegerVector(IntegerVector { data: vec![1, 2, 3, 4, 5], ..Default::default() });
+    let obj = RObject::IntegerVector(IntegerVector {
+        data: vec![1, 2, 3, 4, 5],
+        ..Default::default()
+    });
     write_rds(&file_path, &obj).expect("Failed to write RDS file");
     assert!(file_path.exists());
     assert!(std::fs::metadata(&file_path).unwrap().len() > 0);
@@ -28,7 +37,10 @@ fn test_write_integer_vector() {
 fn test_read_integer_vector() {
     let temp_dir = TempDir::new().unwrap();
     let file_path = temp_dir.path().join("test_int.rds");
-    let original = RObject::IntegerVector(IntegerVector { data: vec![1, 2, 3, 4, 5], ..Default::default() });
+    let original = RObject::IntegerVector(IntegerVector {
+        data: vec![1, 2, 3, 4, 5],
+        ..Default::default()
+    });
     write_rds(&file_path, &original).expect("Failed to write RDS file");
     let result = read_rds(&file_path).expect("Failed to read RDS file");
     match result {
@@ -44,7 +56,10 @@ fn test_read_integer_vector() {
 fn test_roundtrip_integer() {
     let temp_dir = TempDir::new().unwrap();
     let file_path = temp_dir.path().join("roundtrip_int.rds");
-    let original = RObject::IntegerVector(IntegerVector { data: vec![10, 20, 30, 40, 50], ..Default::default() });
+    let original = RObject::IntegerVector(IntegerVector {
+        data: vec![10, 20, 30, 40, 50],
+        ..Default::default()
+    });
     write_rds(&file_path, &original).expect("Failed to write");
     let result = read_rds(&file_path).expect("Failed to read");
     match (&original, &result) {
@@ -59,7 +74,10 @@ fn test_roundtrip_integer() {
 fn test_write_real_vector() {
     let temp_dir = TempDir::new().unwrap();
     let file_path = temp_dir.path().join("test_real.rds");
-    let obj = RObject::DoubleVector(DoubleVector { data: vec![1.1, 2.2, 3.3, 4.4, 5.5], ..Default::default() });
+    let obj = RObject::DoubleVector(DoubleVector {
+        data: vec![1.1, 2.2, 3.3, 4.4, 5.5],
+        ..Default::default()
+    });
     write_rds(&file_path, &obj).expect("Failed to write RDS file");
     assert!(file_path.exists());
 }
@@ -68,7 +86,10 @@ fn test_write_real_vector() {
 fn test_roundtrip_real() {
     let temp_dir = TempDir::new().unwrap();
     let file_path = temp_dir.path().join("roundtrip_real.rds");
-    let original = RObject::DoubleVector(DoubleVector { data: vec![1.1, 2.2, 3.3], ..Default::default() });
+    let original = RObject::DoubleVector(DoubleVector {
+        data: vec![1.1, 2.2, 3.3],
+        ..Default::default()
+    });
     write_rds(&file_path, &original).expect("Failed to write");
     let result = read_rds(&file_path).expect("Failed to read");
     match (&original, &result) {

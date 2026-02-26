@@ -6,13 +6,13 @@
 use crosscell::rds::{
     parse::{parse_rds_file, ParseRdsOptions},
     write::rds::{write_rds_file, WriteRdsOptions},
-    RdsFile, RObject,
+    RObject, RdsFile,
 };
 use std::path::Path;
 use tempfile::TempDir;
 
 /// 比较两个 RdsFile 的结构是否等价
-/// 
+///
 /// 注意：符号和环境数量可能因为去重而不同，这是正常的。
 /// 我们主要比较根对象的结构和数据是否等价。
 fn compare_rds_files(original: &RdsFile, roundtrip: &RdsFile) -> bool {
@@ -48,7 +48,12 @@ fn compare_rds_files(original: &RdsFile, roundtrip: &RdsFile) -> bool {
 }
 
 /// 递归比较两个 RObject，使用 RdsFile 上下文来解析符号引用
-fn compare_robjects_with_context(a: &RObject, b: &RObject, ctx_a: &RdsFile, ctx_b: &RdsFile) -> bool {
+fn compare_robjects_with_context(
+    a: &RObject,
+    b: &RObject,
+    ctx_a: &RdsFile,
+    ctx_b: &RdsFile,
+) -> bool {
     use RObject::*;
 
     match (a, b) {
@@ -72,13 +77,13 @@ fn compare_robjects_with_context(a: &RObject, b: &RObject, ctx_a: &RdsFile, ctx_
         (RawVector(va), RawVector(vb)) => va.data == vb.data,
         (ComplexVector(va), ComplexVector(vb)) => {
             va.data.len() == vb.data.len()
-                && va.data.iter().zip(vb.data.iter()).all(|(x, y)| {
-                    (x.re - y.re).abs() < 1e-10 && (x.im - y.im).abs() < 1e-10
-                })
+                && va
+                    .data
+                    .iter()
+                    .zip(vb.data.iter())
+                    .all(|(x, y)| (x.re - y.re).abs() < 1e-10 && (x.im - y.im).abs() < 1e-10)
         }
-        (StringVector(va), StringVector(vb)) => {
-            va.data == vb.data && va.missing == vb.missing
-        }
+        (StringVector(va), StringVector(vb)) => va.data == vb.data && va.missing == vb.missing,
         (GenericVector(va), GenericVector(vb)) => {
             va.data.len() == vb.data.len()
                 && va
@@ -91,7 +96,10 @@ fn compare_robjects_with_context(a: &RObject, b: &RObject, ctx_a: &RdsFile, ctx_
             va.data.len() == vb.data.len()
                 && va.tag_names == vb.tag_names
                 && va.has_tag == vb.has_tag
-                && va.data.iter().zip(vb.data.iter())
+                && va
+                    .data
+                    .iter()
+                    .zip(vb.data.iter())
                     .all(|(x, y)| compare_robjects_with_context(x, y, ctx_a, ctx_b))
         }
         (S4Object(va), S4Object(vb)) => {
@@ -114,7 +122,10 @@ fn compare_robjects_with_context(a: &RObject, b: &RObject, ctx_a: &RdsFile, ctx_
                 && va.argument_values.len() == vb.argument_values.len()
                 && va.argument_names == vb.argument_names
                 && va.argument_has_name == vb.argument_has_name
-                && va.argument_values.iter().zip(vb.argument_values.iter())
+                && va
+                    .argument_values
+                    .iter()
+                    .zip(vb.argument_values.iter())
                     .all(|(x, y)| compare_robjects_with_context(x, y, ctx_a, ctx_b))
         }
         (ExpressionVector(va), ExpressionVector(vb)) => {
@@ -158,13 +169,13 @@ fn compare_robjects(a: &RObject, b: &RObject) -> bool {
         (RawVector(va), RawVector(vb)) => va.data == vb.data,
         (ComplexVector(va), ComplexVector(vb)) => {
             va.data.len() == vb.data.len()
-                && va.data.iter().zip(vb.data.iter()).all(|(x, y)| {
-                    (x.re - y.re).abs() < 1e-10 && (x.im - y.im).abs() < 1e-10
-                })
+                && va
+                    .data
+                    .iter()
+                    .zip(vb.data.iter())
+                    .all(|(x, y)| (x.re - y.re).abs() < 1e-10 && (x.im - y.im).abs() < 1e-10)
         }
-        (StringVector(va), StringVector(vb)) => {
-            va.data == vb.data && va.missing == vb.missing
-        }
+        (StringVector(va), StringVector(vb)) => va.data == vb.data && va.missing == vb.missing,
         (GenericVector(va), GenericVector(vb)) => {
             va.data.len() == vb.data.len()
                 && va
@@ -177,7 +188,11 @@ fn compare_robjects(a: &RObject, b: &RObject) -> bool {
             va.data.len() == vb.data.len()
                 && va.tag_names == vb.tag_names
                 && va.has_tag == vb.has_tag
-                && va.data.iter().zip(vb.data.iter()).all(|(x, y)| compare_robjects(x, y))
+                && va
+                    .data
+                    .iter()
+                    .zip(vb.data.iter())
+                    .all(|(x, y)| compare_robjects(x, y))
         }
         (S4Object(va), S4Object(vb)) => {
             // S4 对象比较 class 名称
@@ -191,7 +206,10 @@ fn compare_robjects(a: &RObject, b: &RObject) -> bool {
                 && va.argument_values.len() == vb.argument_values.len()
                 && va.argument_names == vb.argument_names
                 && va.argument_has_name == vb.argument_has_name
-                && va.argument_values.iter().zip(vb.argument_values.iter())
+                && va
+                    .argument_values
+                    .iter()
+                    .zip(vb.argument_values.iter())
                     .all(|(x, y)| compare_robjects(x, y))
         }
         (ExpressionVector(va), ExpressionVector(vb)) => {
@@ -238,10 +256,12 @@ fn test_roundtrip_file(path: &Path) -> Result<(), String> {
     if compare_rds_files(&original, &roundtrip) {
         Ok(())
     } else {
-        Err(format!("Roundtrip comparison failed for {}", path.display()))
+        Err(format!(
+            "Roundtrip comparison failed for {}",
+            path.display()
+        ))
     }
 }
-
 
 // ============================================================================
 // 基础类型往返测试
@@ -435,7 +455,6 @@ fn test_roundtrip_list_with_null() {
     println!("✅ list_with_null.rds roundtrip passed");
 }
 
-
 // ============================================================================
 // S4 对象和 dgCMatrix 测试
 // ============================================================================
@@ -612,13 +631,18 @@ fn test_roundtrip_all_test_data() {
     // 允许少量失败（某些边缘情况可能还不支持）
     // 目标是 95% 以上的通过率
     let total = passed + failed;
-    let pass_rate = if total > 0 { (passed as f64 / total as f64) * 100.0 } else { 100.0 };
+    let pass_rate = if total > 0 {
+        (passed as f64 / total as f64) * 100.0
+    } else {
+        100.0
+    };
     println!("Pass rate: {:.1}%", pass_rate);
-    
+
     assert!(
         pass_rate >= 95.0,
         "Pass rate {:.1}% is below 95% threshold. {} tests failed.",
-        pass_rate, failed
+        pass_rate,
+        failed
     );
 }
 
@@ -643,7 +667,10 @@ fn test_roundtrip_generated_seurat_data() {
         let path = entry.path();
 
         if path.extension().map_or(false, |ext| ext == "rds") {
-            print!("Testing {}... ", path.file_name().unwrap().to_string_lossy());
+            print!(
+                "Testing {}... ",
+                path.file_name().unwrap().to_string_lossy()
+            );
 
             match test_roundtrip_file(&path) {
                 Ok(()) => {
@@ -669,7 +696,6 @@ fn test_roundtrip_generated_seurat_data() {
     println!("Note: Some failures may be expected for complex objects");
 }
 
-
 // ============================================================================
 // R 兼容性测试 - 验证解析结果与 R 的 readRDS() 一致
 // **Validates: Requirements 36.3-36.6**
@@ -679,20 +705,24 @@ fn test_roundtrip_generated_seurat_data() {
 #[test]
 fn test_r_compat_integer_values() {
     use crosscell::rds::parse::{parse_rds_file, ParseRdsOptions};
-    
+
     let path = Path::new("tests/data/r_integer.rds");
     if !path.exists() {
         eprintln!("⚠️  Test file not found: {}", path.display());
         return;
     }
-    
-    let rds = parse_rds_file(path, &ParseRdsOptions::default())
-        .expect("Failed to parse R integer file");
-    
+
+    let rds =
+        parse_rds_file(path, &ParseRdsOptions::default()).expect("Failed to parse R integer file");
+
     match &rds.object {
         RObject::IntegerVector(vec) => {
             // R 生成的文件应该包含 [1, 2, 3, 4, 5]
-            assert_eq!(vec.data, vec![1, 2, 3, 4, 5], "Integer values should match R output");
+            assert_eq!(
+                vec.data,
+                vec![1, 2, 3, 4, 5],
+                "Integer values should match R output"
+            );
             println!("✅ R integer compatibility: {:?}", vec.data);
         }
         _ => panic!("Expected IntegerVector, got {:?}", rds.object.sexp_type()),
@@ -703,16 +733,16 @@ fn test_r_compat_integer_values() {
 #[test]
 fn test_r_compat_real_values() {
     use crosscell::rds::parse::{parse_rds_file, ParseRdsOptions};
-    
+
     let path = Path::new("tests/data/r_real.rds");
     if !path.exists() {
         eprintln!("⚠️  Test file not found: {}", path.display());
         return;
     }
-    
-    let rds = parse_rds_file(path, &ParseRdsOptions::default())
-        .expect("Failed to parse R real file");
-    
+
+    let rds =
+        parse_rds_file(path, &ParseRdsOptions::default()).expect("Failed to parse R real file");
+
     match &rds.object {
         RObject::DoubleVector(vec) => {
             // R 生成的文件应该包含 [1.1, 2.2, 3.3, 4.4, 5.5]
@@ -722,7 +752,9 @@ fn test_r_compat_real_values() {
                 assert!(
                     (a - b).abs() < 1e-10,
                     "Value at index {} should match: {} vs {}",
-                    i, a, b
+                    i,
+                    a,
+                    b
                 );
             }
             println!("✅ R real compatibility: {:?}", vec.data);
@@ -735,16 +767,16 @@ fn test_r_compat_real_values() {
 #[test]
 fn test_r_compat_string_values() {
     use crosscell::rds::parse::{parse_rds_file, ParseRdsOptions};
-    
+
     let path = Path::new("tests/data/r_string.rds");
     if !path.exists() {
         eprintln!("⚠️  Test file not found: {}", path.display());
         return;
     }
-    
-    let rds = parse_rds_file(path, &ParseRdsOptions::default())
-        .expect("Failed to parse R string file");
-    
+
+    let rds =
+        parse_rds_file(path, &ParseRdsOptions::default()).expect("Failed to parse R string file");
+
     match &rds.object {
         RObject::StringVector(vec) => {
             // R 生成的文件应该包含 ["hello", "world", "rust", "R"]
@@ -763,16 +795,16 @@ fn test_r_compat_string_values() {
 #[test]
 fn test_r_compat_logical_values() {
     use crosscell::rds::parse::{parse_rds_file, ParseRdsOptions};
-    
+
     let path = Path::new("tests/data/r_logical.rds");
     if !path.exists() {
         eprintln!("⚠️  Test file not found: {}", path.display());
         return;
     }
-    
-    let rds = parse_rds_file(path, &ParseRdsOptions::default())
-        .expect("Failed to parse R logical file");
-    
+
+    let rds =
+        parse_rds_file(path, &ParseRdsOptions::default()).expect("Failed to parse R logical file");
+
     match &rds.object {
         RObject::LogicalVector(vec) => {
             // R 生成的文件应该包含 [TRUE, FALSE, TRUE, FALSE]
@@ -789,16 +821,16 @@ fn test_r_compat_logical_values() {
 #[test]
 fn test_r_compat_na_integer() {
     use crosscell::rds::parse::{parse_rds_file, ParseRdsOptions};
-    
+
     let path = Path::new("tests/data/r_na_int.rds");
     if !path.exists() {
         eprintln!("⚠️  Test file not found: {}", path.display());
         return;
     }
-    
+
     let rds = parse_rds_file(path, &ParseRdsOptions::default())
         .expect("Failed to parse R NA integer file");
-    
+
     match &rds.object {
         RObject::IntegerVector(vec) => {
             // R 的 NA_integer_ 是 i32::MIN
@@ -813,26 +845,31 @@ fn test_r_compat_na_integer() {
 #[test]
 fn test_r_compat_special_values() {
     use crosscell::rds::parse::{parse_rds_file, ParseRdsOptions};
-    
+
     let path = Path::new("tests/data/r_special_values.rds");
     if !path.exists() {
         eprintln!("⚠️  Test file not found: {}", path.display());
         return;
     }
-    
+
     let rds = parse_rds_file(path, &ParseRdsOptions::default())
         .expect("Failed to parse R special values file");
-    
+
     match &rds.object {
         RObject::DoubleVector(vec) => {
             // 检查是否包含特殊值
             let has_inf = vec.data.iter().any(|x| x.is_infinite() && *x > 0.0);
             let has_neg_inf = vec.data.iter().any(|x| x.is_infinite() && *x < 0.0);
             let has_nan = vec.data.iter().any(|x| x.is_nan());
-            
-            assert!(has_inf || has_neg_inf || has_nan, "Should contain special values");
-            println!("✅ R special values compatibility: Inf={}, -Inf={}, NaN={}", 
-                has_inf, has_neg_inf, has_nan);
+
+            assert!(
+                has_inf || has_neg_inf || has_nan,
+                "Should contain special values"
+            );
+            println!(
+                "✅ R special values compatibility: Inf={}, -Inf={}, NaN={}",
+                has_inf, has_neg_inf, has_nan
+            );
         }
         _ => panic!("Expected DoubleVector, got {:?}", rds.object.sexp_type()),
     }
@@ -842,16 +879,16 @@ fn test_r_compat_special_values() {
 #[test]
 fn test_r_compat_list_structure() {
     use crosscell::rds::parse::{parse_rds_file, ParseRdsOptions};
-    
+
     let path = Path::new("tests/data/r_list.rds");
     if !path.exists() {
         eprintln!("⚠️  Test file not found: {}", path.display());
         return;
     }
-    
-    let rds = parse_rds_file(path, &ParseRdsOptions::default())
-        .expect("Failed to parse R list file");
-    
+
+    let rds =
+        parse_rds_file(path, &ParseRdsOptions::default()).expect("Failed to parse R list file");
+
     match &rds.object {
         RObject::GenericVector(vec) => {
             assert!(!vec.data.is_empty(), "List should not be empty");
@@ -865,22 +902,24 @@ fn test_r_compat_list_structure() {
 #[test]
 fn test_r_compat_dgcmatrix_structure() {
     use crosscell::rds::parse::{parse_rds_file, ParseRdsOptions};
-    
+
     let path = Path::new("tests/data/r_created_dgc.rds");
     if !path.exists() {
         eprintln!("⚠️  Test file not found: {}", path.display());
         return;
     }
-    
+
     let rds = parse_rds_file(path, &ParseRdsOptions::default())
         .expect("Failed to parse R dgCMatrix file");
-    
+
     match &rds.object {
         RObject::S4Object(s4) => {
             assert_eq!(s4.class_name, "dgCMatrix", "Class should be dgCMatrix");
             assert_eq!(s4.package_name, "Matrix", "Package should be Matrix");
-            println!("✅ R dgCMatrix compatibility: class={}, package={}", 
-                s4.class_name, s4.package_name);
+            println!(
+                "✅ R dgCMatrix compatibility: class={}, package={}",
+                s4.class_name, s4.package_name
+            );
         }
         _ => panic!("Expected S4Object, got {:?}", rds.object.sexp_type()),
     }

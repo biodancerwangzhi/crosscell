@@ -1,7 +1,7 @@
 //! 准确性测试框架
 //!
 //! 提供详细的准确性指标计算，用于验证真实数据集的往返转换一致性。
-//! 
+//!
 //! # 主要功能
 //! - 计算表达矩阵的相关系数、相对误差、绝对误差
 //! - 计算稀疏性保留率
@@ -9,7 +9,7 @@
 //! - 验证 Categorical 变量一致性
 //! - 验证降维坐标误差
 
-use crate::ir::{SingleCellData, ExpressionMatrix, DataFrame, Embedding};
+use crate::ir::{DataFrame, Embedding, ExpressionMatrix, SingleCellData};
 use std::collections::HashMap;
 
 /// 准确性指标
@@ -47,7 +47,6 @@ pub struct AccuracyMetrics {
     pub nmi: Option<f64>,
 }
 
-
 impl AccuracyMetrics {
     /// 创建默认的准确性指标（全部通过）
     pub fn perfect() -> Self {
@@ -69,7 +68,7 @@ impl AccuracyMetrics {
             nmi: None,
         }
     }
-    
+
     /// 检查是否满足准确性要求
     pub fn meets_requirements(&self, tolerance: f64) -> bool {
         self.correlation > 0.99999
@@ -83,7 +82,7 @@ impl AccuracyMetrics {
             && self.mse < tolerance * tolerance
             && self.exact_match_ratio > 0.999
     }
-    
+
     /// 生成摘要报告
     pub fn summary(&self) -> String {
         let mut s = format!(
@@ -158,39 +157,46 @@ impl AccuracyReport {
             errors: Vec::new(),
         }
     }
-    
+
     /// 添加错误
     pub fn add_error(&mut self, error: String) {
         self.errors.push(error);
         self.passed = false;
     }
-    
+
     /// 生成详细报告
     pub fn detailed_report(&self) -> String {
         let mut report = format!("=== Accuracy Report: {} ===\n\n", self.dataset_name);
-        
+
         // 总体状态
-        report.push_str(&format!("Overall: {}\n\n", if self.passed { "✓ PASSED" } else { "✗ FAILED" }));
-        
+        report.push_str(&format!(
+            "Overall: {}\n\n",
+            if self.passed {
+                "✓ PASSED"
+            } else {
+                "✗ FAILED"
+            }
+        ));
+
         // 表达矩阵
         report.push_str("--- Expression Matrix ---\n");
         report.push_str(&self.expression_accuracy.summary());
         report.push_str("\n\n");
-        
+
         // 细胞元数据
         if let Some(ref meta) = self.cell_metadata_accuracy {
             report.push_str("--- Cell Metadata ---\n");
             report.push_str(&meta.summary());
             report.push_str("\n\n");
         }
-        
+
         // 基因元数据
         if let Some(ref meta) = self.gene_metadata_accuracy {
             report.push_str("--- Gene Metadata ---\n");
             report.push_str(&meta.summary());
             report.push_str("\n\n");
         }
-        
+
         // 嵌入
         if !self.embedding_accuracies.is_empty() {
             report.push_str("--- Embeddings ---\n");
@@ -199,17 +205,19 @@ impl AccuracyReport {
             }
             report.push_str("\n");
         }
-        
+
         // Layers
         if !self.layer_accuracies.is_empty() {
             report.push_str("--- Layers ---\n");
             for (name, acc) in &self.layer_accuracies {
-                report.push_str(&format!("{}: correlation={:.6}, max_err={:.2e}\n", 
-                    name, acc.correlation, acc.max_absolute_error));
+                report.push_str(&format!(
+                    "{}: correlation={:.6}, max_err={:.2e}\n",
+                    name, acc.correlation, acc.max_absolute_error
+                ));
             }
             report.push_str("\n");
         }
-        
+
         // 错误
         if !self.errors.is_empty() {
             report.push_str("--- Errors ---\n");
@@ -217,7 +225,7 @@ impl AccuracyReport {
                 report.push_str(&format!("  - {}\n", err));
             }
         }
-        
+
         report
     }
 }
@@ -249,14 +257,22 @@ impl MetadataAccuracy {
         format!(
             "Rows: {}, Cols: {}, Names: {}, Types: {}, Categorical: {}, NumericErr: {:.2e}",
             if self.row_count_match { "✓" } else { "✗" },
-            if self.column_count_match { "✓" } else { "✗" },
-            if self.column_names_match { "✓" } else { "✗" },
+            if self.column_count_match {
+                "✓"
+            } else {
+                "✗"
+            },
+            if self.column_names_match {
+                "✓"
+            } else {
+                "✗"
+            },
             if self.dtypes_match { "✓" } else { "✗" },
             if self.categorical_match { "✓" } else { "✗" },
             self.numeric_max_error,
         )
     }
-    
+
     /// 检查是否全部通过
     pub fn all_passed(&self) -> bool {
         self.row_count_match
@@ -302,17 +318,17 @@ pub fn pearson_correlation(x: &[f64], y: &[f64]) -> f64 {
     if x.len() != y.len() || x.is_empty() {
         return 0.0;
     }
-    
+
     let n = x.len() as f64;
     let sum_x: f64 = x.iter().sum();
     let sum_y: f64 = y.iter().sum();
     let sum_xy: f64 = x.iter().zip(y.iter()).map(|(a, b)| a * b).sum();
     let sum_x2: f64 = x.iter().map(|a| a * a).sum();
     let sum_y2: f64 = y.iter().map(|a| a * a).sum();
-    
+
     let numerator = n * sum_xy - sum_x * sum_y;
     let denominator = ((n * sum_x2 - sum_x * sum_x) * (n * sum_y2 - sum_y * sum_y)).sqrt();
-    
+
     if denominator == 0.0 {
         // 如果两个向量都是常数，检查它们是否相等
         if x.iter().all(|&v| v == x[0]) && y.iter().all(|&v| v == y[0]) {
@@ -322,7 +338,7 @@ pub fn pearson_correlation(x: &[f64], y: &[f64]) -> f64 {
         }
         return 0.0;
     }
-    
+
     numerator / denominator
 }
 
@@ -348,7 +364,11 @@ pub fn calculate_exact_match_ratio(x: &[f64], y: &[f64]) -> f64 {
     if x.len() != y.len() || x.is_empty() {
         return 0.0;
     }
-    let matches = x.iter().zip(y.iter()).filter(|(a, b)| (*a - *b).abs() < f64::EPSILON).count();
+    let matches = x
+        .iter()
+        .zip(y.iter())
+        .filter(|(a, b)| (*a - *b).abs() < f64::EPSILON)
+        .count();
     matches as f64 / x.len() as f64
 }
 
@@ -372,8 +392,16 @@ pub fn calculate_ari(labels_a: &[String], labels_b: &[String]) -> f64 {
     let mut b_indices = Vec::with_capacity(n);
 
     for (a, b) in labels_a.iter().zip(labels_b.iter()) {
-        let ai = *label_a_map.entry(a.as_str()).or_insert_with(|| { let v = a_idx; a_idx += 1; v });
-        let bi = *label_b_map.entry(b.as_str()).or_insert_with(|| { let v = b_idx; b_idx += 1; v });
+        let ai = *label_a_map.entry(a.as_str()).or_insert_with(|| {
+            let v = a_idx;
+            a_idx += 1;
+            v
+        });
+        let bi = *label_b_map.entry(b.as_str()).or_insert_with(|| {
+            let v = b_idx;
+            b_idx += 1;
+            v
+        });
         a_indices.push(ai);
         b_indices.push(bi);
     }
@@ -389,12 +417,15 @@ pub fn calculate_ari(labels_a: &[String], labels_b: &[String]) -> f64 {
 
     // 行和 a_i, 列和 b_j
     let a_sums: Vec<i64> = contingency.iter().map(|row| row.iter().sum()).collect();
-    let b_sums: Vec<i64> = (0..n_b).map(|j| contingency.iter().map(|row| row[j]).sum()).collect();
+    let b_sums: Vec<i64> = (0..n_b)
+        .map(|j| contingency.iter().map(|row| row[j]).sum())
+        .collect();
 
     // C(n, 2) helper
     let comb2 = |x: i64| -> i64 { x * (x - 1) / 2 };
 
-    let sum_comb_nij: i64 = contingency.iter()
+    let sum_comb_nij: i64 = contingency
+        .iter()
         .flat_map(|row| row.iter())
         .map(|&v| comb2(v))
         .sum();
@@ -442,13 +473,21 @@ pub fn calculate_nmi(labels_a: &[String], labels_b: &[String]) -> f64 {
     }
 
     // H(A)
-    let h_a: f64 = count_a.values()
-        .map(|&c| { let p = c as f64 / n; -p * p.ln() })
+    let h_a: f64 = count_a
+        .values()
+        .map(|&c| {
+            let p = c as f64 / n;
+            -p * p.ln()
+        })
         .sum();
 
     // H(B)
-    let h_b: f64 = count_b.values()
-        .map(|&c| { let p = c as f64 / n; -p * p.ln() })
+    let h_b: f64 = count_b
+        .values()
+        .map(|&c| {
+            let p = c as f64 / n;
+            -p * p.ln()
+        })
         .sum();
 
     if (h_a + h_b).abs() < f64::EPSILON {
@@ -457,7 +496,8 @@ pub fn calculate_nmi(labels_a: &[String], labels_b: &[String]) -> f64 {
     }
 
     // MI(A, B) = sum_ij p_ij * log(p_ij / (p_i * p_j))
-    let mi: f64 = joint.iter()
+    let mi: f64 = joint
+        .iter()
         .map(|(&(a, b), &c)| {
             let p_ij = c as f64 / n;
             let p_i = count_a[a] as f64 / n;
@@ -468,7 +508,6 @@ pub fn calculate_nmi(labels_a: &[String], labels_b: &[String]) -> f64 {
 
     2.0 * mi / (h_a + h_b)
 }
-
 
 // ============================================================================
 // 表达矩阵准确性计算
@@ -482,24 +521,24 @@ pub fn calculate_matrix_accuracy(
     // 检查维度
     let (orig_rows, orig_cols) = original.shape();
     let (conv_rows, conv_cols) = converted.shape();
-    
+
     if orig_rows != conv_rows || orig_cols != conv_cols {
         return Err(format!(
             "Dimension mismatch: original ({}, {}), converted ({}, {})",
             orig_rows, orig_cols, conv_rows, conv_cols
         ));
     }
-    
+
     // 获取所有非零值用于计算
     let (orig_values, orig_nnz) = extract_matrix_values(original);
     let (conv_values, conv_nnz) = extract_matrix_values(converted);
-    
+
     // 计算稀疏度
     let total_elements = orig_rows * orig_cols;
     let orig_sparsity = calculate_sparsity(orig_nnz, total_elements);
     let conv_sparsity = calculate_sparsity(conv_nnz, total_elements);
     let sparsity_preserved = 1.0 - (orig_sparsity - conv_sparsity).abs();
-    
+
     // 如果两个矩阵都是空的
     if orig_values.is_empty() && conv_values.is_empty() {
         return Ok(AccuracyMetrics {
@@ -520,39 +559,43 @@ pub fn calculate_matrix_accuracy(
             nmi: None,
         });
     }
-    
+
     // 需要将矩阵展平为相同顺序的向量进行比较
     let (orig_flat, conv_flat) = flatten_matrices_for_comparison(original, converted)?;
-    
+
     // 计算相关系数
     let correlation = pearson_correlation(&orig_flat, &conv_flat);
-    
+
     // 计算误差
     let mut sum_abs_error = 0.0;
     let mut sum_rel_error = 0.0;
     let mut max_abs_error = 0.0f64;
     let mut count_rel = 0usize;
-    
+
     for (o, c) in orig_flat.iter().zip(conv_flat.iter()) {
         let abs_err = (o - c).abs();
         sum_abs_error += abs_err;
         max_abs_error = max_abs_error.max(abs_err);
-        
+
         // 相对误差（避免除以零）
         if o.abs() > 1e-10 {
             sum_rel_error += abs_err / o.abs();
             count_rel += 1;
         }
     }
-    
+
     let n = orig_flat.len();
     let mean_absolute_error = if n > 0 { sum_abs_error / n as f64 } else { 0.0 };
-    let mean_relative_error = if count_rel > 0 { sum_rel_error / count_rel as f64 } else { 0.0 };
-    
+    let mean_relative_error = if count_rel > 0 {
+        sum_rel_error / count_rel as f64
+    } else {
+        0.0
+    };
+
     // 计算新增指标
     let mse = calculate_mse(&orig_flat, &conv_flat);
     let exact_match_ratio = calculate_exact_match_ratio(&orig_flat, &conv_flat);
-    
+
     Ok(AccuracyMetrics {
         correlation,
         mean_relative_error,
@@ -579,12 +622,8 @@ fn extract_matrix_values(matrix: &ExpressionMatrix) -> (Vec<f64>, usize) {
             let nnz = dense.data.iter().filter(|&&v| v != 0.0).count();
             (dense.data.clone(), nnz)
         }
-        ExpressionMatrix::SparseCSR(sparse) => {
-            (sparse.data.clone(), sparse.data.len())
-        }
-        ExpressionMatrix::SparseCSC(sparse) => {
-            (sparse.data.clone(), sparse.data.len())
-        }
+        ExpressionMatrix::SparseCSR(sparse) => (sparse.data.clone(), sparse.data.len()),
+        ExpressionMatrix::SparseCSC(sparse) => (sparse.data.clone(), sparse.data.len()),
         ExpressionMatrix::Lazy(lazy) => {
             // 延迟加载矩阵：尝试从缓存获取
             if let Some(cached) = lazy.get_cached() {
@@ -603,18 +642,18 @@ fn flatten_matrices_for_comparison(
     converted: &ExpressionMatrix,
 ) -> Result<(Vec<f64>, Vec<f64>), String> {
     let (rows, cols) = original.shape();
-    
+
     // 将两个矩阵都转换为行优先的稠密表示
     let orig_dense = matrix_to_dense_row_major(original, rows, cols);
     let conv_dense = matrix_to_dense_row_major(converted, rows, cols);
-    
+
     Ok((orig_dense, conv_dense))
 }
 
 /// 将矩阵转换为行优先的稠密向量
 fn matrix_to_dense_row_major(matrix: &ExpressionMatrix, rows: usize, cols: usize) -> Vec<f64> {
     let mut result = vec![0.0; rows * cols];
-    
+
     match matrix {
         ExpressionMatrix::Dense(dense) => {
             // 假设 DenseMatrix 已经是行优先
@@ -652,7 +691,7 @@ fn matrix_to_dense_row_major(matrix: &ExpressionMatrix, rows: usize, cols: usize
             // 没有缓存，返回全零
         }
     }
-    
+
     result
 }
 
@@ -666,34 +705,36 @@ pub fn calculate_metadata_accuracy(
     converted: &DataFrame,
 ) -> MetadataAccuracy {
     use std::collections::HashSet;
-    
+
     let orig_cols: HashSet<_> = original.columns.iter().cloned().collect();
     let conv_cols: HashSet<_> = converted.columns.iter().cloned().collect();
-    
+
     let missing: Vec<_> = orig_cols.difference(&conv_cols).cloned().collect();
     let extra: Vec<_> = conv_cols.difference(&orig_cols).cloned().collect();
-    
+
     let mut numeric_max_error = 0.0f64;
     let mut dtypes_match = true;
     let mut categorical_match = true;
-    
+
     // 比较共同的列
     for col_name in orig_cols.intersection(&conv_cols) {
-        if let (Some(orig_arr), Some(conv_arr)) = (original.column(col_name), converted.column(col_name)) {
+        if let (Some(orig_arr), Some(conv_arr)) =
+            (original.column(col_name), converted.column(col_name))
+        {
             // 检查数据类型
             if orig_arr.data_type() != conv_arr.data_type() {
                 dtypes_match = false;
             }
-            
+
             // 对于数值列，计算误差
             use arrow::array::*;
             use arrow::datatypes::DataType;
-            
+
             match orig_arr.data_type() {
                 DataType::Float64 => {
                     let orig = orig_arr.as_any().downcast_ref::<Float64Array>().unwrap();
                     let conv = conv_arr.as_any().downcast_ref::<Float64Array>().unwrap();
-                    
+
                     for i in 0..orig.len().min(conv.len()) {
                         if !orig.is_null(i) && !conv.is_null(i) {
                             let err = (orig.value(i) - conv.value(i)).abs();
@@ -703,9 +744,13 @@ pub fn calculate_metadata_accuracy(
                 }
                 DataType::Dictionary(_, _) => {
                     // Categorical 比较
-                    let orig = orig_arr.as_any().downcast_ref::<DictionaryArray<arrow::datatypes::Int32Type>>();
-                    let conv = conv_arr.as_any().downcast_ref::<DictionaryArray<arrow::datatypes::Int32Type>>();
-                    
+                    let orig = orig_arr
+                        .as_any()
+                        .downcast_ref::<DictionaryArray<arrow::datatypes::Int32Type>>();
+                    let conv = conv_arr
+                        .as_any()
+                        .downcast_ref::<DictionaryArray<arrow::datatypes::Int32Type>>();
+
                     if let (Some(o), Some(c)) = (orig, conv) {
                         // 比较 keys
                         for i in 0..o.len().min(c.len()) {
@@ -722,7 +767,7 @@ pub fn calculate_metadata_accuracy(
             }
         }
     }
-    
+
     MetadataAccuracy {
         row_count_match: original.n_rows == converted.n_rows,
         column_count_match: original.n_cols() == converted.n_cols(),
@@ -744,8 +789,9 @@ pub fn calculate_embedding_accuracy(
     original: &Embedding,
     converted: &Embedding,
 ) -> EmbeddingAccuracy {
-    let dimension_match = original.n_rows == converted.n_rows && original.n_cols == converted.n_cols;
-    
+    let dimension_match =
+        original.n_rows == converted.n_rows && original.n_cols == converted.n_cols;
+
     if !dimension_match || original.data.is_empty() {
         return EmbeddingAccuracy {
             dimension_match,
@@ -754,20 +800,20 @@ pub fn calculate_embedding_accuracy(
             correlation: 0.0,
         };
     }
-    
+
     // 计算误差
     let mut sum_error = 0.0;
     let mut max_error = 0.0f64;
-    
+
     for (o, c) in original.data.iter().zip(converted.data.iter()) {
         let err = (o - c).abs();
         sum_error += err;
         max_error = max_error.max(err);
     }
-    
+
     let mean_error = sum_error / original.data.len() as f64;
     let correlation = pearson_correlation(&original.data, &converted.data);
-    
+
     EmbeddingAccuracy {
         dimension_match,
         mean_error,
@@ -787,7 +833,7 @@ pub fn calculate_full_accuracy(
     dataset_name: &str,
 ) -> AccuracyReport {
     let mut report = AccuracyReport::new(dataset_name);
-    
+
     // 1. 表达矩阵准确性
     match calculate_matrix_accuracy(&original.expression, &converted.expression) {
         Ok(metrics) => {
@@ -797,24 +843,26 @@ pub fn calculate_full_accuracy(
             report.add_error(format!("Expression matrix error: {}", e));
         }
     }
-    
+
     // 2. 细胞元数据准确性
-    let cell_meta_acc = calculate_metadata_accuracy(&original.cell_metadata, &converted.cell_metadata);
+    let cell_meta_acc =
+        calculate_metadata_accuracy(&original.cell_metadata, &converted.cell_metadata);
     // 只有当行数不匹配时才标记为失败
     // 列数差异在跨格式转换中是可以接受的（某些列可能不被保留）
     if !cell_meta_acc.row_count_match {
         report.passed = false;
     }
     report.cell_metadata_accuracy = Some(cell_meta_acc);
-    
+
     // 3. 基因元数据准确性
-    let gene_meta_acc = calculate_metadata_accuracy(&original.gene_metadata, &converted.gene_metadata);
+    let gene_meta_acc =
+        calculate_metadata_accuracy(&original.gene_metadata, &converted.gene_metadata);
     // 只有当行数不匹配时才标记为失败
     if !gene_meta_acc.row_count_match {
         report.passed = false;
     }
     report.gene_metadata_accuracy = Some(gene_meta_acc);
-    
+
     // 4. 嵌入准确性
     if let (Some(orig_emb), Some(conv_emb)) = (&original.embeddings, &converted.embeddings) {
         for (name, orig) in orig_emb {
@@ -827,7 +875,7 @@ pub fn calculate_full_accuracy(
             }
         }
     }
-    
+
     // 5. Layers 准确性
     if let (Some(orig_layers), Some(conv_layers)) = (&original.layers, &converted.layers) {
         for (name, orig) in orig_layers {
@@ -847,12 +895,12 @@ pub fn calculate_full_accuracy(
             }
         }
     }
-    
+
     // 检查表达矩阵准确性是否满足要求
     if !report.expression_accuracy.meets_requirements(1e-7) {
         report.passed = false;
     }
-    
+
     report
 }
 
@@ -863,30 +911,36 @@ pub fn calculate_full_accuracy(
 #[cfg(test)]
 mod tests {
     use super::*;
-    
+
     #[test]
     fn test_pearson_correlation_perfect() {
         let x = vec![1.0, 2.0, 3.0, 4.0, 5.0];
         let y = vec![1.0, 2.0, 3.0, 4.0, 5.0];
         let corr = pearson_correlation(&x, &y);
-        assert!((corr - 1.0).abs() < 1e-10, "Perfect correlation should be 1.0");
+        assert!(
+            (corr - 1.0).abs() < 1e-10,
+            "Perfect correlation should be 1.0"
+        );
     }
-    
+
     #[test]
     fn test_pearson_correlation_negative() {
         let x = vec![1.0, 2.0, 3.0, 4.0, 5.0];
         let y = vec![5.0, 4.0, 3.0, 2.0, 1.0];
         let corr = pearson_correlation(&x, &y);
-        assert!((corr - (-1.0)).abs() < 1e-10, "Perfect negative correlation should be -1.0");
+        assert!(
+            (corr - (-1.0)).abs() < 1e-10,
+            "Perfect negative correlation should be -1.0"
+        );
     }
-    
+
     #[test]
     fn test_calculate_sparsity() {
         assert!((calculate_sparsity(10, 100) - 0.9).abs() < 1e-10);
         assert!((calculate_sparsity(0, 100) - 1.0).abs() < 1e-10);
         assert!((calculate_sparsity(100, 100) - 0.0).abs() < 1e-10);
     }
-    
+
     #[test]
     fn test_accuracy_metrics_summary() {
         let metrics = AccuracyMetrics::perfect();

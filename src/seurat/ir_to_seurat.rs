@@ -3,12 +3,14 @@
 //! This module converts CrossCell IR to native Seurat S4 objects
 //! that can be read directly by R's readRDS() + SeuratObject package.
 
-use crate::ir::{DataFrame, Embedding, ExpressionMatrix, PairwiseMatrix, SingleCellData, SparseMatrixCSC};
+use crate::ir::{
+    DataFrame, Embedding, ExpressionMatrix, PairwiseMatrix, SingleCellData, SparseMatrixCSC,
+};
+use crate::rds::StringEncoding;
 use crate::rds::{
     Attributes, DoubleVector, GenericVector, IntegerVector, LogicalVector, RObject, RdsFile,
     S4Object, StringVector,
 };
-use crate::rds::StringEncoding;
 use crate::seurat::error::SeuratError;
 use arrow::array::Array as ArrowArray;
 use arrow::datatypes::Int32Type;
@@ -61,8 +63,15 @@ fn create_named_list(items: Vec<(String, RObject)>) -> RObject {
     for name in names {
         names_vec.add(name, StringEncoding::Utf8);
     }
-    attrs.add("names".to_string(), RObject::StringVector(names_vec), StringEncoding::Utf8);
-    RObject::GenericVector(GenericVector { data, attributes: attrs })
+    attrs.add(
+        "names".to_string(),
+        RObject::StringVector(names_vec),
+        StringEncoding::Utf8,
+    );
+    RObject::GenericVector(GenericVector {
+        data,
+        attributes: attrs,
+    })
 }
 
 /// Extract names from a DataFrame's `_index` column, falling back to generated names.
@@ -70,16 +79,15 @@ fn extract_names_from_df(df: &DataFrame, n: usize, prefix: &str) -> Vec<String> 
     if let Some(array) = df.column("_index") {
         if let Some(str_arr) = array.as_any().downcast_ref::<arrow::array::StringArray>() {
             if str_arr.len() == n {
-                return (0..n)
-                    .map(|i| str_arr.value(i).to_string())
-                    .collect();
+                return (0..n).map(|i| str_arr.value(i).to_string()).collect();
             }
         }
-        if let Some(str_arr) = array.as_any().downcast_ref::<arrow::array::LargeStringArray>() {
+        if let Some(str_arr) = array
+            .as_any()
+            .downcast_ref::<arrow::array::LargeStringArray>()
+        {
             if str_arr.len() == n {
-                return (0..n)
-                    .map(|i| str_arr.value(i).to_string())
-                    .collect();
+                return (0..n).map(|i| str_arr.value(i).to_string()).collect();
             }
         }
     }
@@ -97,7 +105,11 @@ fn create_package_version(major: i32, minor: i32, patch: i32) -> RObject {
     let mut class_vec = StringVector::default();
     class_vec.add("package_version".to_string(), StringEncoding::Utf8);
     class_vec.add("numeric_version".to_string(), StringEncoding::Utf8);
-    gv.attributes.add("class".to_string(), RObject::StringVector(class_vec), StringEncoding::Utf8);
+    gv.attributes.add(
+        "class".to_string(),
+        RObject::StringVector(class_vec),
+        StringEncoding::Utf8,
+    );
     RObject::GenericVector(gv)
 }
 
@@ -113,7 +125,11 @@ fn create_logmap(row_names: &[String], col_names: &[String]) -> RObject {
 
     let mut attrs = Attributes::new();
     // dim
-    attrs.add("dim".to_string(), create_integer_vector(vec![n_rows as i32, n_cols as i32]), StringEncoding::Utf8);
+    attrs.add(
+        "dim".to_string(),
+        create_integer_vector(vec![n_rows as i32, n_cols as i32]),
+        StringEncoding::Utf8,
+    );
     // dimnames (list of two character vectors)
     let dimnames = RObject::GenericVector(GenericVector {
         data: vec![
@@ -129,11 +145,22 @@ fn create_logmap(row_names: &[String], col_names: &[String]) -> RObject {
     let mut class_attrs = Attributes::new();
     let mut pkg_vec = StringVector::default();
     pkg_vec.add("SeuratObject".to_string(), StringEncoding::Utf8);
-    class_attrs.add("package".to_string(), RObject::StringVector(pkg_vec), StringEncoding::Utf8);
+    class_attrs.add(
+        "package".to_string(),
+        RObject::StringVector(pkg_vec),
+        StringEncoding::Utf8,
+    );
     class_vec.attributes = class_attrs;
-    attrs.add("class".to_string(), RObject::StringVector(class_vec), StringEncoding::Utf8);
+    attrs.add(
+        "class".to_string(),
+        RObject::StringVector(class_vec),
+        StringEncoding::Utf8,
+    );
 
-    RObject::LogicalVector(LogicalVector { data, attributes: attrs })
+    RObject::LogicalVector(LogicalVector {
+        data,
+        attributes: attrs,
+    })
 }
 
 // ─── main entry point ───────────────────────────────────────────────────────
@@ -142,7 +169,11 @@ fn create_logmap(row_names: &[String], col_names: &[String]) -> RObject {
 pub fn ir_to_seurat_rds(ir: &SingleCellData) -> Result<(RObject, RdsFile), SeuratError> {
     let file = RdsFile::default();
 
-    let active_assay = ir.metadata.active_assay.clone().unwrap_or_else(|| "RNA".to_string());
+    let active_assay = ir
+        .metadata
+        .active_assay
+        .clone()
+        .unwrap_or_else(|| "RNA".to_string());
     let n_cells = ir.metadata.n_cells;
     let n_genes = ir.metadata.n_genes;
 
@@ -158,18 +189,25 @@ pub fn ir_to_seurat_rds(ir: &SingleCellData) -> Result<(RObject, RdsFile), Seura
 
     // --- assays slot (named list of Assay5 S4 objects) ---
     let assays = construct_assays(ir, &active_assay, &cell_names, &gene_names)?;
-    s4.attributes.add("assays".to_string(), assays, StringEncoding::Utf8);
+    s4.attributes
+        .add("assays".to_string(), assays, StringEncoding::Utf8);
 
     // --- meta.data slot (data.frame) ---
     let meta_data = construct_metadata(&ir.cell_metadata, &cell_names)?;
-    s4.attributes.add("meta.data".to_string(), meta_data, StringEncoding::Utf8);
+    s4.attributes
+        .add("meta.data".to_string(), meta_data, StringEncoding::Utf8);
 
     // --- active.assay slot ---
-    s4.attributes.add("active.assay".to_string(), create_string_scalar(&active_assay), StringEncoding::Utf8);
+    s4.attributes.add(
+        "active.assay".to_string(),
+        create_string_scalar(&active_assay),
+        StringEncoding::Utf8,
+    );
 
     // --- active.ident slot (factor with cell names) ---
     let ident = create_active_ident(&cell_names, "CrossCell");
-    s4.attributes.add("active.ident".to_string(), ident, StringEncoding::Utf8);
+    s4.attributes
+        .add("active.ident".to_string(), ident, StringEncoding::Utf8);
 
     // --- graphs slot (from cell_pairwise / obsp) ---
     let graphs = if let Some(ref cell_pairwise) = ir.cell_pairwise {
@@ -177,18 +215,30 @@ pub fn ir_to_seurat_rds(ir: &SingleCellData) -> Result<(RObject, RdsFile), Seura
     } else {
         create_named_list(vec![])
     };
-    s4.attributes.add("graphs".to_string(), graphs, StringEncoding::Utf8);
+    s4.attributes
+        .add("graphs".to_string(), graphs, StringEncoding::Utf8);
 
     // --- neighbors slot (empty named list) ---
-    s4.attributes.add("neighbors".to_string(), create_named_list(vec![]), StringEncoding::Utf8);
+    s4.attributes.add(
+        "neighbors".to_string(),
+        create_named_list(vec![]),
+        StringEncoding::Utf8,
+    );
 
     // --- reductions slot ---
     let reductions = if let Some(embeddings) = &ir.embeddings {
-        construct_reductions(embeddings, &ir.gene_loadings, &cell_names, &gene_names, &active_assay)?
+        construct_reductions(
+            embeddings,
+            &ir.gene_loadings,
+            &cell_names,
+            &gene_names,
+            &active_assay,
+        )?
     } else {
         create_named_list(vec![])
     };
-    s4.attributes.add("reductions".to_string(), reductions, StringEncoding::Utf8);
+    s4.attributes
+        .add("reductions".to_string(), reductions, StringEncoding::Utf8);
 
     // --- images slot ---
     let images = if let Some(spatial) = &ir.spatial {
@@ -196,22 +246,43 @@ pub fn ir_to_seurat_rds(ir: &SingleCellData) -> Result<(RObject, RdsFile), Seura
     } else {
         create_named_list(vec![])
     };
-    s4.attributes.add("images".to_string(), images, StringEncoding::Utf8);
+    s4.attributes
+        .add("images".to_string(), images, StringEncoding::Utf8);
 
     // --- project.name slot ---
-    s4.attributes.add("project.name".to_string(), create_string_scalar("CrossCell"), StringEncoding::Utf8);
+    s4.attributes.add(
+        "project.name".to_string(),
+        create_string_scalar("CrossCell"),
+        StringEncoding::Utf8,
+    );
 
     // --- misc slot (empty named list) ---
-    s4.attributes.add("misc".to_string(), create_named_list(vec![]), StringEncoding::Utf8);
+    s4.attributes.add(
+        "misc".to_string(),
+        create_named_list(vec![]),
+        StringEncoding::Utf8,
+    );
 
     // --- version slot (package_version "5.0.0") ---
-    s4.attributes.add("version".to_string(), create_package_version(5, 0, 0), StringEncoding::Utf8);
+    s4.attributes.add(
+        "version".to_string(),
+        create_package_version(5, 0, 0),
+        StringEncoding::Utf8,
+    );
 
     // --- commands slot (empty named list) ---
-    s4.attributes.add("commands".to_string(), create_named_list(vec![]), StringEncoding::Utf8);
+    s4.attributes.add(
+        "commands".to_string(),
+        create_named_list(vec![]),
+        StringEncoding::Utf8,
+    );
 
     // --- tools slot (empty named list) ---
-    s4.attributes.add("tools".to_string(), create_named_list(vec![]), StringEncoding::Utf8);
+    s4.attributes.add(
+        "tools".to_string(),
+        create_named_list(vec![]),
+        StringEncoding::Utf8,
+    );
 
     Ok((RObject::S4Object(s4), file))
 }
@@ -235,9 +306,17 @@ fn create_active_ident(cell_names: &[String], project_name: &str) -> RObject {
     // class = "factor"
     let mut class_vec = StringVector::default();
     class_vec.add("factor".to_string(), StringEncoding::Utf8);
-    int_vec.attributes.add("class".to_string(), RObject::StringVector(class_vec), StringEncoding::Utf8);
+    int_vec.attributes.add(
+        "class".to_string(),
+        RObject::StringVector(class_vec),
+        StringEncoding::Utf8,
+    );
     // names = cell names
-    int_vec.attributes.add("names".to_string(), create_string_vector(cell_names.to_vec()), StringEncoding::Utf8);
+    int_vec.attributes.add(
+        "names".to_string(),
+        create_string_vector(cell_names.to_vec()),
+        StringEncoding::Utf8,
+    );
 
     RObject::IntegerVector(int_vec)
 }
@@ -255,7 +334,11 @@ fn construct_assays(
 
     // Main assay
     let main_assay = construct_single_assay(
-        &ir.expression, &ir.gene_metadata, cell_names, gene_names, active_assay,
+        &ir.expression,
+        &ir.gene_metadata,
+        cell_names,
+        gene_names,
+        active_assay,
     )?;
     assay_list.push((active_assay.to_string(), main_assay));
 
@@ -263,7 +346,11 @@ fn construct_assays(
     if let Some(layers) = &ir.layers {
         for (name, layer_expr) in layers {
             let layer_assay = construct_single_assay(
-                layer_expr, &ir.gene_metadata, cell_names, gene_names, name,
+                layer_expr,
+                &ir.gene_metadata,
+                cell_names,
+                gene_names,
+                name,
             )?;
             assay_list.push((name.clone(), layer_assay));
         }
@@ -289,33 +376,56 @@ fn construct_single_assay(
     // layers slot: named list with "counts" → dgCMatrix
     let dgc = expression_to_dgcmatrix(expression, gene_names, cell_names)?;
     let layers = create_named_list(vec![("counts".to_string(), dgc)]);
-    s4.attributes.add("layers".to_string(), layers, StringEncoding::Utf8);
+    s4.attributes
+        .add("layers".to_string(), layers, StringEncoding::Utf8);
 
     // cells slot: LogMap (cell_names × layer_names)
     let layer_names = vec!["counts".to_string()];
     let cells_logmap = create_logmap(cell_names, &layer_names);
-    s4.attributes.add("cells".to_string(), cells_logmap, StringEncoding::Utf8);
+    s4.attributes
+        .add("cells".to_string(), cells_logmap, StringEncoding::Utf8);
 
     // features slot: LogMap (gene_names × layer_names)
     let features_logmap = create_logmap(gene_names, &layer_names);
-    s4.attributes.add("features".to_string(), features_logmap, StringEncoding::Utf8);
+    s4.attributes.add(
+        "features".to_string(),
+        features_logmap,
+        StringEncoding::Utf8,
+    );
 
     // default slot: integer(1) = 1
-    s4.attributes.add("default".to_string(), create_integer_vector(vec![1]), StringEncoding::Utf8);
+    s4.attributes.add(
+        "default".to_string(),
+        create_integer_vector(vec![1]),
+        StringEncoding::Utf8,
+    );
 
     // assay.orig slot: character("")
-    s4.attributes.add("assay.orig".to_string(), create_string_scalar(""), StringEncoding::Utf8);
+    s4.attributes.add(
+        "assay.orig".to_string(),
+        create_string_scalar(""),
+        StringEncoding::Utf8,
+    );
 
     // meta.data slot: empty data.frame with n_genes rows
     let assay_meta = construct_empty_dataframe(gene_names.len())?;
-    s4.attributes.add("meta.data".to_string(), assay_meta, StringEncoding::Utf8);
+    s4.attributes
+        .add("meta.data".to_string(), assay_meta, StringEncoding::Utf8);
 
     // misc slot: empty named list
-    s4.attributes.add("misc".to_string(), create_named_list(vec![]), StringEncoding::Utf8);
+    s4.attributes.add(
+        "misc".to_string(),
+        create_named_list(vec![]),
+        StringEncoding::Utf8,
+    );
 
     // key slot: lowercase assay name + "_"
     let key = format!("{}_", assay_name.to_lowercase());
-    s4.attributes.add("key".to_string(), create_string_scalar(&key), StringEncoding::Utf8);
+    s4.attributes.add(
+        "key".to_string(),
+        create_string_scalar(&key),
+        StringEncoding::Utf8,
+    );
 
     Ok(RObject::S4Object(s4))
 }
@@ -324,11 +434,19 @@ fn construct_single_assay(
 fn construct_empty_dataframe(n_rows: usize) -> Result<RObject, SeuratError> {
     let mut attrs = Attributes::new();
     // names: character(0)
-    attrs.add("names".to_string(), create_string_vector(vec![]), StringEncoding::Utf8);
+    attrs.add(
+        "names".to_string(),
+        create_string_vector(vec![]),
+        StringEncoding::Utf8,
+    );
     // class
     let mut class_vec = StringVector::default();
     class_vec.add("data.frame".to_string(), StringEncoding::Utf8);
-    attrs.add("class".to_string(), RObject::StringVector(class_vec), StringEncoding::Utf8);
+    attrs.add(
+        "class".to_string(),
+        RObject::StringVector(class_vec),
+        StringEncoding::Utf8,
+    );
     // row.names: compact form c(NA, -n_rows)
     let row_names = create_integer_vector(vec![i32::MIN, -(n_rows as i32)]);
     attrs.add("row.names".to_string(), row_names, StringEncoding::Utf8);
@@ -348,7 +466,9 @@ pub fn expression_to_dgcmatrix(
     cell_names: &[String],
 ) -> Result<RObject, SeuratError> {
     match expression {
-        ExpressionMatrix::SparseCSC(sparse) => sparse_csc_to_dgcmatrix(sparse, gene_names, cell_names),
+        ExpressionMatrix::SparseCSC(sparse) => {
+            sparse_csc_to_dgcmatrix(sparse, gene_names, cell_names)
+        }
         ExpressionMatrix::SparseCSR(sparse) => {
             use crate::sparse::convert::csr_to_csc;
             let csc = csr_to_csc(sparse);
@@ -388,7 +508,13 @@ fn dense_to_dgcmatrix(
         }
         indptr.push(data.len());
     }
-    let csc = SparseMatrixCSC { data, indices, indptr, n_rows, n_cols };
+    let csc = SparseMatrixCSC {
+        data,
+        indices,
+        indptr,
+        n_rows,
+        n_cols,
+    };
     sparse_csc_to_dgcmatrix(&csc, gene_names, cell_names)
 }
 
@@ -400,7 +526,8 @@ fn sparse_csc_to_dgcmatrix(
 ) -> Result<RObject, SeuratError> {
     log::debug!(
         "sparse_csc_to_dgcmatrix: IR input: {} cells x {} genes",
-        sparse.n_rows, sparse.n_cols
+        sparse.n_rows,
+        sparse.n_cols
     );
 
     // dgCMatrix in R stores genes × cells (transposed from our cells × genes).
@@ -416,18 +543,34 @@ fn sparse_csc_to_dgcmatrix(
 
     // i: row indices (0-based)
     let i_vec: Vec<i32> = csr.indices.iter().map(|&x| x as i32).collect();
-    s4.attributes.add("i".to_string(), create_integer_vector(i_vec), StringEncoding::Utf8);
+    s4.attributes.add(
+        "i".to_string(),
+        create_integer_vector(i_vec),
+        StringEncoding::Utf8,
+    );
 
     // p: column pointers
     let p_vec: Vec<i32> = csr.indptr.iter().map(|&x| x as i32).collect();
-    s4.attributes.add("p".to_string(), create_integer_vector(p_vec), StringEncoding::Utf8);
+    s4.attributes.add(
+        "p".to_string(),
+        create_integer_vector(p_vec),
+        StringEncoding::Utf8,
+    );
 
     // x: non-zero values
-    s4.attributes.add("x".to_string(), create_real_vector(csr.data.clone()), StringEncoding::Utf8);
+    s4.attributes.add(
+        "x".to_string(),
+        create_real_vector(csr.data.clone()),
+        StringEncoding::Utf8,
+    );
 
     // Dim: [n_genes, n_cells]
     let dim_vec = vec![sparse.n_cols as i32, sparse.n_rows as i32];
-    s4.attributes.add("Dim".to_string(), create_integer_vector(dim_vec), StringEncoding::Utf8);
+    s4.attributes.add(
+        "Dim".to_string(),
+        create_integer_vector(dim_vec),
+        StringEncoding::Utf8,
+    );
 
     // Dimnames: list(gene_names_or_NULL, cell_names_or_NULL)
     let row_dimnames = if gene_names.is_empty() {
@@ -444,7 +587,8 @@ fn sparse_csc_to_dgcmatrix(
         data: vec![row_dimnames, col_dimnames],
         attributes: Attributes::new(),
     });
-    s4.attributes.add("Dimnames".to_string(), dimnames, StringEncoding::Utf8);
+    s4.attributes
+        .add("Dimnames".to_string(), dimnames, StringEncoding::Utf8);
 
     // factors: empty list
     s4.attributes.add(
@@ -462,11 +606,23 @@ fn sparse_csc_to_dgcmatrix(
 fn construct_metadata(df: &DataFrame, cell_names: &[String]) -> Result<RObject, SeuratError> {
     if df.n_rows == 0 {
         let mut attrs = Attributes::new();
-        attrs.add("names".to_string(), create_string_vector(vec![]), StringEncoding::Utf8);
+        attrs.add(
+            "names".to_string(),
+            create_string_vector(vec![]),
+            StringEncoding::Utf8,
+        );
         let mut class_vec = StringVector::default();
         class_vec.add("data.frame".to_string(), StringEncoding::Utf8);
-        attrs.add("class".to_string(), RObject::StringVector(class_vec), StringEncoding::Utf8);
-        attrs.add("row.names".to_string(), create_integer_vector(vec![]), StringEncoding::Utf8);
+        attrs.add(
+            "class".to_string(),
+            RObject::StringVector(class_vec),
+            StringEncoding::Utf8,
+        );
+        attrs.add(
+            "row.names".to_string(),
+            create_integer_vector(vec![]),
+            StringEncoding::Utf8,
+        );
         return Ok(RObject::GenericVector(GenericVector {
             data: vec![],
             attributes: attrs,
@@ -496,99 +652,204 @@ fn construct_metadata(df: &DataFrame, cell_names: &[String]) -> Result<RObject, 
 
     let mut attrs = Attributes::new();
     // names (column names) — must come before row.names for R data.frame compatibility
-    attrs.add("names".to_string(), create_string_vector(col_names), StringEncoding::Utf8);
+    attrs.add(
+        "names".to_string(),
+        create_string_vector(col_names),
+        StringEncoding::Utf8,
+    );
     // class
     let mut class_vec = StringVector::default();
     class_vec.add("data.frame".to_string(), StringEncoding::Utf8);
-    attrs.add("class".to_string(), RObject::StringVector(class_vec), StringEncoding::Utf8);
+    attrs.add(
+        "class".to_string(),
+        RObject::StringVector(class_vec),
+        StringEncoding::Utf8,
+    );
     // row.names = cell names (character vector)
-    attrs.add("row.names".to_string(), create_string_vector(cell_names.to_vec()), StringEncoding::Utf8);
+    attrs.add(
+        "row.names".to_string(),
+        create_string_vector(cell_names.to_vec()),
+        StringEncoding::Utf8,
+    );
 
-    Ok(RObject::GenericVector(GenericVector { data, attributes: attrs }))
+    Ok(RObject::GenericVector(GenericVector {
+        data,
+        attributes: attrs,
+    }))
 }
 
 /// Convert Arrow array to RObject
-fn arrow_array_to_robject(array: &dyn arrow::array::Array, col_name: &str) -> Result<RObject, SeuratError> {
+fn arrow_array_to_robject(
+    array: &dyn arrow::array::Array,
+    col_name: &str,
+) -> Result<RObject, SeuratError> {
     use arrow::array::*;
     use arrow::datatypes::DataType;
 
     match array.data_type() {
         DataType::Int64 => {
-            let arr = array.as_any().downcast_ref::<Int64Array>()
-                .ok_or_else(|| SeuratError::ConversionError(format!("Failed to downcast {} to Int64Array", col_name)))?;
-            let values: Vec<i32> = arr.iter().map(|v| v.map(|x| x as i32).unwrap_or(i32::MIN)).collect();
+            let arr = array.as_any().downcast_ref::<Int64Array>().ok_or_else(|| {
+                SeuratError::ConversionError(format!(
+                    "Failed to downcast {} to Int64Array",
+                    col_name
+                ))
+            })?;
+            let values: Vec<i32> = arr
+                .iter()
+                .map(|v| v.map(|x| x as i32).unwrap_or(i32::MIN))
+                .collect();
             Ok(create_integer_vector(values))
         }
         DataType::Int32 => {
-            let arr = array.as_any().downcast_ref::<Int32Array>()
-                .ok_or_else(|| SeuratError::ConversionError(format!("Failed to downcast {} to Int32Array", col_name)))?;
+            let arr = array.as_any().downcast_ref::<Int32Array>().ok_or_else(|| {
+                SeuratError::ConversionError(format!(
+                    "Failed to downcast {} to Int32Array",
+                    col_name
+                ))
+            })?;
             let values: Vec<i32> = arr.iter().map(|v| v.unwrap_or(i32::MIN)).collect();
             Ok(create_integer_vector(values))
         }
         DataType::Float64 => {
-            let arr = array.as_any().downcast_ref::<Float64Array>()
-                .ok_or_else(|| SeuratError::ConversionError(format!("Failed to downcast {} to Float64Array", col_name)))?;
+            let arr = array
+                .as_any()
+                .downcast_ref::<Float64Array>()
+                .ok_or_else(|| {
+                    SeuratError::ConversionError(format!(
+                        "Failed to downcast {} to Float64Array",
+                        col_name
+                    ))
+                })?;
             let values: Vec<f64> = arr.iter().map(|v| v.unwrap_or(f64::NAN)).collect();
             Ok(create_real_vector(values))
         }
         DataType::Float32 => {
-            let arr = array.as_any().downcast_ref::<Float32Array>()
-                .ok_or_else(|| SeuratError::ConversionError(format!("Failed to downcast {} to Float32Array", col_name)))?;
-            let values: Vec<f64> = arr.iter().map(|v| v.map(|x| x as f64).unwrap_or(f64::NAN)).collect();
+            let arr = array
+                .as_any()
+                .downcast_ref::<Float32Array>()
+                .ok_or_else(|| {
+                    SeuratError::ConversionError(format!(
+                        "Failed to downcast {} to Float32Array",
+                        col_name
+                    ))
+                })?;
+            let values: Vec<f64> = arr
+                .iter()
+                .map(|v| v.map(|x| x as f64).unwrap_or(f64::NAN))
+                .collect();
             Ok(create_real_vector(values))
         }
         DataType::Utf8 => {
-            let arr = array.as_any().downcast_ref::<StringArray>()
-                .ok_or_else(|| SeuratError::ConversionError(format!("Failed to downcast {} to StringArray", col_name)))?;
-            let values: Vec<String> = arr.iter().map(|v| v.map(|s| s.to_string()).unwrap_or_else(|| "NA".to_string())).collect();
+            let arr = array
+                .as_any()
+                .downcast_ref::<StringArray>()
+                .ok_or_else(|| {
+                    SeuratError::ConversionError(format!(
+                        "Failed to downcast {} to StringArray",
+                        col_name
+                    ))
+                })?;
+            let values: Vec<String> = arr
+                .iter()
+                .map(|v| v.map(|s| s.to_string()).unwrap_or_else(|| "NA".to_string()))
+                .collect();
             Ok(create_string_vector(values))
         }
         DataType::LargeUtf8 => {
-            let arr = array.as_any().downcast_ref::<LargeStringArray>()
-                .ok_or_else(|| SeuratError::ConversionError(format!("Failed to downcast {} to LargeStringArray", col_name)))?;
-            let values: Vec<String> = arr.iter().map(|v| v.map(|s| s.to_string()).unwrap_or_else(|| "NA".to_string())).collect();
+            let arr = array
+                .as_any()
+                .downcast_ref::<LargeStringArray>()
+                .ok_or_else(|| {
+                    SeuratError::ConversionError(format!(
+                        "Failed to downcast {} to LargeStringArray",
+                        col_name
+                    ))
+                })?;
+            let values: Vec<String> = arr
+                .iter()
+                .map(|v| v.map(|s| s.to_string()).unwrap_or_else(|| "NA".to_string()))
+                .collect();
             Ok(create_string_vector(values))
         }
         DataType::Boolean => {
-            let arr = array.as_any().downcast_ref::<BooleanArray>()
-                .ok_or_else(|| SeuratError::ConversionError(format!("Failed to downcast {} to BooleanArray", col_name)))?;
-            let values: Vec<i32> = arr.iter().map(|v| match v {
-                Some(true) => 1,
-                Some(false) => 0,
-                None => i32::MIN,
-            }).collect();
+            let arr = array
+                .as_any()
+                .downcast_ref::<BooleanArray>()
+                .ok_or_else(|| {
+                    SeuratError::ConversionError(format!(
+                        "Failed to downcast {} to BooleanArray",
+                        col_name
+                    ))
+                })?;
+            let values: Vec<i32> = arr
+                .iter()
+                .map(|v| match v {
+                    Some(true) => 1,
+                    Some(false) => 0,
+                    None => i32::MIN,
+                })
+                .collect();
             Ok(create_integer_vector(values))
         }
         DataType::Dictionary(key_type, _value_type) => {
             match key_type.as_ref() {
                 DataType::Int32 => {
-                    let dict_arr = array.as_any().downcast_ref::<DictionaryArray<Int32Type>>()
-                        .ok_or_else(|| SeuratError::ConversionError(format!("Failed to downcast {} to DictionaryArray", col_name)))?;
-                    let keys: Vec<i32> = dict_arr.keys().iter()
+                    let dict_arr = array
+                        .as_any()
+                        .downcast_ref::<DictionaryArray<Int32Type>>()
+                        .ok_or_else(|| {
+                            SeuratError::ConversionError(format!(
+                                "Failed to downcast {} to DictionaryArray",
+                                col_name
+                            ))
+                        })?;
+                    let keys: Vec<i32> = dict_arr
+                        .keys()
+                        .iter()
                         .map(|v: Option<i32>| v.map(|k| k + 1).unwrap_or(i32::MIN))
                         .collect();
                     let values = dict_arr.values();
-                    let levels: Vec<String> = if let Some(str_arr) = values.as_any().downcast_ref::<StringArray>() {
-                        str_arr.iter().map(|v: Option<&str>| v.unwrap_or("").to_string()).collect()
-                    } else {
-                        (0..values.len()).map(|i| format!("Level_{}", i)).collect()
+                    let levels: Vec<String> =
+                        if let Some(str_arr) = values.as_any().downcast_ref::<StringArray>() {
+                            str_arr
+                                .iter()
+                                .map(|v: Option<&str>| v.unwrap_or("").to_string())
+                                .collect()
+                        } else {
+                            (0..values.len()).map(|i| format!("Level_{}", i)).collect()
+                        };
+                    let mut int_vec = IntegerVector {
+                        data: keys,
+                        attributes: Attributes::new(),
                     };
-                    let mut int_vec = IntegerVector { data: keys, attributes: Attributes::new() };
-                    int_vec.attributes.add("levels".to_string(), create_string_vector(levels), StringEncoding::Utf8);
+                    int_vec.attributes.add(
+                        "levels".to_string(),
+                        create_string_vector(levels),
+                        StringEncoding::Utf8,
+                    );
                     let mut class_vec = StringVector::default();
                     class_vec.add("factor".to_string(), StringEncoding::Utf8);
-                    int_vec.attributes.add("class".to_string(), RObject::StringVector(class_vec), StringEncoding::Utf8);
+                    int_vec.attributes.add(
+                        "class".to_string(),
+                        RObject::StringVector(class_vec),
+                        StringEncoding::Utf8,
+                    );
                     Ok(RObject::IntegerVector(int_vec))
                 }
                 _ => {
                     eprintln!("Warning: Unsupported dictionary key type for column {}, converting to string", col_name);
-                    let values: Vec<String> = (0..array.len()).map(|i| format!("Value_{}", i)).collect();
+                    let values: Vec<String> =
+                        (0..array.len()).map(|i| format!("Value_{}", i)).collect();
                     Ok(create_string_vector(values))
                 }
             }
         }
         _ => {
-            eprintln!("Warning: Unsupported data type {:?} for column {}, converting to string", array.data_type(), col_name);
+            eprintln!(
+                "Warning: Unsupported data type {:?} for column {}, converting to string",
+                array.data_type(),
+                col_name
+            );
             let values: Vec<String> = (0..array.len()).map(|i| format!("Value_{}", i)).collect();
             Ok(create_string_vector(values))
         }
@@ -622,7 +883,8 @@ fn construct_reductions(
                     }
                 })
         });
-        let reduction = construct_single_reduction(embedding, loading, cell_names, gene_names, assay_name)?;
+        let reduction =
+            construct_single_reduction(embedding, loading, cell_names, gene_names, assay_name)?;
         // Strip AnnData "X_" prefix for Seurat reduction names
         let seurat_name = if name.starts_with("X_") || name.starts_with("x_") {
             name[2..].to_string()
@@ -650,36 +912,74 @@ fn construct_single_reduction(
 
     // cell.embeddings slot: matrix with dimnames
     let cell_embeddings = embedding_to_matrix(embedding, cell_names)?;
-    s4.attributes.add("cell.embeddings".to_string(), cell_embeddings, StringEncoding::Utf8);
+    s4.attributes.add(
+        "cell.embeddings".to_string(),
+        cell_embeddings,
+        StringEncoding::Utf8,
+    );
 
     // feature.loadings: gene loadings matrix or empty
     let feature_loadings = if let Some(load) = loading {
         loading_to_matrix(load, gene_names, embedding.n_cols)?
     } else {
-        RObject::DoubleVector(DoubleVector { data: vec![], attributes: Attributes::new() })
+        RObject::DoubleVector(DoubleVector {
+            data: vec![],
+            attributes: Attributes::new(),
+        })
     };
-    s4.attributes.add("feature.loadings".to_string(), feature_loadings, StringEncoding::Utf8);
+    s4.attributes.add(
+        "feature.loadings".to_string(),
+        feature_loadings,
+        StringEncoding::Utf8,
+    );
 
     // feature.loadings.projected: empty matrix
-    let empty_mat = DoubleVector { data: vec![], attributes: Attributes::new() };
-    s4.attributes.add("feature.loadings.projected".to_string(), RObject::DoubleVector(empty_mat), StringEncoding::Utf8);
+    let empty_mat = DoubleVector {
+        data: vec![],
+        attributes: Attributes::new(),
+    };
+    s4.attributes.add(
+        "feature.loadings.projected".to_string(),
+        RObject::DoubleVector(empty_mat),
+        StringEncoding::Utf8,
+    );
 
     // assay.used
-    s4.attributes.add("assay.used".to_string(), create_string_scalar(assay_name), StringEncoding::Utf8);
+    s4.attributes.add(
+        "assay.used".to_string(),
+        create_string_scalar(assay_name),
+        StringEncoding::Utf8,
+    );
 
     // global: FALSE
-    let lv = LogicalVector { data: vec![0], attributes: Attributes::new() };
-    s4.attributes.add("global".to_string(), RObject::LogicalVector(lv), StringEncoding::Utf8);
+    let lv = LogicalVector {
+        data: vec![0],
+        attributes: Attributes::new(),
+    };
+    s4.attributes.add(
+        "global".to_string(),
+        RObject::LogicalVector(lv),
+        StringEncoding::Utf8,
+    );
 
     // stdev: numeric(0)
-    s4.attributes.add("stdev".to_string(), create_real_vector(vec![]), StringEncoding::Utf8);
+    s4.attributes.add(
+        "stdev".to_string(),
+        create_real_vector(vec![]),
+        StringEncoding::Utf8,
+    );
 
     // jackstraw: JackStrawData S4 with empty matrix slots
     let jackstraw = create_jackstraw_data();
-    s4.attributes.add("jackstraw".to_string(), jackstraw, StringEncoding::Utf8);
+    s4.attributes
+        .add("jackstraw".to_string(), jackstraw, StringEncoding::Utf8);
 
     // misc: empty list
-    s4.attributes.add("misc".to_string(), create_named_list(vec![]), StringEncoding::Utf8);
+    s4.attributes.add(
+        "misc".to_string(),
+        create_named_list(vec![]),
+        StringEncoding::Utf8,
+    );
 
     // key: e.g. "pca_", "umap_"
     // Strip AnnData "X_" prefix for Seurat compatibility
@@ -690,7 +990,11 @@ fn construct_single_reduction(
         &base_name
     };
     let key = format!("{}_", clean_name);
-    s4.attributes.add("key".to_string(), create_string_scalar(&key), StringEncoding::Utf8);
+    s4.attributes.add(
+        "key".to_string(),
+        create_string_scalar(&key),
+        StringEncoding::Utf8,
+    );
 
     Ok(RObject::S4Object(s4))
 }
@@ -703,17 +1007,39 @@ fn create_jackstraw_data() -> RObject {
     s4.package_name = "SeuratObject".to_string();
     s4.package_encoding = StringEncoding::Utf8;
 
-    let empty_mat = RObject::DoubleVector(DoubleVector { data: vec![], attributes: Attributes::new() });
-    s4.attributes.add("empirical.p.values".to_string(), empty_mat.clone(), StringEncoding::Utf8);
-    s4.attributes.add("fake.reduction.scores".to_string(), empty_mat.clone(), StringEncoding::Utf8);
-    s4.attributes.add("empirical.p.values.full".to_string(), empty_mat.clone(), StringEncoding::Utf8);
-    s4.attributes.add("overall.p.values".to_string(), empty_mat, StringEncoding::Utf8);
+    let empty_mat = RObject::DoubleVector(DoubleVector {
+        data: vec![],
+        attributes: Attributes::new(),
+    });
+    s4.attributes.add(
+        "empirical.p.values".to_string(),
+        empty_mat.clone(),
+        StringEncoding::Utf8,
+    );
+    s4.attributes.add(
+        "fake.reduction.scores".to_string(),
+        empty_mat.clone(),
+        StringEncoding::Utf8,
+    );
+    s4.attributes.add(
+        "empirical.p.values.full".to_string(),
+        empty_mat.clone(),
+        StringEncoding::Utf8,
+    );
+    s4.attributes.add(
+        "overall.p.values".to_string(),
+        empty_mat,
+        StringEncoding::Utf8,
+    );
 
     RObject::S4Object(s4)
 }
 
 /// Convert Embedding to R matrix with dimnames
-fn embedding_to_matrix(embedding: &Embedding, cell_names: &[String]) -> Result<RObject, SeuratError> {
+fn embedding_to_matrix(
+    embedding: &Embedding,
+    cell_names: &[String],
+) -> Result<RObject, SeuratError> {
     let n_rows = embedding.n_rows;
     let n_cols = embedding.n_cols;
 
@@ -727,7 +1053,11 @@ fn embedding_to_matrix(embedding: &Embedding, cell_names: &[String]) -> Result<R
 
     let mut attrs = Attributes::new();
     // dim
-    attrs.add("dim".to_string(), create_integer_vector(vec![n_rows as i32, n_cols as i32]), StringEncoding::Utf8);
+    attrs.add(
+        "dim".to_string(),
+        create_integer_vector(vec![n_rows as i32, n_cols as i32]),
+        StringEncoding::Utf8,
+    );
     // dimnames: list(cell_names, component_names)
     // Strip AnnData "X_" prefix for Seurat compatibility
     let base = &embedding.name;
@@ -756,7 +1086,11 @@ fn embedding_to_matrix(embedding: &Embedding, cell_names: &[String]) -> Result<R
 ///
 /// The loading matrix is n_genes × n_components (row-major in IR).
 /// R expects column-major storage.
-fn loading_to_matrix(loading: &Embedding, gene_names: &[String], expected_cols: usize) -> Result<RObject, SeuratError> {
+fn loading_to_matrix(
+    loading: &Embedding,
+    gene_names: &[String],
+    expected_cols: usize,
+) -> Result<RObject, SeuratError> {
     let n_rows = loading.n_rows; // n_genes
     let n_cols = std::cmp::min(loading.n_cols, expected_cols); // n_components
 
@@ -770,7 +1104,11 @@ fn loading_to_matrix(loading: &Embedding, gene_names: &[String], expected_cols: 
 
     let mut attrs = Attributes::new();
     // dim
-    attrs.add("dim".to_string(), create_integer_vector(vec![n_rows as i32, n_cols as i32]), StringEncoding::Utf8);
+    attrs.add(
+        "dim".to_string(),
+        create_integer_vector(vec![n_rows as i32, n_cols as i32]),
+        StringEncoding::Utf8,
+    );
     // dimnames: list(gene_names, component_names)
     let comp_names: Vec<String> = (1..=n_cols).map(|i| format!("PC_{}", i)).collect();
     let row_names = if gene_names.len() == n_rows {
@@ -832,7 +1170,8 @@ fn construct_single_graph(
                 ],
                 attributes: Attributes::new(),
             });
-            s4.attributes.add("Dimnames".to_string(), dimnames, StringEncoding::Utf8);
+            s4.attributes
+                .add("Dimnames".to_string(), dimnames, StringEncoding::Utf8);
 
             // Override class to Graph (which inherits from dgCMatrix)
             let mut class_vec = StringVector::default();
@@ -845,7 +1184,9 @@ fn construct_single_graph(
 
             Ok(RObject::S4Object(s4))
         }
-        _ => Err(SeuratError::ConversionError("Expected S4 dgCMatrix from expression_to_dgcmatrix".to_string())),
+        _ => Err(SeuratError::ConversionError(
+            "Expected S4 dgCMatrix from expression_to_dgcmatrix".to_string(),
+        )),
     }
 }
 
@@ -859,7 +1200,8 @@ fn construct_spatial_data(
     if spatial.n_cells() != expected_cells {
         return Err(SeuratError::ValidationError(format!(
             "Spatial data cell count {} doesn't match expected {}",
-            spatial.n_cells(), expected_cells
+            spatial.n_cells(),
+            expected_cells
         )));
     }
     let image_obj = construct_image_object(spatial)?;
@@ -871,7 +1213,10 @@ fn construct_image_object(spatial: &crate::ir::SpatialData) -> Result<RObject, S
     let coordinates = construct_spatial_coordinates(spatial)?;
     image_fields.push(("coordinates".to_string(), coordinates));
     if let Some(scale_factors) = &spatial.scale_factors {
-        image_fields.push(("scale.factors".to_string(), construct_scale_factors(scale_factors)?));
+        image_fields.push((
+            "scale.factors".to_string(),
+            construct_scale_factors(scale_factors)?,
+        ));
     }
     if let Some(images) = &spatial.images {
         if !images.is_empty() {
@@ -890,8 +1235,15 @@ fn construct_spatial_coordinates(spatial: &crate::ir::SpatialData) -> Result<ROb
             col_major_data.push(spatial.coordinates[row * n_dims + col]);
         }
     }
-    let mut double_vec = DoubleVector { data: col_major_data, attributes: Attributes::new() };
-    double_vec.attributes.add("dim".to_string(), create_integer_vector(vec![n_cells as i32, n_dims as i32]), StringEncoding::Utf8);
+    let mut double_vec = DoubleVector {
+        data: col_major_data,
+        attributes: Attributes::new(),
+    };
+    double_vec.attributes.add(
+        "dim".to_string(),
+        create_integer_vector(vec![n_cells as i32, n_dims as i32]),
+        StringEncoding::Utf8,
+    );
     Ok(RObject::DoubleVector(double_vec))
 }
 
@@ -906,9 +1258,16 @@ fn construct_scale_factors(
 }
 
 fn construct_image_data(image: &crate::ir::SpatialImage) -> Result<RObject, SeuratError> {
-    let mut double_vec = DoubleVector { data: Vec::new(), attributes: Attributes::new() };
+    let mut double_vec = DoubleVector {
+        data: Vec::new(),
+        attributes: Attributes::new(),
+    };
     let dim_vec = vec![image.height as i32, image.width as i32, 3];
-    double_vec.attributes.add("dim".to_string(), create_integer_vector(dim_vec), StringEncoding::Utf8);
+    double_vec.attributes.add(
+        "dim".to_string(),
+        create_integer_vector(dim_vec),
+        StringEncoding::Utf8,
+    );
     Ok(RObject::DoubleVector(double_vec))
 }
 
@@ -955,7 +1314,11 @@ mod tests {
             .expect("Failed to create IR");
 
         let result = ir_to_seurat_rds(&ir);
-        assert!(result.is_ok(), "Failed to convert IR to Seurat: {:?}", result.err());
+        assert!(
+            result.is_ok(),
+            "Failed to convert IR to Seurat: {:?}",
+            result.err()
+        );
 
         let (seurat, _file) = result.unwrap();
         match &seurat {
@@ -995,7 +1358,11 @@ mod tests {
 
         let output_path = "tests/data/rust_generated_seurat.rds";
         let result = write_seurat_rds(&ir, output_path);
-        assert!(result.is_ok(), "Failed to write Seurat RDS: {:?}", result.err());
+        assert!(
+            result.is_ok(),
+            "Failed to write Seurat RDS: {:?}",
+            result.err()
+        );
 
         use std::path::Path;
         assert!(Path::new(output_path).exists(), "Output file not created");
@@ -1016,7 +1383,11 @@ mod tests {
         let cell_names: Vec<String> = (1..=3).map(|i| format!("Cell_{}", i)).collect();
 
         let result = sparse_csc_to_dgcmatrix(&sparse, &gene_names, &cell_names);
-        assert!(result.is_ok(), "Failed to convert to dgCMatrix: {:?}", result.err());
+        assert!(
+            result.is_ok(),
+            "Failed to convert to dgCMatrix: {:?}",
+            result.err()
+        );
 
         match result.unwrap() {
             RObject::S4Object(s4) => {
@@ -1032,7 +1403,10 @@ mod tests {
                     Some(RObject::GenericVector(gv)) => {
                         assert_eq!(gv.data.len(), 2);
                     }
-                    other => panic!("Expected Dimnames to be a list, got {:?}", other.map(|o| o.type_name())),
+                    other => panic!(
+                        "Expected Dimnames to be a list, got {:?}",
+                        other.map(|o| o.type_name())
+                    ),
                 }
             }
             _ => panic!("Expected S4 object"),
@@ -1041,11 +1415,8 @@ mod tests {
 
     #[test]
     fn test_embedding_to_matrix() {
-        let embedding = Embedding::new(
-            "pca".to_string(),
-            vec![1.0, 2.0, 3.0, 4.0, 5.0, 6.0],
-            3, 2,
-        ).expect("Failed to create embedding");
+        let embedding = Embedding::new("pca".to_string(), vec![1.0, 2.0, 3.0, 4.0, 5.0, 6.0], 3, 2)
+            .expect("Failed to create embedding");
         let cell_names: Vec<String> = (1..=3).map(|i| format!("Cell_{}", i)).collect();
 
         let result = embedding_to_matrix(&embedding, &cell_names);
@@ -1089,8 +1460,8 @@ mod tests {
     fn test_construct_spatial_coordinates() {
         use crate::ir::SpatialData;
         let coordinates = vec![1.0, 2.0, 3.0, 4.0, 5.0, 6.0];
-        let spatial = SpatialData::new(coordinates, 2, None, None)
-            .expect("Failed to create spatial data");
+        let spatial =
+            SpatialData::new(coordinates, 2, None, None).expect("Failed to create spatial data");
 
         let result = construct_spatial_coordinates(&spatial);
         assert!(result.is_ok());

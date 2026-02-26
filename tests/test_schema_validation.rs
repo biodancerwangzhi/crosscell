@@ -2,12 +2,12 @@
 //!
 //! 测试 Task 7 的所有子任务：Schema 验证正确性
 
+use arrow::array::{ArrayRef, BooleanArray, StringArray};
 use crosscell::ir::*;
 use crosscell::validation::schema::{
-    validate_cellxgene_schema, SchemaValidationResult,
-    CELLXGENE_V5_OBS_REQUIRED, CELLXGENE_V5_VAR_REQUIRED,
+    validate_cellxgene_schema, SchemaValidationResult, CELLXGENE_V5_OBS_REQUIRED,
+    CELLXGENE_V5_VAR_REQUIRED,
 };
-use arrow::array::{ArrayRef, BooleanArray, StringArray};
 use std::sync::Arc;
 
 // ============================================================================
@@ -56,7 +56,11 @@ fn make_data(obs_cols: &[&str], var_cols: &[&str]) -> SingleCellData {
 fn test_all_required_fields_pass() {
     let data = make_data(CELLXGENE_V5_OBS_REQUIRED, CELLXGENE_V5_VAR_REQUIRED);
     let result = validate_cellxgene_schema(&data, "cellxgene-v5");
-    assert!(result.passed, "Should pass with all required fields: {:?}", result);
+    assert!(
+        result.passed,
+        "Should pass with all required fields: {:?}",
+        result
+    );
     assert!(result.missing_obs_fields.is_empty());
     assert!(result.missing_var_fields.is_empty());
 }
@@ -78,7 +82,10 @@ fn test_missing_all_obs_fields() {
     let data = make_data(&[], CELLXGENE_V5_VAR_REQUIRED);
     let result = validate_cellxgene_schema(&data, "cellxgene-v5");
     assert!(!result.passed);
-    assert_eq!(result.missing_obs_fields.len(), CELLXGENE_V5_OBS_REQUIRED.len());
+    assert_eq!(
+        result.missing_obs_fields.len(),
+        CELLXGENE_V5_OBS_REQUIRED.len()
+    );
 }
 
 #[test]
@@ -127,7 +134,11 @@ fn test_summary_passed() {
         missing_var_fields: vec![],
     };
     let summary = result.summary();
-    assert!(summary.contains("passed"), "Summary should say passed: {}", summary);
+    assert!(
+        summary.contains("passed"),
+        "Summary should say passed: {}",
+        summary
+    );
 }
 
 #[test]
@@ -146,12 +157,20 @@ fn test_summary_failed_lists_fields() {
 
 #[test]
 fn test_obs_required_has_12_fields() {
-    assert_eq!(CELLXGENE_V5_OBS_REQUIRED.len(), 12, "CELLxGENE v5 requires 12 obs fields");
+    assert_eq!(
+        CELLXGENE_V5_OBS_REQUIRED.len(),
+        12,
+        "CELLxGENE v5 requires 12 obs fields"
+    );
 }
 
 #[test]
 fn test_var_required_has_1_field() {
-    assert_eq!(CELLXGENE_V5_VAR_REQUIRED.len(), 1, "CELLxGENE v5 requires 1 var field");
+    assert_eq!(
+        CELLXGENE_V5_VAR_REQUIRED.len(),
+        1,
+        "CELLxGENE v5 requires 1 var field"
+    );
 }
 
 // ============================================================================

@@ -3,12 +3,14 @@
 //! 将 IR 数据写入 HDF5 格式的 AnnData 文件。
 
 use super::Result;
-use crate::ir::{SingleCellData, ExpressionMatrix, SparseMatrixCSR, DenseMatrix, DataFrame, Embedding};
-use hdf5::File;
-use std::path::Path;
-use std::collections::HashMap;
+use crate::ir::{
+    DataFrame, DenseMatrix, Embedding, ExpressionMatrix, SingleCellData, SparseMatrixCSR,
+};
 use arrow::array::{Array, AsArray};
 use arrow::datatypes::DataType;
+use hdf5::File;
+use std::collections::HashMap;
+use std::path::Path;
 
 /// 将 IR 数据写入 .h5ad 文件
 ///
@@ -30,52 +32,57 @@ use arrow::datatypes::DataType;
 /// ```
 pub fn write_h5ad<P: AsRef<Path>>(data: &SingleCellData, path: P) -> Result<()> {
     let file = File::create(path.as_ref())?;
-    
+
     write_expression_matrix(&file, &data.expression)?;
     write_metadata_dataframe(&file, "obs", &data.cell_metadata)?;
     write_metadata_dataframe(&file, "var", &data.gene_metadata)?;
-    
+
     // 分离 layers：同维度 → /layers，不同维度（多 Assay）→ /obsm
     let (same_dim_layers, diff_dim_layers) = if let Some(ref layers) = data.layers {
         split_layers_by_dimension(layers, data.metadata.n_cells, data.metadata.n_genes)
     } else {
         (HashMap::new(), HashMap::new())
     };
-    
+
     // 写入降维嵌入 /obsm
     if let Some(ref embeddings) = data.embeddings {
         write_embeddings(&file, embeddings, data.metadata.n_cells)?;
     }
-    
+
     // 写入不同维度的 assay 到 /obsm（如 ADT）
     if !diff_dim_layers.is_empty() {
         write_multi_assay_to_obsm(&file, &diff_dim_layers, data.metadata.n_cells)?;
     }
-    
+
     // 写入同维度 layers 到 /layers
     if !same_dim_layers.is_empty() {
-        write_layers(&file, &same_dim_layers, data.metadata.n_cells, data.metadata.n_genes)?;
+        write_layers(
+            &file,
+            &same_dim_layers,
+            data.metadata.n_cells,
+            data.metadata.n_genes,
+        )?;
     }
-    
+
     // 写入多 Assay 元信息到 /uns/crosscell_multi_assay
     if !diff_dim_layers.is_empty() {
         write_multi_assay_metadata(&file, &diff_dim_layers)?;
     }
-    
+
     // 写入 obsp
     if let Some(ref cell_pairwise) = data.cell_pairwise {
         if !cell_pairwise.is_empty() {
             write_pairwise_matrices(&file, "obsp", cell_pairwise)?;
         }
     }
-    
+
     // 写入 varp
     if let Some(ref gene_pairwise) = data.gene_pairwise {
         if !gene_pairwise.is_empty() {
             write_pairwise_matrices(&file, "varp", gene_pairwise)?;
         }
     }
-    
+
     // 写入空间数据
     if let Some(ref spatial) = data.spatial {
         write_spatial_data(&file, spatial, data.metadata.n_cells)?;
@@ -87,10 +94,9 @@ pub fn write_h5ad<P: AsRef<Path>>(data: &SingleCellData, path: P) -> Result<()> 
             write_varm(&file, gene_loadings)?;
         }
     }
-    
+
     Ok(())
 }
-
 
 /// 写入表达矩阵到 HDF5 文件 (/X)
 ///
@@ -130,46 +136,58 @@ fn write_expression_matrix(file: &File, matrix: &ExpressionMatrix) -> Result<()>
 fn write_sparse_csr_matrix(file: &File, name: &str, csr: &SparseMatrixCSR) -> Result<()> {
     // 创建 Group
     let group = file.create_group(name)?;
-    
+
     // 写入 shape 属性
     let shape = vec![csr.n_rows as i64, csr.n_cols as i64];
-    group.new_attr::<i64>()
+    group
+        .new_attr::<i64>()
         .shape([2])
         .create("shape")?
         .write(&shape)?;
-    
+
     // 写入 encoding-type 属性
-    group.new_attr::<hdf5::types::VarLenUnicode>()
+    group
+        .new_attr::<hdf5::types::VarLenUnicode>()
         .create("encoding-type")?
-        .write_scalar(&"csr_matrix".parse::<hdf5::types::VarLenUnicode>()
-            .map_err(|_| hdf5::Error::Internal("Failed to create VarLenUnicode".to_string()))?)?;
-    
+        .write_scalar(
+            &"csr_matrix"
+                .parse::<hdf5::types::VarLenUnicode>()
+                .map_err(|_| hdf5::Error::Internal("Failed to create VarLenUnicode".to_string()))?,
+        )?;
+
     // 写入 encoding-version 属性
-    group.new_attr::<hdf5::types::VarLenUnicode>()
+    group
+        .new_attr::<hdf5::types::VarLenUnicode>()
         .create("encoding-version")?
-        .write_scalar(&"0.1.0".parse::<hdf5::types::VarLenUnicode>()
-            .map_err(|_| hdf5::Error::Internal("Failed to create VarLenUnicode".to_string()))?)?;
-    
+        .write_scalar(
+            &"0.1.0"
+                .parse::<hdf5::types::VarLenUnicode>()
+                .map_err(|_| hdf5::Error::Internal("Failed to create VarLenUnicode".to_string()))?,
+        )?;
+
     // 写入 data (非零元素值)
-    let data_dataset = group.new_dataset::<f64>()
+    let data_dataset = group
+        .new_dataset::<f64>()
         .shape([csr.data.len()])
         .create("data")?;
     data_dataset.write(&csr.data)?;
-    
+
     // 写入 indices (列索引，转换为 i32)
     let indices_i32: Vec<i32> = csr.indices.iter().map(|&x| x as i32).collect();
-    let indices_dataset = group.new_dataset::<i32>()
+    let indices_dataset = group
+        .new_dataset::<i32>()
         .shape([indices_i32.len()])
         .create("indices")?;
     indices_dataset.write(&indices_i32)?;
-    
+
     // 写入 indptr (行指针，转换为 i32)
     let indptr_i32: Vec<i32> = csr.indptr.iter().map(|&x| x as i32).collect();
-    let indptr_dataset = group.new_dataset::<i32>()
+    let indptr_dataset = group
+        .new_dataset::<i32>()
         .shape([indptr_i32.len()])
         .create("indptr")?;
     indptr_dataset.write(&indptr_i32)?;
-    
+
     Ok(())
 }
 
@@ -179,16 +197,17 @@ fn write_sparse_csr_matrix(file: &File, name: &str, csr: &SparseMatrixCSR) -> Re
 /// - /X: Dataset (n_cells × n_genes)
 fn write_dense_matrix(file: &File, name: &str, dense: &DenseMatrix) -> Result<()> {
     // 创建 Dataset
-    let dataset = file.new_dataset::<f64>()
+    let dataset = file
+        .new_dataset::<f64>()
         .shape([dense.n_rows, dense.n_cols])
         .create(name)?;
-    
+
     // 写入数据（行优先）
     // HDF5 expects data in the shape specified, so we need to write it as a 2D array
     // The data is already in row-major order, so we can write it directly
     // but we need to use write_raw to specify the shape
     dataset.write_raw(&dense.data)?;
-    
+
     Ok(())
 }
 
@@ -207,10 +226,10 @@ fn write_metadata_dataframe(file: &File, group_name: &str, df: &DataFrame) -> Re
         file.create_group(group_name)?;
         return Ok(());
     }
-    
+
     // 创建主 Group
     let group = file.create_group(group_name)?;
-    
+
     // 写入每一列
     for (col_name, array) in df.columns.iter().zip(df.data.iter()) {
         match array.data_type() {
@@ -241,7 +260,7 @@ fn write_metadata_dataframe(file: &File, group_name: &str, df: &DataFrame) -> Re
             }
         }
     }
-    
+
     Ok(())
 }
 
@@ -250,79 +269,105 @@ fn write_metadata_dataframe(file: &File, group_name: &str, df: &DataFrame) -> Re
 /// 记录原始 Arrow 数据类型，用于读取时恢复类型保真度。
 /// 写入失败时仅记录警告，不阻断转换。
 fn write_dtype_attribute(dataset: &hdf5::Dataset, dtype_str: &str) {
-    if let Err(e) = (|| -> std::result::Result<(), hdf5::Error> {
-        dataset.new_attr::<hdf5::types::VarLenUnicode>()
-            .create("crosscell_original_dtype")?
-            .write_scalar(&dtype_str.parse::<hdf5::types::VarLenUnicode>()
-                .map_err(|_| hdf5::Error::Internal("Failed to create VarLenUnicode".to_string()))?)?;
-        Ok(())
-    })() {
+    if let Err(e) =
+        (|| -> std::result::Result<(), hdf5::Error> {
+            dataset
+                .new_attr::<hdf5::types::VarLenUnicode>()
+                .create("crosscell_original_dtype")?
+                .write_scalar(&dtype_str.parse::<hdf5::types::VarLenUnicode>().map_err(
+                    |_| hdf5::Error::Internal("Failed to create VarLenUnicode".to_string()),
+                )?)?;
+            Ok(())
+        })()
+    {
         log::warn!("Failed to write crosscell_original_dtype attribute: {}", e);
     }
 }
 
 /// 写入 Float64 列
-fn write_float64_column(group: &hdf5::Group, col_name: &str, array: &arrow::array::ArrayRef) -> Result<()> {
+fn write_float64_column(
+    group: &hdf5::Group,
+    col_name: &str,
+    array: &arrow::array::ArrayRef,
+) -> Result<()> {
     let float_array = array.as_primitive::<arrow::datatypes::Float64Type>();
     let values: Vec<f64> = float_array.values().to_vec();
-    
-    let dataset = group.new_dataset::<f64>()
+
+    let dataset = group
+        .new_dataset::<f64>()
         .shape([values.len()])
         .create(col_name)?;
     dataset.write(&values)?;
     write_dtype_attribute(&dataset, "float64");
-    
+
     Ok(())
 }
 
 /// 写入 Int64 列
-fn write_int64_column(group: &hdf5::Group, col_name: &str, array: &arrow::array::ArrayRef) -> Result<()> {
+fn write_int64_column(
+    group: &hdf5::Group,
+    col_name: &str,
+    array: &arrow::array::ArrayRef,
+) -> Result<()> {
     let int_array = array.as_primitive::<arrow::datatypes::Int64Type>();
     let values: Vec<i64> = int_array.values().to_vec();
-    
-    let dataset = group.new_dataset::<i64>()
+
+    let dataset = group
+        .new_dataset::<i64>()
         .shape([values.len()])
         .create(col_name)?;
     dataset.write(&values)?;
     write_dtype_attribute(&dataset, "int64");
-    
+
     Ok(())
 }
 
 /// 写入 Int32 列
-fn write_int32_column(group: &hdf5::Group, col_name: &str, array: &arrow::array::ArrayRef) -> Result<()> {
+fn write_int32_column(
+    group: &hdf5::Group,
+    col_name: &str,
+    array: &arrow::array::ArrayRef,
+) -> Result<()> {
     let int_array = array.as_primitive::<arrow::datatypes::Int32Type>();
     let values: Vec<i32> = int_array.values().to_vec();
-    
-    let dataset = group.new_dataset::<i32>()
+
+    let dataset = group
+        .new_dataset::<i32>()
         .shape([values.len()])
         .create(col_name)?;
     dataset.write(&values)?;
     write_dtype_attribute(&dataset, "int32");
-    
+
     Ok(())
 }
 
 /// 写入 Boolean 列
-fn write_boolean_column(group: &hdf5::Group, col_name: &str, array: &arrow::array::ArrayRef) -> Result<()> {
+fn write_boolean_column(
+    group: &hdf5::Group,
+    col_name: &str,
+    array: &arrow::array::ArrayRef,
+) -> Result<()> {
     let bool_array = array.as_boolean();
-    let values: Vec<bool> = (0..bool_array.len())
-        .map(|i| bool_array.value(i))
-        .collect();
-    
-    let dataset = group.new_dataset::<bool>()
+    let values: Vec<bool> = (0..bool_array.len()).map(|i| bool_array.value(i)).collect();
+
+    let dataset = group
+        .new_dataset::<bool>()
         .shape([values.len()])
         .create(col_name)?;
     dataset.write(&values)?;
     write_dtype_attribute(&dataset, "bool");
-    
+
     Ok(())
 }
 
 /// 写入 String 列
-fn write_string_column(group: &hdf5::Group, col_name: &str, array: &arrow::array::ArrayRef) -> Result<()> {
+fn write_string_column(
+    group: &hdf5::Group,
+    col_name: &str,
+    array: &arrow::array::ArrayRef,
+) -> Result<()> {
     let string_array = array.as_string::<i32>();
-    
+
     // 将字符串转换为 VarLenUnicode
     let values: Vec<hdf5::types::VarLenUnicode> = (0..string_array.len())
         .map(|i| {
@@ -331,13 +376,14 @@ fn write_string_column(group: &hdf5::Group, col_name: &str, array: &arrow::array
                 .map_err(|_| hdf5::Error::Internal("Failed to create VarLenUnicode".to_string()))
         })
         .collect::<std::result::Result<Vec<_>, _>>()?;
-    
-    let dataset = group.new_dataset::<hdf5::types::VarLenUnicode>()
+
+    let dataset = group
+        .new_dataset::<hdf5::types::VarLenUnicode>()
         .shape([values.len()])
         .create(col_name)?;
     dataset.write(&values)?;
     write_dtype_attribute(&dataset, "utf8");
-    
+
     Ok(())
 }
 
@@ -355,7 +401,7 @@ fn write_categorical_column_v2(
 ) -> Result<()> {
     use arrow::array::DictionaryArray;
     use arrow::datatypes::Int32Type;
-    
+
     // 转换为 DictionaryArray
     let dict_array = array
         .as_any()
@@ -363,20 +409,22 @@ fn write_categorical_column_v2(
         .ok_or_else(|| {
             super::AnnDataError::InvalidFormat("Expected DictionaryArray<Int32Type>".to_string())
         })?;
-    
+
     // 提取整数编码
     let keys = dict_array.keys();
     let codes: Vec<i32> = keys.values().to_vec();
-    
+
     // 提取类别标签
     let values = dict_array.values();
     let string_values = values
         .as_any()
         .downcast_ref::<arrow::array::StringArray>()
         .ok_or_else(|| {
-            super::AnnDataError::InvalidFormat("Expected StringArray for dictionary values".to_string())
+            super::AnnDataError::InvalidFormat(
+                "Expected StringArray for dictionary values".to_string(),
+            )
         })?;
-    
+
     let categories: Vec<hdf5::types::VarLenUnicode> = (0..string_values.len())
         .map(|i| {
             let s = string_values.value(i);
@@ -384,49 +432,67 @@ fn write_categorical_column_v2(
                 .map_err(|_| hdf5::Error::Internal("Failed to create VarLenUnicode".to_string()))
         })
         .collect::<std::result::Result<Vec<_>, _>>()?;
-    
+
     // 创建 categorical 列的 Group（新版本格式）
     let cat_col_group = group.create_group(col_name)?;
-    
+
     // 写入属性
-    cat_col_group.new_attr::<hdf5::types::VarLenUnicode>()
+    cat_col_group
+        .new_attr::<hdf5::types::VarLenUnicode>()
         .create("encoding-type")?
-        .write_scalar(&"categorical".parse::<hdf5::types::VarLenUnicode>()
-            .map_err(|_| hdf5::Error::Internal("Failed to create VarLenUnicode".to_string()))?)?;
-    
-    cat_col_group.new_attr::<hdf5::types::VarLenUnicode>()
+        .write_scalar(
+            &"categorical"
+                .parse::<hdf5::types::VarLenUnicode>()
+                .map_err(|_| hdf5::Error::Internal("Failed to create VarLenUnicode".to_string()))?,
+        )?;
+
+    cat_col_group
+        .new_attr::<hdf5::types::VarLenUnicode>()
         .create("encoding-version")?
-        .write_scalar(&"0.2.0".parse::<hdf5::types::VarLenUnicode>()
-            .map_err(|_| hdf5::Error::Internal("Failed to create VarLenUnicode".to_string()))?)?;
-    
+        .write_scalar(
+            &"0.2.0"
+                .parse::<hdf5::types::VarLenUnicode>()
+                .map_err(|_| hdf5::Error::Internal("Failed to create VarLenUnicode".to_string()))?,
+        )?;
+
     // ordered 属性（默认 False）
-    cat_col_group.new_attr::<bool>()
+    cat_col_group
+        .new_attr::<bool>()
         .create("ordered")?
         .write_scalar(&false)?;
-    
+
     // 写入 codes
-    let codes_dataset = cat_col_group.new_dataset::<i32>()
+    let codes_dataset = cat_col_group
+        .new_dataset::<i32>()
         .shape([codes.len()])
         .create("codes")?;
     codes_dataset.write(&codes)?;
-    
+
     // 写入 categories
-    let cat_dataset = cat_col_group.new_dataset::<hdf5::types::VarLenUnicode>()
+    let cat_dataset = cat_col_group
+        .new_dataset::<hdf5::types::VarLenUnicode>()
         .shape([categories.len()])
         .create("categories")?;
     cat_dataset.write(&categories)?;
-    
+
     // 写入 crosscell_original_dtype 属性到 categorical group
-    if let Err(e) = (|| -> std::result::Result<(), hdf5::Error> {
-        cat_col_group.new_attr::<hdf5::types::VarLenUnicode>()
-            .create("crosscell_original_dtype")?
-            .write_scalar(&"dictionary".parse::<hdf5::types::VarLenUnicode>()
-                .map_err(|_| hdf5::Error::Internal("Failed to create VarLenUnicode".to_string()))?)?;
-        Ok(())
-    })() {
-        log::warn!("Failed to write crosscell_original_dtype attribute for categorical column: {}", e);
+    if let Err(e) =
+        (|| -> std::result::Result<(), hdf5::Error> {
+            cat_col_group
+                .new_attr::<hdf5::types::VarLenUnicode>()
+                .create("crosscell_original_dtype")?
+                .write_scalar(&"dictionary".parse::<hdf5::types::VarLenUnicode>().map_err(
+                    |_| hdf5::Error::Internal("Failed to create VarLenUnicode".to_string()),
+                )?)?;
+            Ok(())
+        })()
+    {
+        log::warn!(
+            "Failed to write crosscell_original_dtype attribute for categorical column: {}",
+            e
+        );
     }
-    
+
     Ok(())
 }
 
@@ -442,7 +508,7 @@ fn write_embeddings(
 ) -> Result<()> {
     // 创建 /obsm Group
     let obsm_group = file.create_group("obsm")?;
-    
+
     // 写入每个嵌入
     for (name, embedding) in embeddings {
         // 验证行数
@@ -452,16 +518,17 @@ fn write_embeddings(
                 name, embedding.n_rows, expected_cells
             )));
         }
-        
+
         // 创建 Dataset (n_rows × n_cols)
-        let dataset = obsm_group.new_dataset::<f64>()
+        let dataset = obsm_group
+            .new_dataset::<f64>()
             .shape([embedding.n_rows, embedding.n_cols])
             .create(name.as_str())?;
-        
+
         // 写入数据（行优先）
         dataset.write_raw(&embedding.data)?;
     }
-    
+
     Ok(())
 }
 
@@ -478,7 +545,7 @@ fn write_layers(
 ) -> Result<()> {
     // 创建 /layers Group
     let layers_group = file.create_group("layers")?;
-    
+
     // 写入每个 layer
     for (name, matrix) in layers {
         // 验证维度
@@ -489,7 +556,7 @@ fn write_layers(
                 name, n_rows, n_cols, expected_cells, expected_genes
             )));
         }
-        
+
         // 根据矩阵类型写入
         match matrix {
             ExpressionMatrix::SparseCSR(csr) => {
@@ -505,7 +572,8 @@ fn write_layers(
             }
             ExpressionMatrix::Dense(dense) => {
                 // 创建 Dataset 并写入稠密矩阵
-                let dataset = layers_group.new_dataset::<f64>()
+                let dataset = layers_group
+                    .new_dataset::<f64>()
                     .shape([dense.n_rows, dense.n_cols])
                     .create(name.as_str())?;
                 dataset.write_raw(&dense.data)?;
@@ -528,14 +596,15 @@ fn write_layers(
                             write_sparse_csr_to_group(&layer_group, &csr)?;
                         }
                         ExpressionMatrix::Dense(dense) => {
-                            let dataset = layers_group.new_dataset::<f64>()
+                            let dataset = layers_group
+                                .new_dataset::<f64>()
                                 .shape([dense.n_rows, dense.n_cols])
                                 .create(name.as_str())?;
                             dataset.write_raw(&dense.data)?;
                         }
                         ExpressionMatrix::Lazy(_) => {
                             return Err(super::AnnDataError::DimensionMismatch(
-                                "Nested LazyMatrix not supported".to_string()
+                                "Nested LazyMatrix not supported".to_string(),
                             ));
                         }
                     }
@@ -548,7 +617,7 @@ fn write_layers(
             }
         }
     }
-    
+
     Ok(())
 }
 
@@ -560,10 +629,13 @@ fn split_layers_by_dimension(
     layers: &HashMap<String, ExpressionMatrix>,
     n_cells: usize,
     n_genes: usize,
-) -> (HashMap<String, ExpressionMatrix>, HashMap<String, ExpressionMatrix>) {
+) -> (
+    HashMap<String, ExpressionMatrix>,
+    HashMap<String, ExpressionMatrix>,
+) {
     let mut same_dim = HashMap::new();
     let mut diff_dim = HashMap::new();
-    
+
     for (name, matrix) in layers {
         let (rows, cols) = matrix.shape();
         if rows == n_cells && cols == n_genes {
@@ -576,7 +648,7 @@ fn split_layers_by_dimension(
             diff_dim.insert(name.clone(), matrix.clone());
         }
     }
-    
+
     (same_dim, diff_dim)
 }
 
@@ -594,7 +666,7 @@ fn write_multi_assay_to_obsm(
     } else {
         file.create_group("obsm")?
     };
-    
+
     for (name, matrix) in diff_dim_layers {
         let (n_rows, _n_cols) = matrix.shape();
         if n_rows != expected_cells {
@@ -603,18 +675,19 @@ fn write_multi_assay_to_obsm(
                 name, n_rows, expected_cells
             )));
         }
-        
+
         // 命名约定：X_{assay_name}
         let obsm_key = format!("X_{}", name);
-        
+
         // 转为 dense 写入
         let dense = expression_to_dense(matrix)?;
-        let dataset = obsm_group.new_dataset::<f64>()
+        let dataset = obsm_group
+            .new_dataset::<f64>()
             .shape([dense.n_rows, dense.n_cols])
             .create(obsm_key.as_str())?;
         dataset.write_raw(&dense.data)?;
     }
-    
+
     Ok(())
 }
 
@@ -622,18 +695,14 @@ fn write_multi_assay_to_obsm(
 fn expression_to_dense(matrix: &ExpressionMatrix) -> Result<DenseMatrix> {
     match matrix {
         ExpressionMatrix::Dense(dense) => Ok(dense.clone()),
-        ExpressionMatrix::SparseCSR(csr) => {
-            Ok(crate::sparse::convert::csr_to_dense(csr))
-        }
-        ExpressionMatrix::SparseCSC(csc) => {
-            Ok(crate::sparse::convert::csc_to_dense(csc))
-        }
+        ExpressionMatrix::SparseCSR(csr) => Ok(crate::sparse::convert::csr_to_dense(csr)),
+        ExpressionMatrix::SparseCSC(csc) => Ok(crate::sparse::convert::csc_to_dense(csc)),
         ExpressionMatrix::Lazy(lazy) => {
             if let Some(cached) = lazy.get_cached() {
                 expression_to_dense(&cached)
             } else {
                 Err(super::AnnDataError::InvalidFormat(
-                    "Cannot convert LazyMatrix to dense without cached data".to_string()
+                    "Cannot convert LazyMatrix to dense without cached data".to_string(),
                 ))
             }
         }
@@ -654,41 +723,52 @@ fn write_multi_assay_metadata(
     } else {
         file.create_group("uns")?
     };
-    
+
     // 创建 /uns/crosscell_multi_assay group
     let meta_group = uns_group.create_group("crosscell_multi_assay")?;
-    
+
     // 记录 assay 名称列表
-    let assay_names: Vec<hdf5::types::VarLenUnicode> = diff_dim_layers.keys()
-        .map(|name| name.parse::<hdf5::types::VarLenUnicode>()
-            .map_err(|_| hdf5::Error::Internal("Failed to create VarLenUnicode".to_string())))
+    let assay_names: Vec<hdf5::types::VarLenUnicode> = diff_dim_layers
+        .keys()
+        .map(|name| {
+            name.parse::<hdf5::types::VarLenUnicode>()
+                .map_err(|_| hdf5::Error::Internal("Failed to create VarLenUnicode".to_string()))
+        })
         .collect::<std::result::Result<Vec<_>, _>>()?;
-    
-    let names_ds = meta_group.new_dataset::<hdf5::types::VarLenUnicode>()
+
+    let names_ds = meta_group
+        .new_dataset::<hdf5::types::VarLenUnicode>()
         .shape([assay_names.len()])
         .create("assay_names")?;
     names_ds.write(&assay_names)?;
-    
+
     // 为每个 assay 记录维度信息
     for (name, matrix) in diff_dim_layers {
         let assay_group = meta_group.create_group(name.as_str())?;
         let (n_rows, n_cols) = matrix.shape();
-        
+
         // obsm_key
         let obsm_key = format!("X_{}", name);
-        assay_group.new_attr::<hdf5::types::VarLenUnicode>()
+        assay_group
+            .new_attr::<hdf5::types::VarLenUnicode>()
             .create("obsm_key")?
-            .write_scalar(&obsm_key.parse::<hdf5::types::VarLenUnicode>()
-                .map_err(|_| hdf5::Error::Internal("Failed to create VarLenUnicode".to_string()))?)?;
-        
+            .write_scalar(
+                &obsm_key
+                    .parse::<hdf5::types::VarLenUnicode>()
+                    .map_err(|_| {
+                        hdf5::Error::Internal("Failed to create VarLenUnicode".to_string())
+                    })?,
+            )?;
+
         // shape
         let shape = vec![n_rows as i64, n_cols as i64];
-        assay_group.new_attr::<i64>()
+        assay_group
+            .new_attr::<i64>()
             .shape([2])
             .create("shape")?
             .write(&shape)?;
     }
-    
+
     Ok(())
 }
 
@@ -704,7 +784,7 @@ fn write_pairwise_matrices(
 ) -> Result<()> {
     // 创建 Group
     let pw_group = file.create_group(group_name)?;
-    
+
     // 写入每个成对矩阵
     for (name, pw_matrix) in pairwise_matrices {
         // 验证是方阵
@@ -715,7 +795,7 @@ fn write_pairwise_matrices(
                 name, n_rows, n_cols
             )));
         }
-        
+
         // 根据矩阵类型写入
         match &pw_matrix.matrix {
             ExpressionMatrix::SparseCSR(csr) => {
@@ -731,7 +811,8 @@ fn write_pairwise_matrices(
             }
             ExpressionMatrix::Dense(dense) => {
                 // 创建 Dataset 并写入稠密矩阵
-                let dataset = pw_group.new_dataset::<f64>()
+                let dataset = pw_group
+                    .new_dataset::<f64>()
                     .shape([dense.n_rows, dense.n_cols])
                     .create(name.as_str())?;
                 dataset.write_raw(&dense.data)?;
@@ -750,14 +831,15 @@ fn write_pairwise_matrices(
                             write_sparse_csr_to_group(&matrix_group, &csr)?;
                         }
                         ExpressionMatrix::Dense(dense) => {
-                            let dataset = pw_group.new_dataset::<f64>()
+                            let dataset = pw_group
+                                .new_dataset::<f64>()
                                 .shape([dense.n_rows, dense.n_cols])
                                 .create(name.as_str())?;
                             dataset.write_raw(&dense.data)?;
                         }
                         ExpressionMatrix::Lazy(_) => {
                             return Err(super::AnnDataError::InvalidFormat(
-                                "Nested LazyMatrix not supported".to_string()
+                                "Nested LazyMatrix not supported".to_string(),
                             ));
                         }
                     }
@@ -770,7 +852,7 @@ fn write_pairwise_matrices(
             }
         }
     }
-    
+
     Ok(())
 }
 
@@ -780,43 +862,55 @@ fn write_pairwise_matrices(
 fn write_sparse_csr_to_group(group: &hdf5::Group, csr: &SparseMatrixCSR) -> Result<()> {
     // 写入 shape 属性
     let shape = vec![csr.n_rows as i64, csr.n_cols as i64];
-    group.new_attr::<i64>()
+    group
+        .new_attr::<i64>()
         .shape([2])
         .create("shape")?
         .write(&shape)?;
-    
+
     // 写入 encoding-type 属性
-    group.new_attr::<hdf5::types::VarLenUnicode>()
+    group
+        .new_attr::<hdf5::types::VarLenUnicode>()
         .create("encoding-type")?
-        .write_scalar(&"csr_matrix".parse::<hdf5::types::VarLenUnicode>()
-            .map_err(|_| hdf5::Error::Internal("Failed to create VarLenUnicode".to_string()))?)?;
-    
+        .write_scalar(
+            &"csr_matrix"
+                .parse::<hdf5::types::VarLenUnicode>()
+                .map_err(|_| hdf5::Error::Internal("Failed to create VarLenUnicode".to_string()))?,
+        )?;
+
     // 写入 encoding-version 属性
-    group.new_attr::<hdf5::types::VarLenUnicode>()
+    group
+        .new_attr::<hdf5::types::VarLenUnicode>()
         .create("encoding-version")?
-        .write_scalar(&"0.1.0".parse::<hdf5::types::VarLenUnicode>()
-            .map_err(|_| hdf5::Error::Internal("Failed to create VarLenUnicode".to_string()))?)?;
-    
+        .write_scalar(
+            &"0.1.0"
+                .parse::<hdf5::types::VarLenUnicode>()
+                .map_err(|_| hdf5::Error::Internal("Failed to create VarLenUnicode".to_string()))?,
+        )?;
+
     // 写入 data (非零元素值)
-    let data_dataset = group.new_dataset::<f64>()
+    let data_dataset = group
+        .new_dataset::<f64>()
         .shape([csr.data.len()])
         .create("data")?;
     data_dataset.write(&csr.data)?;
-    
+
     // 写入 indices (列索引，转换为 i32)
     let indices_i32: Vec<i32> = csr.indices.iter().map(|&x| x as i32).collect();
-    let indices_dataset = group.new_dataset::<i32>()
+    let indices_dataset = group
+        .new_dataset::<i32>()
         .shape([indices_i32.len()])
         .create("indices")?;
     indices_dataset.write(&indices_i32)?;
-    
+
     // 写入 indptr (行指针，转换为 i32)
     let indptr_i32: Vec<i32> = csr.indptr.iter().map(|&x| x as i32).collect();
-    let indptr_dataset = group.new_dataset::<i32>()
+    let indptr_dataset = group
+        .new_dataset::<i32>()
         .shape([indptr_i32.len()])
         .create("indptr")?;
     indptr_dataset.write(&indptr_i32)?;
-    
+
     Ok(())
 }
 
@@ -827,29 +921,31 @@ fn write_sparse_csr_to_group(group: &hdf5::Group, csr: &SparseMatrixCSR) -> Resu
 /// HDF5 结构：
 /// - /varm: Group，包含多个 2D Dataset (n_genes × n_components)
 /// - 常见成员：PCs (PCA loadings)
-fn write_varm(
-    file: &File,
-    gene_loadings: &HashMap<String, Embedding>,
-) -> Result<()> {
+fn write_varm(file: &File, gene_loadings: &HashMap<String, Embedding>) -> Result<()> {
     let varm_group = file.create_group("varm")?;
-    
+
     for (name, loading) in gene_loadings {
-        let dataset = varm_group.new_dataset::<f64>()
+        let dataset = varm_group
+            .new_dataset::<f64>()
             .shape([loading.n_rows, loading.n_cols])
             .create(name.as_str())?;
         dataset.write_raw(&loading.data)?;
-        
+
         // 写入 encoding-type 属性
-        dataset.new_attr::<hdf5::types::VarLenUnicode>()
+        dataset
+            .new_attr::<hdf5::types::VarLenUnicode>()
             .create("encoding-type")?
-            .write_scalar(&"array".parse::<hdf5::types::VarLenUnicode>()
-                .map_err(|_| hdf5::Error::Internal("Failed to create VarLenUnicode".to_string()))?)?;
-        dataset.new_attr::<hdf5::types::VarLenUnicode>()
+            .write_scalar(&"array".parse::<hdf5::types::VarLenUnicode>().map_err(|_| {
+                hdf5::Error::Internal("Failed to create VarLenUnicode".to_string())
+            })?)?;
+        dataset
+            .new_attr::<hdf5::types::VarLenUnicode>()
             .create("encoding-version")?
-            .write_scalar(&"0.2.0".parse::<hdf5::types::VarLenUnicode>()
-                .map_err(|_| hdf5::Error::Internal("Failed to create VarLenUnicode".to_string()))?)?;
+            .write_scalar(&"0.2.0".parse::<hdf5::types::VarLenUnicode>().map_err(|_| {
+                hdf5::Error::Internal("Failed to create VarLenUnicode".to_string())
+            })?)?;
     }
-    
+
     Ok(())
 }
 
@@ -871,7 +967,7 @@ fn write_spatial_data(
             expected_cells
         )));
     }
-    
+
     // 1. 写入空间坐标到 /obsm/spatial
     // 确保 /obsm group 存在
     let obsm_group = if file.link_exists("obsm") {
@@ -879,15 +975,16 @@ fn write_spatial_data(
     } else {
         file.create_group("obsm")?
     };
-    
+
     // 写入坐标数据 - 检查是否已存在
     if !obsm_group.link_exists("spatial") {
-        let spatial_dataset = obsm_group.new_dataset::<f64>()
+        let spatial_dataset = obsm_group
+            .new_dataset::<f64>()
             .shape([spatial.n_cells(), spatial.n_dims])
             .create("spatial")?;
         spatial_dataset.write_raw(&spatial.coordinates)?;
     }
-    
+
     // 2. 写入图像和缩放因子到 /uns/spatial（如果存在）
     if spatial.images.is_some() || spatial.scale_factors.is_some() {
         // 确保 /uns group 存在
@@ -896,14 +993,14 @@ fn write_spatial_data(
         } else {
             file.create_group("uns")?
         };
-        
+
         // 创建 /uns/spatial group
         let spatial_group = if uns_group.link_exists("spatial") {
             uns_group.group("spatial")?
         } else {
             uns_group.create_group("spatial")?
         };
-        
+
         // 使用默认 library_id "library_1"
         let library_id = "library_1";
         let library_group = if spatial_group.link_exists(library_id) {
@@ -911,7 +1008,7 @@ fn write_spatial_data(
         } else {
             spatial_group.create_group(library_id)?
         };
-        
+
         // 写入图像
         if let Some(ref images) = spatial.images {
             let images_group = if library_group.link_exists("images") {
@@ -919,27 +1016,32 @@ fn write_spatial_data(
             } else {
                 library_group.create_group("images")?
             };
-            
+
             for img in images {
                 // 验证图像数据大小
                 let expected_size = img.width * img.height * 3; // RGB
                 if img.data.len() != expected_size {
                     return Err(super::AnnDataError::InvalidFormat(format!(
                         "Image '{}' data size {} doesn't match dimensions {}×{}×3 = {}",
-                        img.name, img.data.len(), img.width, img.height, expected_size
+                        img.name,
+                        img.data.len(),
+                        img.width,
+                        img.height,
+                        expected_size
                     )));
                 }
-                
+
                 // 创建 3D dataset (height, width, channels)
-                let img_dataset = images_group.new_dataset::<u8>()
+                let img_dataset = images_group
+                    .new_dataset::<u8>()
                     .shape([img.height, img.width, 3])
                     .create(img.name.as_str())?;
-                
+
                 // 写入图像数据（已经是行优先的 RGB 格式）
                 img_dataset.write_raw(&img.data)?;
             }
         }
-        
+
         // 写入缩放因子
         if let Some(ref scale_factors) = spatial.scale_factors {
             let scalefactors_group = if library_group.link_exists("scalefactors") {
@@ -947,15 +1049,16 @@ fn write_spatial_data(
             } else {
                 library_group.create_group("scalefactors")?
             };
-            
+
             for (factor_name, &factor_value) in scale_factors {
                 // 创建标量 dataset
-                let factor_dataset = scalefactors_group.new_dataset::<f64>()
+                let factor_dataset = scalefactors_group
+                    .new_dataset::<f64>()
                     .create(factor_name.as_str())?;
                 factor_dataset.write_scalar(&factor_value)?;
             }
         }
     }
-    
+
     Ok(())
 }

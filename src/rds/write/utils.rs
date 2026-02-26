@@ -3,11 +3,11 @@
 //! 提供底层写入工具，包括字节序转换、长度写入等。
 //! 对应 rds2cpp 的写入工具函数。
 
-use std::io::Write;
 use crate::rds::error::Result;
-use crate::rds::sexp_type::SEXPType;
 use crate::rds::r_object::{Attributes, RObject};
+use crate::rds::sexp_type::SEXPType;
 use crate::rds::string_encoding::StringEncoding;
+use std::io::Write;
 
 /// 4 字节头部类型
 pub type Header = [u8; 4];
@@ -55,7 +55,6 @@ pub fn inject_i32_be(value: i32, buffer: &mut Vec<u8>) {
 pub fn inject_f64_be(value: f64, buffer: &mut Vec<u8>) {
     buffer.extend_from_slice(&value.to_be_bytes());
 }
-
 
 /// 写入大端序 i32 到 writer
 ///
@@ -129,7 +128,6 @@ pub fn write_length<W: Write>(value: usize, writer: &mut W) -> Result<()> {
     Ok(())
 }
 
-
 /// 注入字符串到 buffer（带长度前缀）
 ///
 /// # 参数
@@ -184,11 +182,20 @@ pub fn make_header(sexp_type: SEXPType) -> Header {
 /// # 返回
 /// 4 字节头部数组
 #[inline]
-pub fn make_header_with_flags(sexp_type: SEXPType, has_attributes: bool, is_object: bool, is_s4: bool) -> Header {
+pub fn make_header_with_flags(
+    sexp_type: SEXPType,
+    has_attributes: bool,
+    is_object: bool,
+    is_s4: bool,
+) -> Header {
     let mut flags: u8 = 0x00;
-    if is_object { flags |= 0x01; }      // bit 0 = is_object
-    if has_attributes { flags |= 0x02; }  // bit 1 = has_attributes
-    // gp high byte: bit 0 = S4 flag (corresponds to gp bit 4 in R)
+    if is_object {
+        flags |= 0x01;
+    } // bit 0 = is_object
+    if has_attributes {
+        flags |= 0x02;
+    } // bit 1 = has_attributes
+      // gp high byte: bit 0 = S4 flag (corresponds to gp bit 4 in R)
     let gp_high: u8 = if is_s4 { 0x01 } else { 0x00 };
     [0, gp_high, flags, sexp_type as u8]
 }
@@ -216,9 +223,10 @@ pub fn inject_header_with_attributes(
     let has_attrs = !attributes.is_empty();
     let is_object = attributes.get("class").is_some();
     let is_s4 = is_s4_class(attributes);
-    buffer.extend_from_slice(&make_header_with_flags(sexp_type, has_attrs, is_object, is_s4));
+    buffer.extend_from_slice(&make_header_with_flags(
+        sexp_type, has_attrs, is_object, is_s4,
+    ));
 }
-
 
 /// 写入对象头部到 writer
 ///
@@ -250,7 +258,9 @@ pub fn write_header_with_attributes<W: Write>(
     let has_attrs = !attributes.is_empty();
     let is_object = attributes.get("class").is_some();
     let is_s4 = is_s4_class(attributes);
-    writer.write_all(&make_header_with_flags(sexp_type, has_attrs, is_object, is_s4))?;
+    writer.write_all(&make_header_with_flags(
+        sexp_type, has_attrs, is_object, is_s4,
+    ))?;
     Ok(())
 }
 
@@ -337,7 +347,6 @@ pub fn make_string_header(encoding: StringEncoding, missing: bool) -> Header {
         }
     }
 }
-
 
 /// 注入单字符串头部到 buffer
 ///
@@ -436,4 +445,3 @@ pub fn flush_buffer<W: Write>(buffer: &mut Vec<u8>, writer: &mut W) -> Result<()
     buffer.clear();
     Ok(())
 }
-

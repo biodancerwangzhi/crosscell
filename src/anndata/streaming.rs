@@ -23,10 +23,13 @@
 
 use super::{AnnDataError, Result};
 use crate::ir::{
-    DataFrame, DenseMatrix, Embedding, ExpressionMatrix, SparseMatrixCSR,
-    SingleCellData, DatasetMetadata,
+    DataFrame, DatasetMetadata, DenseMatrix, Embedding, ExpressionMatrix, SingleCellData,
+    SparseMatrixCSR,
 };
-use arrow::array::{ArrayRef, Float64Array, Int32Array, Int64Array, StringArray, BooleanArray, DictionaryArray, Array};
+use arrow::array::{
+    Array, ArrayRef, BooleanArray, DictionaryArray, Float64Array, Int32Array, Int64Array,
+    StringArray,
+};
 use arrow::datatypes::Int32Type;
 use hdf5::File;
 use ndarray::s;
@@ -142,7 +145,9 @@ impl StreamingH5adReader {
         // 一次性读取基因元数据（通常 < 50k 行，内存很小）
         let n_genes = metadata.n_genes;
         let gene_metadata = if file.link_exists("var") {
-            Some(crate::anndata::reader::read_metadata_dataframe(&file, "var", n_genes)?)
+            Some(crate::anndata::reader::read_metadata_dataframe(
+                &file, "var", n_genes,
+            )?)
         } else {
             None
         };
@@ -166,7 +171,9 @@ impl StreamingH5adReader {
         let full_cell_metadata = if file.link_exists("obs") && file.group("obs").is_err() {
             // obs 存在但不是 Group → 旧格式 compound Dataset
             log::info!("Detected legacy compound Dataset for /obs, reading full cell metadata");
-            Some(crate::anndata::reader::read_metadata_dataframe(&file, "obs", n_cells)?)
+            Some(crate::anndata::reader::read_metadata_dataframe(
+                &file, "obs", n_cells,
+            )?)
         } else {
             None
         };
@@ -310,10 +317,14 @@ impl StreamingH5adReader {
 
         // Slice read indptr（只读 start_row..=end_row）
         let indptr_dataset = x_group.dataset("indptr")?;
-        let indptr_slice: Vec<i64> = if let Ok(slice_i32) = indptr_dataset.read_slice_1d::<i32, _>(s![start_row..=end_row]) {
+        let indptr_slice: Vec<i64> = if let Ok(slice_i32) =
+            indptr_dataset.read_slice_1d::<i32, _>(s![start_row..=end_row])
+        {
             slice_i32.to_vec().into_iter().map(|x| x as i64).collect()
         } else {
-            indptr_dataset.read_slice_1d::<i64, _>(s![start_row..=end_row])?.to_vec()
+            indptr_dataset
+                .read_slice_1d::<i64, _>(s![start_row..=end_row])?
+                .to_vec()
         };
 
         // 获取当前块的 data/indices 范围
@@ -331,7 +342,9 @@ impl StreamingH5adReader {
         let indices_dataset = x_group.dataset("indices")?;
 
         let data: Vec<f64> = if data_start < data_end {
-            data_dataset.read_slice_1d::<f64, _>(s![data_start..data_end])?.to_vec()
+            data_dataset
+                .read_slice_1d::<f64, _>(s![data_start..data_end])?
+                .to_vec()
         } else {
             Vec::new()
         };
@@ -340,7 +353,8 @@ impl StreamingH5adReader {
             if let Ok(idx_i32) = indices_dataset.read_slice_1d::<i32, _>(s![data_start..data_end]) {
                 idx_i32.to_vec().into_iter().map(|x| x as usize).collect()
             } else {
-                indices_dataset.read_slice_1d::<i64, _>(s![data_start..data_end])?
+                indices_dataset
+                    .read_slice_1d::<i64, _>(s![data_start..data_end])?
                     .to_vec()
                     .into_iter()
                     .map(|x| x as usize)
@@ -366,8 +380,8 @@ impl StreamingH5adReader {
         let chunk_data = x_dataset.read_slice_2d::<f64, _>(s![start_row..end_row, ..])?;
         let data = chunk_data.into_raw_vec();
 
-        let dense = DenseMatrix::new(data, n_rows, n_cols)
-            .map_err(|e| AnnDataError::InvalidFormat(e))?;
+        let dense =
+            DenseMatrix::new(data, n_rows, n_cols).map_err(|e| AnnDataError::InvalidFormat(e))?;
 
         Ok(ExpressionMatrix::Dense(dense))
     }
@@ -476,29 +490,36 @@ impl StreamingH5adReader {
     ) -> Result<ArrayRef> {
         // Slice read codes（只读需要的范围）
         let codes_dataset = group.dataset("codes")?;
-        let codes: Vec<i32> = if let Ok(c) = codes_dataset.read_slice_1d::<i8, _>(s![start_row..end_row]) {
-            c.to_vec().into_iter().map(|x| x as i32).collect()
-        } else if let Ok(c) = codes_dataset.read_slice_1d::<i16, _>(s![start_row..end_row]) {
-            c.to_vec().into_iter().map(|x| x as i32).collect()
-        } else if let Ok(c) = codes_dataset.read_slice_1d::<i32, _>(s![start_row..end_row]) {
-            c.to_vec()
-        } else {
-            codes_dataset.read_slice_1d::<i64, _>(s![start_row..end_row])?
-                .to_vec()
-                .into_iter()
-                .map(|x| x as i32)
-                .collect()
-        };
+        let codes: Vec<i32> =
+            if let Ok(c) = codes_dataset.read_slice_1d::<i8, _>(s![start_row..end_row]) {
+                c.to_vec().into_iter().map(|x| x as i32).collect()
+            } else if let Ok(c) = codes_dataset.read_slice_1d::<i16, _>(s![start_row..end_row]) {
+                c.to_vec().into_iter().map(|x| x as i32).collect()
+            } else if let Ok(c) = codes_dataset.read_slice_1d::<i32, _>(s![start_row..end_row]) {
+                c.to_vec()
+            } else {
+                codes_dataset
+                    .read_slice_1d::<i64, _>(s![start_row..end_row])?
+                    .to_vec()
+                    .into_iter()
+                    .map(|x| x as i32)
+                    .collect()
+            };
 
         // categories 保持全量读取（通常 < 1000 个类别，内存很小）
         let categories_dataset = group.dataset("categories")?;
-        let categories: Vec<String> = if let Ok(cat_varlen) = categories_dataset.read_1d::<hdf5::types::VarLenUnicode>() {
+        let categories: Vec<String> = if let Ok(cat_varlen) =
+            categories_dataset.read_1d::<hdf5::types::VarLenUnicode>()
+        {
             cat_varlen.iter().map(|s| s.to_string()).collect()
         } else if let Ok(cat_ascii) = categories_dataset.read_1d::<hdf5::types::VarLenAscii>() {
             cat_ascii.iter().map(|s| s.to_string()).collect()
-        } else if let Ok(cat_fixed) = categories_dataset.read_1d::<hdf5::types::FixedUnicode<64>>() {
+        } else if let Ok(cat_fixed) = categories_dataset.read_1d::<hdf5::types::FixedUnicode<64>>()
+        {
             cat_fixed.iter().map(|s| s.to_string()).collect()
-        } else if let Ok(cat_fixed_ascii) = categories_dataset.read_1d::<hdf5::types::FixedAscii<64>>() {
+        } else if let Ok(cat_fixed_ascii) =
+            categories_dataset.read_1d::<hdf5::types::FixedAscii<64>>()
+        {
             cat_fixed_ascii.iter().map(|s| s.to_string()).collect()
         } else if let Ok(cat_i64) = categories_dataset.read_1d::<i64>() {
             cat_i64.iter().map(|v| v.to_string()).collect()
@@ -515,8 +536,10 @@ impl StreamingH5adReader {
         // 创建 Arrow Dictionary Array
         let keys = Int32Array::from(codes);
         let values = StringArray::from(categories);
-        let dict_array = DictionaryArray::<Int32Type>::try_new(keys, Arc::new(values))
-            .map_err(|e| AnnDataError::InvalidFormat(format!("Failed to create dictionary array: {}", e)))?;
+        let dict_array =
+            DictionaryArray::<Int32Type>::try_new(keys, Arc::new(values)).map_err(|e| {
+                AnnDataError::InvalidFormat(format!("Failed to create dictionary array: {}", e))
+            })?;
 
         Ok(Arc::new(dict_array) as ArrayRef)
     }
@@ -530,56 +553,61 @@ impl StreamingH5adReader {
     ) -> Result<ArrayRef> {
         let values_dataset = subgroup.dataset("values")?;
         let mask_dataset = subgroup.dataset("mask")?;
-        
+
         // Slice read mask（true = NA）
-        let mask_slice: Vec<bool> = mask_dataset.read_slice_1d::<bool, _>(s![start_row..end_row])
+        let mask_slice: Vec<bool> = mask_dataset
+            .read_slice_1d::<bool, _>(s![start_row..end_row])
             .map(|v| v.to_vec())
             .unwrap_or_else(|_| vec![false; end_row - start_row]);
-        
+
         // validity: Arrow true = valid, anndata mask true = NA
         let validity: Vec<bool> = mask_slice.iter().map(|&m| !m).collect();
-        
+
         // Slice read 数值类型
         if let Ok(vals) = values_dataset.read_slice_1d::<i64, _>(s![start_row..end_row]) {
             let vals = vals.to_vec();
             let array = Int64Array::from(
-                vals.iter().zip(validity.iter())
+                vals.iter()
+                    .zip(validity.iter())
                     .map(|(&v, &valid)| if valid { Some(v) } else { None })
-                    .collect::<Vec<Option<i64>>>()
+                    .collect::<Vec<Option<i64>>>(),
             );
             return Ok(Arc::new(array) as ArrayRef);
         }
-        
+
         if let Ok(vals) = values_dataset.read_slice_1d::<i32, _>(s![start_row..end_row]) {
             let vals = vals.to_vec();
             let array = Int32Array::from(
-                vals.iter().zip(validity.iter())
+                vals.iter()
+                    .zip(validity.iter())
                     .map(|(&v, &valid)| if valid { Some(v) } else { None })
-                    .collect::<Vec<Option<i32>>>()
+                    .collect::<Vec<Option<i32>>>(),
             );
             return Ok(Arc::new(array) as ArrayRef);
         }
-        
+
         if let Ok(vals) = values_dataset.read_slice_1d::<f64, _>(s![start_row..end_row]) {
             let vals = vals.to_vec();
             let array = Float64Array::from(
-                vals.iter().zip(validity.iter())
+                vals.iter()
+                    .zip(validity.iter())
                     .map(|(&v, &valid)| if valid { Some(v) } else { None })
-                    .collect::<Vec<Option<f64>>>()
+                    .collect::<Vec<Option<f64>>>(),
             );
             return Ok(Arc::new(array) as ArrayRef);
         }
-        
+
         if let Ok(vals) = values_dataset.read_slice_1d::<bool, _>(s![start_row..end_row]) {
             let vals = vals.to_vec();
             let array = BooleanArray::from(
-                vals.iter().zip(validity.iter())
+                vals.iter()
+                    .zip(validity.iter())
                     .map(|(&v, &valid)| if valid { Some(v) } else { None })
-                    .collect::<Vec<Option<bool>>>()
+                    .collect::<Vec<Option<bool>>>(),
             );
             return Ok(Arc::new(array) as ArrayRef);
         }
-        
+
         Err(AnnDataError::UnsupportedType(
             "Unsupported nullable column data type".to_string(),
         ))
@@ -608,9 +636,12 @@ impl StreamingH5adReader {
                 let n_cols = shape[1] as usize;
 
                 // Slice read: 只读取需要的行
-                let chunk_data = if let Ok(arr) = dataset.read_slice_2d::<f64, _>(s![start_row..end_row, ..]) {
+                let chunk_data = if let Ok(arr) =
+                    dataset.read_slice_2d::<f64, _>(s![start_row..end_row, ..])
+                {
                     arr.into_raw_vec()
-                } else if let Ok(arr) = dataset.read_slice_2d::<f32, _>(s![start_row..end_row, ..]) {
+                } else if let Ok(arr) = dataset.read_slice_2d::<f32, _>(s![start_row..end_row, ..])
+                {
                     arr.into_raw_vec().into_iter().map(|x| x as f64).collect()
                 } else {
                     continue;
@@ -636,9 +667,11 @@ impl StreamingH5adReader {
     /// 从 DataFrame 中切片指定行范围
     fn slice_dataframe(df: &DataFrame, start_row: usize, end_row: usize) -> Result<DataFrame> {
         let n_rows = end_row - start_row;
-        let sliced_data: Vec<ArrayRef> = df.data.iter().map(|arr| {
-            arr.slice(start_row, n_rows)
-        }).collect();
+        let sliced_data: Vec<ArrayRef> = df
+            .data
+            .iter()
+            .map(|arr| arr.slice(start_row, n_rows))
+            .collect();
         DataFrame::new(df.columns.clone(), sliced_data, n_rows)
             .map_err(|e| AnnDataError::InvalidFormat(e))
     }
@@ -646,7 +679,8 @@ impl StreamingH5adReader {
     /// 内部方法：读取元数据
     fn read_metadata_internal(file: &File) -> Result<StreamingMetadata> {
         // 读取表达矩阵元数据
-        let (n_cells, n_genes, is_sparse, sparse_format, nnz) = Self::read_expression_metadata(file)?;
+        let (n_cells, n_genes, is_sparse, sparse_format, nnz) =
+            Self::read_expression_metadata(file)?;
 
         // 读取 obs 列名
         let obs_columns = if file.link_exists("obs") {
@@ -690,7 +724,9 @@ impl StreamingH5adReader {
     }
 
     /// 读取表达矩阵元数据
-    fn read_expression_metadata(file: &File) -> Result<(usize, usize, bool, Option<String>, Option<usize>)> {
+    fn read_expression_metadata(
+        file: &File,
+    ) -> Result<(usize, usize, bool, Option<String>, Option<usize>)> {
         if !file.link_exists("X") {
             return Err(AnnDataError::MissingField("/X".to_string()));
         }
@@ -727,7 +763,7 @@ impl StreamingH5adReader {
                         arr.iter().map(|&v| v as usize).collect()
                     } else {
                         return Err(AnnDataError::InvalidFormat(
-                            "Cannot read /X shape attribute as usize or i64".to_string()
+                            "Cannot read /X shape attribute as usize or i64".to_string(),
                         ));
                     }
                 } else if let Ok(shape_attr) = x_group.attr("h5sparse_shape") {
@@ -737,7 +773,7 @@ impl StreamingH5adReader {
                         arr.iter().map(|&v| v as usize).collect()
                     } else {
                         return Err(AnnDataError::InvalidFormat(
-                            "Cannot read /X h5sparse_shape attribute".to_string()
+                            "Cannot read /X h5sparse_shape attribute".to_string(),
                         ));
                     }
                 } else {
@@ -754,7 +790,8 @@ impl StreamingH5adReader {
                 let (n_rows, n_cols) = (shape[0], shape[1]);
 
                 let sparse_format = if let Ok(encoding_attr) = x_group.attr("encoding-type") {
-                    if let Ok(encoding) = encoding_attr.read_scalar::<hdf5::types::VarLenUnicode>() {
+                    if let Ok(encoding) = encoding_attr.read_scalar::<hdf5::types::VarLenUnicode>()
+                    {
                         Some(encoding.to_string())
                     } else {
                         Some("csr_matrix".to_string())
@@ -823,11 +860,10 @@ impl Iterator for StreamingH5adReader {
     }
 }
 
-
 /// 流式 HDF5 写入器
 ///
 /// 支持按块写入大型 .h5ad 文件。
-/// 
+///
 /// 注意：由于 HDF5 crate 的限制，当前实现会在内存中累积数据，
 /// 然后在 `finish()` 时一次性写入。对于真正的流式写入，
 /// 需要使用支持可扩展数据集的 HDF5 库。
@@ -932,7 +968,7 @@ impl StreamingH5adWriter {
                 let offset = self.accumulated_data.len();
                 self.accumulated_data.extend_from_slice(&csr.data);
                 self.accumulated_indices.extend_from_slice(&csr.indices);
-                
+
                 // 调整 indptr 并追加（跳过第一个 0）
                 for &ptr in csr.indptr.iter().skip(1) {
                     self.accumulated_indptr.push(ptr + offset);
@@ -944,7 +980,7 @@ impl StreamingH5adWriter {
                 let offset = self.accumulated_data.len();
                 self.accumulated_data.extend_from_slice(&csr.data);
                 self.accumulated_indices.extend_from_slice(&csr.indices);
-                
+
                 for &ptr in csr.indptr.iter().skip(1) {
                     self.accumulated_indptr.push(ptr + offset);
                 }
@@ -955,7 +991,7 @@ impl StreamingH5adWriter {
                 let offset = self.accumulated_data.len();
                 self.accumulated_data.extend_from_slice(&csr.data);
                 self.accumulated_indices.extend_from_slice(&csr.indices);
-                
+
                 for &ptr in csr.indptr.iter().skip(1) {
                     self.accumulated_indptr.push(ptr + offset);
                 }
@@ -974,7 +1010,8 @@ impl StreamingH5adWriter {
         // 如果是第一个块，初始化列结构
         if self.accumulated_cell_metadata.is_empty() {
             for col_name in &cell_metadata.columns {
-                self.accumulated_cell_metadata.push((col_name.clone(), Vec::new()));
+                self.accumulated_cell_metadata
+                    .push((col_name.clone(), Vec::new()));
             }
         }
 
@@ -991,7 +1028,10 @@ impl StreamingH5adWriter {
     /// 累积嵌入
     fn accumulate_embeddings(&mut self, embeddings: &HashMap<String, Embedding>) -> Result<()> {
         for (name, embedding) in embeddings {
-            let entry = self.accumulated_embeddings.entry(name.clone()).or_insert_with(Vec::new);
+            let entry = self
+                .accumulated_embeddings
+                .entry(name.clone())
+                .or_insert_with(Vec::new);
             entry.extend_from_slice(&embedding.data);
             self.embedding_dims.insert(name.clone(), embedding.n_cols);
         }
@@ -1060,13 +1100,9 @@ impl StreamingH5adWriter {
         x_group
             .new_attr::<hdf5::types::VarLenUnicode>()
             .create("encoding-version")?
-            .write_scalar(
-                &"0.1.0"
-                    .parse::<hdf5::types::VarLenUnicode>()
-                    .map_err(|_| {
-                        hdf5::Error::Internal("Failed to create VarLenUnicode".to_string())
-                    })?,
-            )?;
+            .write_scalar(&"0.1.0".parse::<hdf5::types::VarLenUnicode>().map_err(|_| {
+                hdf5::Error::Internal("Failed to create VarLenUnicode".to_string())
+            })?)?;
 
         // 写入 data
         let data_dataset = x_group
@@ -1213,8 +1249,12 @@ impl StreamingH5adWriter {
                         let str_arr = arr.as_any().downcast_ref::<StringArray>().unwrap();
                         for i in 0..str_arr.len() {
                             let s = str_arr.value(i);
-                            let unicode = s.parse::<hdf5::types::VarLenUnicode>()
-                                .map_err(|_| hdf5::Error::Internal("Failed to create VarLenUnicode".to_string()))?;
+                            let unicode =
+                                s.parse::<hdf5::types::VarLenUnicode>().map_err(|_| {
+                                    hdf5::Error::Internal(
+                                        "Failed to create VarLenUnicode".to_string(),
+                                    )
+                                })?;
                             all_values.push(unicode);
                         }
                     }
@@ -1343,7 +1383,6 @@ mod tests {
     }
 }
 
-
 // ============================================================================
 // Streaming RDS Support
 // ============================================================================
@@ -1379,7 +1418,9 @@ impl StreamingRdsReader {
     /// - `Err(AnnDataError)`: 创建失败
     pub fn new<P: AsRef<Path>>(path: P, chunk_size: usize) -> Result<Self> {
         // 读取完整的 RDS 文件
-        let path_str = path.as_ref().to_str()
+        let path_str = path
+            .as_ref()
+            .to_str()
             .ok_or_else(|| AnnDataError::InvalidFormat("Invalid path".to_string()))?;
         let data = crate::seurat::seurat_rds_to_ir(path_str)
             .map_err(|e| AnnDataError::InvalidFormat(format!("Failed to read RDS: {}", e)))?;
@@ -1409,10 +1450,16 @@ impl StreamingRdsReader {
             nnz: Some(self.data.expression.nnz()),
             obs_columns: self.data.cell_metadata.columns.clone(),
             var_columns: self.data.gene_metadata.columns.clone(),
-            embedding_names: self.data.embeddings.as_ref()
+            embedding_names: self
+                .data
+                .embeddings
+                .as_ref()
                 .map(|e| e.keys().cloned().collect())
                 .unwrap_or_default(),
-            layer_names: self.data.layers.as_ref()
+            layer_names: self
+                .data
+                .layers
+                .as_ref()
                 .map(|l| l.keys().cloned().collect())
                 .unwrap_or_default(),
         }
@@ -1447,7 +1494,10 @@ impl StreamingRdsReader {
     /// 读取指定块
     fn read_chunk(&self, chunk_index: usize) -> Result<DataChunk> {
         let start_row = chunk_index * self.chunk_size;
-        let end_row = std::cmp::min((chunk_index + 1) * self.chunk_size, self.data.metadata.n_cells);
+        let end_row = std::cmp::min(
+            (chunk_index + 1) * self.chunk_size,
+            self.data.metadata.n_cells,
+        );
         let _n_rows = end_row - start_row;
         let n_cols = self.data.metadata.n_genes;
 
@@ -1469,7 +1519,12 @@ impl StreamingRdsReader {
     }
 
     /// 提取表达矩阵块
-    fn extract_expression_chunk(&self, start_row: usize, end_row: usize, n_cols: usize) -> Result<ExpressionMatrix> {
+    fn extract_expression_chunk(
+        &self,
+        start_row: usize,
+        end_row: usize,
+        n_cols: usize,
+    ) -> Result<ExpressionMatrix> {
         let n_rows = end_row - start_row;
 
         match &self.data.expression {
@@ -1508,9 +1563,15 @@ impl StreamingRdsReader {
                     new_indptr.push(new_data.len());
                 }
 
-                let chunk_csc = crate::ir::SparseMatrixCSC::new(new_data, new_indices, new_indptr, n_rows, n_cols)
-                    .map_err(|e| AnnDataError::InvalidFormat(e))?;
-                
+                let chunk_csc = crate::ir::SparseMatrixCSC::new(
+                    new_data,
+                    new_indices,
+                    new_indptr,
+                    n_rows,
+                    n_cols,
+                )
+                .map_err(|e| AnnDataError::InvalidFormat(e))?;
+
                 // 转换为 CSR 以保持一致性
                 let chunk_csr = crate::sparse::convert::csc_to_csr(&chunk_csc);
                 Ok(ExpressionMatrix::SparseCSR(chunk_csr))
@@ -1527,9 +1588,9 @@ impl StreamingRdsReader {
                     .map_err(|e| AnnDataError::InvalidFormat(e))?;
                 Ok(ExpressionMatrix::Dense(chunk_dense))
             }
-            ExpressionMatrix::Lazy(_) => {
-                Err(AnnDataError::InvalidFormat("Cannot chunk LazyMatrix".to_string()))
-            }
+            ExpressionMatrix::Lazy(_) => Err(AnnDataError::InvalidFormat(
+                "Cannot chunk LazyMatrix".to_string(),
+            )),
         }
     }
 
@@ -1539,7 +1600,13 @@ impl StreamingRdsReader {
         let mut columns = Vec::new();
         let mut data: Vec<ArrayRef> = Vec::new();
 
-        for (col_name, array) in self.data.cell_metadata.columns.iter().zip(self.data.cell_metadata.data.iter()) {
+        for (col_name, array) in self
+            .data
+            .cell_metadata
+            .columns
+            .iter()
+            .zip(self.data.cell_metadata.data.iter())
+        {
             let sliced = self.slice_array(array, start_row, end_row)?;
             columns.push(col_name.clone());
             data.push(sliced);
@@ -1556,7 +1623,11 @@ impl StreamingRdsReader {
     }
 
     /// 提取嵌入块
-    fn extract_embeddings_chunk(&self, start_row: usize, end_row: usize) -> Result<Option<HashMap<String, Embedding>>> {
+    fn extract_embeddings_chunk(
+        &self,
+        start_row: usize,
+        end_row: usize,
+    ) -> Result<Option<HashMap<String, Embedding>>> {
         let embeddings = match &self.data.embeddings {
             Some(emb) => emb,
             None => return Ok(None),
@@ -1577,12 +1648,15 @@ impl StreamingRdsReader {
                 }
             }
 
-            result.insert(name.clone(), Embedding {
-                name: name.clone(),
-                data,
-                n_rows,
-                n_cols,
-            });
+            result.insert(
+                name.clone(),
+                Embedding {
+                    name: name.clone(),
+                    data,
+                    n_rows,
+                    n_cols,
+                },
+            );
         }
 
         if result.is_empty() {
@@ -1667,7 +1741,9 @@ where
     let n_genes = metadata.n_genes;
 
     // 从 reader 获取已读取的非分块数据（不再二次读取！）
-    let gene_metadata = reader.gene_metadata().cloned()
+    let gene_metadata = reader
+        .gene_metadata()
+        .cloned()
         .unwrap_or_else(|| DataFrame::empty(n_genes));
     let full_embeddings = reader.take_full_embeddings();
     let spatial = reader.take_spatial();
@@ -1731,8 +1807,14 @@ where
     }
 
     // 构建完整表达矩阵
-    let expression = SparseMatrixCSR::new(all_data, all_indices, all_indptr, metadata.n_cells, metadata.n_genes)
-        .map_err(|e| AnnDataError::InvalidFormat(e))?;
+    let expression = SparseMatrixCSR::new(
+        all_data,
+        all_indices,
+        all_indptr,
+        metadata.n_cells,
+        metadata.n_genes,
+    )
+    .map_err(|e| AnnDataError::InvalidFormat(e))?;
 
     // 合并细胞元数据
     let cell_metadata = if let Some(columns) = all_cell_metadata_columns {
@@ -1742,9 +1824,11 @@ where
                 continue;
             }
             // 使用 arrow concat 合并数组
-            let refs: Vec<&dyn arrow::array::Array> = col_arrays.iter().map(|a| a.as_ref()).collect();
-            let merged = arrow::compute::concat(&refs)
-                .map_err(|e| AnnDataError::InvalidFormat(format!("Failed to concat arrays: {}", e)))?;
+            let refs: Vec<&dyn arrow::array::Array> =
+                col_arrays.iter().map(|a| a.as_ref()).collect();
+            let merged = arrow::compute::concat(&refs).map_err(|e| {
+                AnnDataError::InvalidFormat(format!("Failed to concat arrays: {}", e))
+            })?;
             merged_data.push(merged);
         }
         DataFrame::new(columns, merged_data, total_accumulated_rows)
@@ -1760,12 +1844,15 @@ where
         cell_metadata,
         gene_metadata,
         dataset_metadata,
-    ).map_err(|e| AnnDataError::InvalidFormat(e))?;
+    )
+    .map_err(|e| AnnDataError::InvalidFormat(e))?;
     ir_data.embeddings = full_embeddings;
     ir_data.spatial = spatial;
 
     // 写入 RDS
-    let output_str = output.as_ref().to_str()
+    let output_str = output
+        .as_ref()
+        .to_str()
         .ok_or_else(|| AnnDataError::InvalidFormat("Invalid output path".to_string()))?;
     crate::seurat::write_seurat_rds(&ir_data, output_str)
         .map_err(|e| AnnDataError::InvalidFormat(format!("Failed to write RDS: {}", e)))?;

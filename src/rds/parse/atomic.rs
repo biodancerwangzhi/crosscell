@@ -12,14 +12,16 @@
 //!
 //! 数据使用大端序（XDR 格式）存储。
 
-use std::io::Read;
-use num_complex::Complex64;
+use super::single_string::parse_single_string;
+use super::utils::{
+    get_sexp_type, quick_extract, read_f64_be, read_header, read_i32_be, read_length,
+};
 use crate::rds::error::Result;
 use crate::rds::r_object::{
-    IntegerVector, LogicalVector, DoubleVector, RawVector, ComplexVector, StringVector,
+    ComplexVector, DoubleVector, IntegerVector, LogicalVector, RawVector, StringVector,
 };
-use super::utils::{read_length, quick_extract, read_i32_be, read_f64_be, read_header, get_sexp_type};
-use super::single_string::parse_single_string;
+use num_complex::Complex64;
+use std::io::Read;
 
 /// 解析整数向量体
 ///
@@ -37,22 +39,21 @@ use super::single_string::parse_single_string;
 pub fn parse_integer_body<R: Read>(reader: &mut R) -> Result<IntegerVector> {
     let length = read_length(reader)?;
     let mut data = Vec::with_capacity(length);
-    
+
     // 读取所有字节
     let bytes = quick_extract(reader, length * 4)?;
-    
+
     // 转换为 i32（大端序）
     for chunk in bytes.chunks_exact(4) {
         let arr: [u8; 4] = chunk.try_into().unwrap();
         data.push(read_i32_be(&arr));
     }
-    
+
     Ok(IntegerVector {
         data,
         attributes: Default::default(),
     })
 }
-
 
 /// 解析逻辑向量体
 ///
@@ -67,14 +68,14 @@ pub fn parse_integer_body<R: Read>(reader: &mut R) -> Result<IntegerVector> {
 pub fn parse_logical_body<R: Read>(reader: &mut R) -> Result<LogicalVector> {
     let length = read_length(reader)?;
     let mut data = Vec::with_capacity(length);
-    
+
     let bytes = quick_extract(reader, length * 4)?;
-    
+
     for chunk in bytes.chunks_exact(4) {
         let arr: [u8; 4] = chunk.try_into().unwrap();
         data.push(read_i32_be(&arr));
     }
-    
+
     Ok(LogicalVector {
         data,
         attributes: Default::default(),
@@ -94,14 +95,14 @@ pub fn parse_logical_body<R: Read>(reader: &mut R) -> Result<LogicalVector> {
 pub fn parse_double_body<R: Read>(reader: &mut R) -> Result<DoubleVector> {
     let length = read_length(reader)?;
     let mut data = Vec::with_capacity(length);
-    
+
     let bytes = quick_extract(reader, length * 8)?;
-    
+
     for chunk in bytes.chunks_exact(8) {
         let arr: [u8; 8] = chunk.try_into().unwrap();
         data.push(read_f64_be(&arr));
     }
-    
+
     Ok(DoubleVector {
         data,
         attributes: Default::default(),
@@ -121,13 +122,12 @@ pub fn parse_double_body<R: Read>(reader: &mut R) -> Result<DoubleVector> {
 pub fn parse_raw_body<R: Read>(reader: &mut R) -> Result<RawVector> {
     let length = read_length(reader)?;
     let data = quick_extract(reader, length)?;
-    
+
     Ok(RawVector {
         data,
         attributes: Default::default(),
     })
 }
-
 
 /// 解析复数向量体
 ///
@@ -142,10 +142,10 @@ pub fn parse_raw_body<R: Read>(reader: &mut R) -> Result<RawVector> {
 pub fn parse_complex_body<R: Read>(reader: &mut R) -> Result<ComplexVector> {
     let length = read_length(reader)?;
     let mut data = Vec::with_capacity(length);
-    
+
     // 每个复数 16 字节（8 字节实部 + 8 字节虚部）
     let bytes = quick_extract(reader, length * 16)?;
-    
+
     for chunk in bytes.chunks_exact(16) {
         let re_arr: [u8; 8] = chunk[0..8].try_into().unwrap();
         let im_arr: [u8; 8] = chunk[8..16].try_into().unwrap();
@@ -153,7 +153,7 @@ pub fn parse_complex_body<R: Read>(reader: &mut R) -> Result<ComplexVector> {
         let im = read_f64_be(&im_arr);
         data.push(Complex64::new(re, im));
     }
-    
+
     Ok(ComplexVector {
         data,
         attributes: Default::default(),
@@ -175,14 +175,14 @@ pub fn parse_string_body<R: Read>(reader: &mut R) -> Result<StringVector> {
     let mut data = Vec::with_capacity(length);
     let mut encodings = Vec::with_capacity(length);
     let mut missing = Vec::with_capacity(length);
-    
+
     for _ in 0..length {
         let info = parse_single_string(reader)?;
         data.push(info.value);
         encodings.push(info.encoding);
         missing.push(info.missing);
     }
-    
+
     Ok(StringVector {
         data,
         encodings,
@@ -206,11 +206,16 @@ fn parse_object_with_header_fallback<R: Read, F>(
     shared: &mut crate::rds::parse::shared_info::SharedParseInfo,
     parse_fn: &mut F,
 ) -> crate::rds::error::Result<crate::rds::r_object::RObject>
-where F: FnMut(&mut R, &mut crate::rds::parse::shared_info::SharedParseInfo) -> crate::rds::error::Result<crate::rds::r_object::RObject> {
-    use crate::rds::sexp_type::SEXPType;
-    use crate::rds::r_object::RObject;
+where
+    F: FnMut(
+        &mut R,
+        &mut crate::rds::parse::shared_info::SharedParseInfo,
+    ) -> crate::rds::error::Result<crate::rds::r_object::RObject>,
+{
     use crate::rds::parse::header::has_attributes;
-    
+    use crate::rds::r_object::RObject;
+    use crate::rds::sexp_type::SEXPType;
+
     match header.sexp_type {
         SEXPType::Nil | SEXPType::NilValue => Ok(RObject::Null),
         SEXPType::MissingArg | SEXPType::UnboundValue => Ok(RObject::Null),
@@ -344,20 +349,20 @@ pub fn parse_string_body_with_ref<R: Read>(
     reader: &mut R,
     shared: &mut crate::rds::parse::shared_info::SharedParseInfo,
 ) -> Result<StringVector> {
-    use crate::rds::sexp_type::SEXPType;
     use super::header::encoding_flags;
-    
+    use crate::rds::sexp_type::SEXPType;
+
     let length = read_length(reader)?;
-    
+
     let mut data = Vec::with_capacity(length);
     let mut encodings = Vec::with_capacity(length);
     let mut missing = Vec::with_capacity(length);
-    
+
     for i in 0..length {
         // 读取头部
         let header = read_header(reader)?;
         let sexp_type = get_sexp_type(&header);
-        
+
         if sexp_type == SEXPType::Ref as u8 {
             // 引用类型 - 从共享信息中获取字符串
             let (value, encoding, is_missing) = shared.get_string_or_symbol(&header)?;
@@ -367,27 +372,32 @@ pub fn parse_string_body_with_ref<R: Read>(
         } else if sexp_type == SEXPType::Char as u8 {
             // 标准 CHARSXP - 请求新槽位并解析
             let str_index = shared.request_string();
-            
+
             // 获取编码
             let gp = header[1];
-            let encoding = if (gp & encoding_flags::UTF8) != 0 { 
-                crate::rds::string_encoding::StringEncoding::Utf8 
-            } else if (gp & encoding_flags::LATIN1) != 0 { 
-                crate::rds::string_encoding::StringEncoding::Latin1 
-            } else if (gp & encoding_flags::ASCII) != 0 { 
-                crate::rds::string_encoding::StringEncoding::Ascii 
-            } else { 
-                crate::rds::string_encoding::StringEncoding::Utf8 
+            let encoding = if (gp & encoding_flags::UTF8) != 0 {
+                crate::rds::string_encoding::StringEncoding::Utf8
+            } else if (gp & encoding_flags::LATIN1) != 0 {
+                crate::rds::string_encoding::StringEncoding::Latin1
+            } else if (gp & encoding_flags::ASCII) != 0 {
+                crate::rds::string_encoding::StringEncoding::Ascii
+            } else {
+                crate::rds::string_encoding::StringEncoding::Utf8
             };
-            
+
             // 读取长度
             let mut len_buf = [0u8; 4];
             reader.read_exact(&mut len_buf)?;
             let length_i32 = i32::from_be_bytes(len_buf);
-            
+
             if length_i32 == -1 {
                 // NA 字符串
-                shared.store_string(str_index, String::new(), crate::rds::string_encoding::StringEncoding::None, true);
+                shared.store_string(
+                    str_index,
+                    String::new(),
+                    crate::rds::string_encoding::StringEncoding::None,
+                    true,
+                );
                 data.push(String::new());
                 encodings.push(crate::rds::string_encoding::StringEncoding::None);
                 missing.push(true);
@@ -395,7 +405,7 @@ pub fn parse_string_body_with_ref<R: Read>(
                 let str_len = length_i32 as usize;
                 let bytes = quick_extract(reader, str_len)?;
                 let value = String::from_utf8_lossy(&bytes).into_owned();
-                
+
                 shared.store_string(str_index, value.clone(), encoding, false);
                 data.push(value);
                 encodings.push(encoding);
@@ -405,12 +415,13 @@ pub fn parse_string_body_with_ref<R: Read>(
             // 符号类型 - 解析符号并使用其名称
             use super::symbol::parse_symbol_body;
             let sym_idx = parse_symbol_body(reader, shared)?;
-            let symbol = shared.get_symbol(sym_idx.index)
-                .ok_or_else(|| crate::rds::error::RdsError::ParseError {
+            let symbol = shared.get_symbol(sym_idx.index).ok_or_else(|| {
+                crate::rds::error::RdsError::ParseError {
                     context: "string_body".to_string(),
                     message: format!("Symbol index {} not found", sym_idx.index),
-                })?;
-            
+                }
+            })?;
+
             data.push(symbol.name.clone());
             encodings.push(symbol.encoding);
             missing.push(false);
@@ -481,15 +492,20 @@ pub fn parse_string_body_with_ref<R: Read>(
         } else {
             // 其他类型 - 使用通用解析器处理以保持流位置正确
             use super::header::ParsedHeader;
-            
+
             if let Some(parsed_header) = ParsedHeader::from_raw(header) {
                 // 创建递归解析闭包
                 let mut parse_fn = |r: &mut R, s: &mut crate::rds::parse::shared_info::SharedParseInfo| -> crate::rds::error::Result<crate::rds::r_object::RObject> {
                     super::object::parse_object(r, s)
                 };
-                
+
                 // 使用通用解析器处理
-                match parse_object_with_header_fallback(reader, &parsed_header, shared, &mut parse_fn) {
+                match parse_object_with_header_fallback(
+                    reader,
+                    &parsed_header,
+                    shared,
+                    &mut parse_fn,
+                ) {
                     Ok(_) => {
                         data.push(format!("<type:{}>", sexp_type));
                         encodings.push(crate::rds::string_encoding::StringEncoding::Utf8);
@@ -517,7 +533,7 @@ pub fn parse_string_body_with_ref<R: Read>(
             }
         }
     }
-    
+
     Ok(StringVector {
         data,
         encodings,
@@ -532,19 +548,19 @@ fn parse_string_body_with_ref_complex<R: Read>(
     reader: &mut R,
     shared: &mut crate::rds::parse::shared_info::SharedParseInfo,
 ) -> Result<StringVector> {
-    use crate::rds::sexp_type::SEXPType;
     use super::header::encoding_flags;
-    
+    use crate::rds::sexp_type::SEXPType;
+
     let length = read_length(reader)?;
     let mut data = Vec::with_capacity(length);
     let mut encodings = Vec::with_capacity(length);
     let mut missing = Vec::with_capacity(length);
-    
+
     for _ in 0..length {
         // 读取头部
         let header = read_header(reader)?;
         let sexp_type = get_sexp_type(&header);
-        
+
         if sexp_type == SEXPType::Ref as u8 {
             // 引用类型 - 从共享信息中获取字符串
             let (value, encoding, is_missing) = shared.get_string_or_symbol(&header)?;
@@ -554,27 +570,32 @@ fn parse_string_body_with_ref_complex<R: Read>(
         } else if sexp_type == SEXPType::Char as u8 {
             // 标准 CHARSXP - 请求新槽位并解析
             let str_index = shared.request_string();
-            
+
             // 获取编码
             let gp = header[1];
-            let encoding = if (gp & encoding_flags::UTF8) != 0 { 
-                crate::rds::string_encoding::StringEncoding::Utf8 
-            } else if (gp & encoding_flags::LATIN1) != 0 { 
-                crate::rds::string_encoding::StringEncoding::Latin1 
-            } else if (gp & encoding_flags::ASCII) != 0 { 
-                crate::rds::string_encoding::StringEncoding::Ascii 
-            } else { 
-                crate::rds::string_encoding::StringEncoding::Utf8 
+            let encoding = if (gp & encoding_flags::UTF8) != 0 {
+                crate::rds::string_encoding::StringEncoding::Utf8
+            } else if (gp & encoding_flags::LATIN1) != 0 {
+                crate::rds::string_encoding::StringEncoding::Latin1
+            } else if (gp & encoding_flags::ASCII) != 0 {
+                crate::rds::string_encoding::StringEncoding::Ascii
+            } else {
+                crate::rds::string_encoding::StringEncoding::Utf8
             };
-            
+
             // 读取长度
             let mut len_buf = [0u8; 4];
             reader.read_exact(&mut len_buf)?;
             let length_i32 = i32::from_be_bytes(len_buf);
-            
+
             if length_i32 == -1 {
                 // NA 字符串
-                shared.store_string(str_index, String::new(), crate::rds::string_encoding::StringEncoding::None, true);
+                shared.store_string(
+                    str_index,
+                    String::new(),
+                    crate::rds::string_encoding::StringEncoding::None,
+                    true,
+                );
                 data.push(String::new());
                 encodings.push(crate::rds::string_encoding::StringEncoding::None);
                 missing.push(true);
@@ -582,7 +603,7 @@ fn parse_string_body_with_ref_complex<R: Read>(
                 let str_len = length_i32 as usize;
                 let bytes = quick_extract(reader, str_len)?;
                 let value = String::from_utf8_lossy(&bytes).into_owned();
-                
+
                 shared.store_string(str_index, value.clone(), encoding, false);
                 data.push(value);
                 encodings.push(encoding);
@@ -593,12 +614,13 @@ fn parse_string_body_with_ref_complex<R: Read>(
             // 使用 parse_symbol_body 来正确处理符号名（可能是 CHAR 或 Ref）
             use super::symbol::parse_symbol_body;
             let sym_idx = parse_symbol_body(reader, shared)?;
-            let symbol = shared.get_symbol(sym_idx.index)
-                .ok_or_else(|| crate::rds::error::RdsError::ParseError {
+            let symbol = shared.get_symbol(sym_idx.index).ok_or_else(|| {
+                crate::rds::error::RdsError::ParseError {
                     context: "string_body".to_string(),
                     message: format!("Symbol index {} not found", sym_idx.index),
-                })?;
-            
+                }
+            })?;
+
             data.push(symbol.name.clone());
             encodings.push(symbol.encoding);
             missing.push(false);
@@ -641,19 +663,24 @@ fn parse_string_body_with_ref_complex<R: Read>(
             // 注意：头部已经被读取，所以我们需要使用 parse_new_environment_body
             use super::environment::parse_new_environment_body;
             use super::header::ParsedHeader;
-            
-            let parsed_header = ParsedHeader::from_raw(header)
-                .ok_or_else(|| crate::rds::error::RdsError::ParseError {
+
+            let parsed_header = ParsedHeader::from_raw(header).ok_or_else(|| {
+                crate::rds::error::RdsError::ParseError {
                     context: "string_body".to_string(),
                     message: "Failed to parse Env header".to_string(),
-                })?;
-            
+                }
+            })?;
+
             // 创建递归解析闭包
-            let mut parse_fn = |r: &mut R, s: &mut crate::rds::parse::shared_info::SharedParseInfo| -> crate::rds::error::Result<crate::rds::r_object::RObject> {
-                super::object::parse_object(r, s)
-            };
-            
-            let env_idx = parse_new_environment_body(reader, &parsed_header, shared, &mut parse_fn)?;
+            let mut parse_fn =
+                |r: &mut R,
+                 s: &mut crate::rds::parse::shared_info::SharedParseInfo|
+                 -> crate::rds::error::Result<crate::rds::r_object::RObject> {
+                    super::object::parse_object(r, s)
+                };
+
+            let env_idx =
+                parse_new_environment_body(reader, &parsed_header, shared, &mut parse_fn)?;
             data.push(format!("<env:{}>", env_idx.index));
             encodings.push(crate::rds::string_encoding::StringEncoding::Utf8);
             missing.push(false);
@@ -661,19 +688,23 @@ fn parse_string_body_with_ref_complex<R: Read>(
             // Promise 类型 - 解析并跳过
             // Promise 结构: value, expression, environment
             // 注意：头部已经被读取
-            use super::header::{ParsedHeader, has_attributes};
-            
-            let parsed_header = ParsedHeader::from_raw(header)
-                .ok_or_else(|| crate::rds::error::RdsError::ParseError {
+            use super::header::{has_attributes, ParsedHeader};
+
+            let parsed_header = ParsedHeader::from_raw(header).ok_or_else(|| {
+                crate::rds::error::RdsError::ParseError {
                     context: "string_body".to_string(),
                     message: "Failed to parse Promise header".to_string(),
-                })?;
-            
+                }
+            })?;
+
             // 创建递归解析闭包
-            let mut parse_fn = |r: &mut R, s: &mut crate::rds::parse::shared_info::SharedParseInfo| -> crate::rds::error::Result<crate::rds::r_object::RObject> {
-                super::object::parse_object(r, s)
-            };
-            
+            let mut parse_fn =
+                |r: &mut R,
+                 s: &mut crate::rds::parse::shared_info::SharedParseInfo|
+                 -> crate::rds::error::Result<crate::rds::r_object::RObject> {
+                    super::object::parse_object(r, s)
+                };
+
             // Promise 有属性时先解析属性
             if has_attributes(&parsed_header.raw) {
                 use super::attributes::parse_attributes;
@@ -685,26 +716,30 @@ fn parse_string_body_with_ref_complex<R: Read>(
             let _ = parse_fn(reader, shared)?;
             // 解析 environment
             let _ = parse_fn(reader, shared)?;
-            
+
             data.push("<promise>".to_string());
             encodings.push(crate::rds::string_encoding::StringEncoding::Utf8);
             missing.push(false);
         } else if sexp_type == SEXPType::Clo as u8 {
             // Closure 类型 - 解析并跳过
             // Closure 结构: formals, body, environment
-            use super::header::{ParsedHeader, has_attributes};
-            
-            let parsed_header = ParsedHeader::from_raw(header)
-                .ok_or_else(|| crate::rds::error::RdsError::ParseError {
+            use super::header::{has_attributes, ParsedHeader};
+
+            let parsed_header = ParsedHeader::from_raw(header).ok_or_else(|| {
+                crate::rds::error::RdsError::ParseError {
                     context: "string_body".to_string(),
                     message: "Failed to parse Closure header".to_string(),
-                })?;
-            
+                }
+            })?;
+
             // 创建递归解析闭包
-            let mut parse_fn = |r: &mut R, s: &mut crate::rds::parse::shared_info::SharedParseInfo| -> crate::rds::error::Result<crate::rds::r_object::RObject> {
-                super::object::parse_object(r, s)
-            };
-            
+            let mut parse_fn =
+                |r: &mut R,
+                 s: &mut crate::rds::parse::shared_info::SharedParseInfo|
+                 -> crate::rds::error::Result<crate::rds::r_object::RObject> {
+                    super::object::parse_object(r, s)
+                };
+
             // Closure 有属性时先解析属性
             if has_attributes(&parsed_header.raw) {
                 use super::attributes::parse_attributes;
@@ -716,7 +751,7 @@ fn parse_string_body_with_ref_complex<R: Read>(
             let _ = parse_fn(reader, shared)?;
             // 解析 environment
             let _ = parse_fn(reader, shared)?;
-            
+
             data.push("<closure>".to_string());
             encodings.push(crate::rds::string_encoding::StringEncoding::Utf8);
             missing.push(false);
@@ -739,15 +774,20 @@ fn parse_string_body_with_ref_complex<R: Read>(
             // 未知类型 - 可能是流位置错误
             // 尝试使用 parse_object 来解析
             use super::header::ParsedHeader;
-            
+
             if let Some(parsed_header) = ParsedHeader::from_raw(header) {
                 // 创建递归解析闭包
                 let mut parse_fn = |r: &mut R, s: &mut crate::rds::parse::shared_info::SharedParseInfo| -> crate::rds::error::Result<crate::rds::r_object::RObject> {
                     super::object::parse_object(r, s)
                 };
-                
+
                 // 尝试使用 parse_object_with_header 来解析
-                match parse_object_with_header_fallback(reader, &parsed_header, shared, &mut parse_fn) {
+                match parse_object_with_header_fallback(
+                    reader,
+                    &parsed_header,
+                    shared,
+                    &mut parse_fn,
+                ) {
                     Ok(_) => {
                         data.push(format!("<type:{}>", sexp_type));
                         encodings.push(crate::rds::string_encoding::StringEncoding::Utf8);
@@ -763,12 +803,15 @@ fn parse_string_body_with_ref_complex<R: Read>(
             } else {
                 return Err(crate::rds::error::RdsError::ParseError {
                     context: "string_body".to_string(),
-                    message: format!("Expected CHAR (9), Ref (255), Sym (1), Int (13), Env (4), or Nil, got {}", sexp_type),
+                    message: format!(
+                        "Expected CHAR (9), Ref (255), Sym (1), Int (13), Env (4), or Nil, got {}",
+                        sexp_type
+                    ),
                 });
             }
         }
     }
-    
+
     Ok(StringVector {
         data,
         encodings,
@@ -777,14 +820,13 @@ fn parse_string_body_with_ref_complex<R: Read>(
     })
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::io::Cursor;
+    use crate::rds::parse::header::encoding_flags;
     use crate::rds::sexp_type::SEXPType;
     use crate::rds::string_encoding::StringEncoding;
-    use crate::rds::parse::header::encoding_flags;
+    use std::io::Cursor;
 
     /// 构造长度字节（大端序）
     fn make_length(len: i32) -> [u8; 4] {
@@ -820,10 +862,10 @@ mod tests {
     fn test_parse_integer_empty() {
         let mut data = Vec::new();
         data.extend_from_slice(&make_length(0));
-        
+
         let mut cursor = Cursor::new(data);
         let vec = parse_integer_body(&mut cursor).unwrap();
-        
+
         assert!(vec.data.is_empty());
     }
 
@@ -832,10 +874,10 @@ mod tests {
         let mut data = Vec::new();
         data.extend_from_slice(&make_length(1));
         data.extend_from_slice(&make_i32(42));
-        
+
         let mut cursor = Cursor::new(data);
         let vec = parse_integer_body(&mut cursor).unwrap();
-        
+
         assert_eq!(vec.data, vec![42]);
     }
 
@@ -846,10 +888,10 @@ mod tests {
         data.extend_from_slice(&make_i32(1));
         data.extend_from_slice(&make_i32(2));
         data.extend_from_slice(&make_i32(3));
-        
+
         let mut cursor = Cursor::new(data);
         let vec = parse_integer_body(&mut cursor).unwrap();
-        
+
         assert_eq!(vec.data, vec![1, 2, 3]);
     }
 
@@ -859,10 +901,10 @@ mod tests {
         data.extend_from_slice(&make_length(2));
         data.extend_from_slice(&make_i32(-100));
         data.extend_from_slice(&make_i32(i32::MIN));
-        
+
         let mut cursor = Cursor::new(data);
         let vec = parse_integer_body(&mut cursor).unwrap();
-        
+
         assert_eq!(vec.data, vec![-100, i32::MIN]);
     }
 
@@ -872,13 +914,12 @@ mod tests {
         data.extend_from_slice(&make_length(2));
         data.extend_from_slice(&make_i32(i32::MAX));
         data.extend_from_slice(&make_i32(i32::MIN));
-        
+
         let mut cursor = Cursor::new(data);
         let vec = parse_integer_body(&mut cursor).unwrap();
-        
+
         assert_eq!(vec.data, vec![i32::MAX, i32::MIN]);
     }
-
 
     // ========================================
     // 逻辑向量测试
@@ -888,10 +929,10 @@ mod tests {
     fn test_parse_logical_empty() {
         let mut data = Vec::new();
         data.extend_from_slice(&make_length(0));
-        
+
         let mut cursor = Cursor::new(data);
         let vec = parse_logical_body(&mut cursor).unwrap();
-        
+
         assert!(vec.data.is_empty());
     }
 
@@ -899,13 +940,13 @@ mod tests {
     fn test_parse_logical_values() {
         let mut data = Vec::new();
         data.extend_from_slice(&make_length(3));
-        data.extend_from_slice(&make_i32(0));  // FALSE
-        data.extend_from_slice(&make_i32(1));  // TRUE
-        data.extend_from_slice(&make_i32(i32::MIN));  // NA (NA_INTEGER)
-        
+        data.extend_from_slice(&make_i32(0)); // FALSE
+        data.extend_from_slice(&make_i32(1)); // TRUE
+        data.extend_from_slice(&make_i32(i32::MIN)); // NA (NA_INTEGER)
+
         let mut cursor = Cursor::new(data);
         let vec = parse_logical_body(&mut cursor).unwrap();
-        
+
         assert_eq!(vec.data, vec![0, 1, i32::MIN]);
     }
 
@@ -917,10 +958,10 @@ mod tests {
     fn test_parse_double_empty() {
         let mut data = Vec::new();
         data.extend_from_slice(&make_length(0));
-        
+
         let mut cursor = Cursor::new(data);
         let vec = parse_double_body(&mut cursor).unwrap();
-        
+
         assert!(vec.data.is_empty());
     }
 
@@ -929,10 +970,10 @@ mod tests {
         let mut data = Vec::new();
         data.extend_from_slice(&make_length(1));
         data.extend_from_slice(&make_f64(3.14159));
-        
+
         let mut cursor = Cursor::new(data);
         let vec = parse_double_body(&mut cursor).unwrap();
-        
+
         assert_eq!(vec.data.len(), 1);
         assert!((vec.data[0] - 3.14159).abs() < 1e-10);
     }
@@ -944,10 +985,10 @@ mod tests {
         data.extend_from_slice(&make_f64(1.0));
         data.extend_from_slice(&make_f64(-2.5));
         data.extend_from_slice(&make_f64(0.0));
-        
+
         let mut cursor = Cursor::new(data);
         let vec = parse_double_body(&mut cursor).unwrap();
-        
+
         assert_eq!(vec.data, vec![1.0, -2.5, 0.0]);
     }
 
@@ -957,14 +998,13 @@ mod tests {
         data.extend_from_slice(&make_length(2));
         data.extend_from_slice(&make_f64(f64::INFINITY));
         data.extend_from_slice(&make_f64(f64::NEG_INFINITY));
-        
+
         let mut cursor = Cursor::new(data);
         let vec = parse_double_body(&mut cursor).unwrap();
-        
+
         assert_eq!(vec.data[0], f64::INFINITY);
         assert_eq!(vec.data[1], f64::NEG_INFINITY);
     }
-
 
     // ========================================
     // 原始向量测试
@@ -974,10 +1014,10 @@ mod tests {
     fn test_parse_raw_empty() {
         let mut data = Vec::new();
         data.extend_from_slice(&make_length(0));
-        
+
         let mut cursor = Cursor::new(data);
         let vec = parse_raw_body(&mut cursor).unwrap();
-        
+
         assert!(vec.data.is_empty());
     }
 
@@ -986,10 +1026,10 @@ mod tests {
         let mut data = Vec::new();
         data.extend_from_slice(&make_length(5));
         data.extend_from_slice(&[0x01, 0x02, 0x03, 0x04, 0x05]);
-        
+
         let mut cursor = Cursor::new(data);
         let vec = parse_raw_body(&mut cursor).unwrap();
-        
+
         assert_eq!(vec.data, vec![0x01, 0x02, 0x03, 0x04, 0x05]);
     }
 
@@ -998,10 +1038,10 @@ mod tests {
         let mut data = Vec::new();
         data.extend_from_slice(&make_length(3));
         data.extend_from_slice(&[0x00, 0xFF, 0x80]);
-        
+
         let mut cursor = Cursor::new(data);
         let vec = parse_raw_body(&mut cursor).unwrap();
-        
+
         assert_eq!(vec.data, vec![0x00, 0xFF, 0x80]);
     }
 
@@ -1013,10 +1053,10 @@ mod tests {
     fn test_parse_complex_empty() {
         let mut data = Vec::new();
         data.extend_from_slice(&make_length(0));
-        
+
         let mut cursor = Cursor::new(data);
         let vec = parse_complex_body(&mut cursor).unwrap();
-        
+
         assert!(vec.data.is_empty());
     }
 
@@ -1024,12 +1064,12 @@ mod tests {
     fn test_parse_complex_single() {
         let mut data = Vec::new();
         data.extend_from_slice(&make_length(1));
-        data.extend_from_slice(&make_f64(3.0));  // 实部
-        data.extend_from_slice(&make_f64(4.0));  // 虚部
-        
+        data.extend_from_slice(&make_f64(3.0)); // 实部
+        data.extend_from_slice(&make_f64(4.0)); // 虚部
+
         let mut cursor = Cursor::new(data);
         let vec = parse_complex_body(&mut cursor).unwrap();
-        
+
         assert_eq!(vec.data.len(), 1);
         assert_eq!(vec.data[0].re, 3.0);
         assert_eq!(vec.data[0].im, 4.0);
@@ -1043,15 +1083,14 @@ mod tests {
         data.extend_from_slice(&make_f64(2.0));
         data.extend_from_slice(&make_f64(-1.0));
         data.extend_from_slice(&make_f64(-2.0));
-        
+
         let mut cursor = Cursor::new(data);
         let vec = parse_complex_body(&mut cursor).unwrap();
-        
+
         assert_eq!(vec.data.len(), 2);
         assert_eq!(vec.data[0], Complex64::new(1.0, 2.0));
         assert_eq!(vec.data[1], Complex64::new(-1.0, -2.0));
     }
-
 
     // ========================================
     // 字符串向量测试
@@ -1061,10 +1100,10 @@ mod tests {
     fn test_parse_string_empty() {
         let mut data = Vec::new();
         data.extend_from_slice(&make_length(0));
-        
+
         let mut cursor = Cursor::new(data);
         let vec = parse_string_body(&mut cursor).unwrap();
-        
+
         assert!(vec.data.is_empty());
         assert!(vec.encodings.is_empty());
         assert!(vec.missing.is_empty());
@@ -1078,10 +1117,10 @@ mod tests {
         data.extend_from_slice(&make_char_header(StringEncoding::Utf8));
         data.extend_from_slice(&make_length(5));
         data.extend_from_slice(b"hello");
-        
+
         let mut cursor = Cursor::new(data);
         let vec = parse_string_body(&mut cursor).unwrap();
-        
+
         assert_eq!(vec.data, vec!["hello"]);
         assert_eq!(vec.encodings, vec![StringEncoding::Utf8]);
         assert_eq!(vec.missing, vec![false]);
@@ -1091,22 +1130,25 @@ mod tests {
     fn test_parse_string_multiple() {
         let mut data = Vec::new();
         data.extend_from_slice(&make_length(2));
-        
+
         // 第一个字符串
         data.extend_from_slice(&make_char_header(StringEncoding::Utf8));
         data.extend_from_slice(&make_length(3));
         data.extend_from_slice(b"foo");
-        
+
         // 第二个字符串
         data.extend_from_slice(&make_char_header(StringEncoding::Ascii));
         data.extend_from_slice(&make_length(3));
         data.extend_from_slice(b"bar");
-        
+
         let mut cursor = Cursor::new(data);
         let vec = parse_string_body(&mut cursor).unwrap();
-        
+
         assert_eq!(vec.data, vec!["foo", "bar"]);
-        assert_eq!(vec.encodings, vec![StringEncoding::Utf8, StringEncoding::Ascii]);
+        assert_eq!(
+            vec.encodings,
+            vec![StringEncoding::Utf8, StringEncoding::Ascii]
+        );
         assert_eq!(vec.missing, vec![false, false]);
     }
 
@@ -1114,24 +1156,24 @@ mod tests {
     fn test_parse_string_with_na() {
         let mut data = Vec::new();
         data.extend_from_slice(&make_length(3));
-        
+
         // 第一个字符串
         data.extend_from_slice(&make_char_header(StringEncoding::Utf8));
         data.extend_from_slice(&make_length(1));
         data.extend_from_slice(b"a");
-        
+
         // NA 字符串
         data.extend_from_slice(&make_char_header(StringEncoding::None));
         data.extend_from_slice(&make_length(-1));
-        
+
         // 第三个字符串
         data.extend_from_slice(&make_char_header(StringEncoding::Utf8));
         data.extend_from_slice(&make_length(1));
         data.extend_from_slice(b"b");
-        
+
         let mut cursor = Cursor::new(data);
         let vec = parse_string_body(&mut cursor).unwrap();
-        
+
         assert_eq!(vec.data, vec!["a", "", "b"]);
         assert_eq!(vec.missing, vec![false, true, false]);
     }
@@ -1140,16 +1182,16 @@ mod tests {
     fn test_parse_string_unicode() {
         let mut data = Vec::new();
         data.extend_from_slice(&make_length(1));
-        
+
         let unicode_str = "你好";
         let bytes = unicode_str.as_bytes();
         data.extend_from_slice(&make_char_header(StringEncoding::Utf8));
         data.extend_from_slice(&make_length(bytes.len() as i32));
         data.extend_from_slice(bytes);
-        
+
         let mut cursor = Cursor::new(data);
         let vec = parse_string_body(&mut cursor).unwrap();
-        
+
         assert_eq!(vec.data, vec!["你好"]);
     }
 
@@ -1163,10 +1205,10 @@ mod tests {
         data.extend_from_slice(&make_length(3));
         data.extend_from_slice(&make_i32(1));
         // 缺少 2 个整数
-        
+
         let mut cursor = Cursor::new(data);
         let result = parse_integer_body(&mut cursor);
-        
+
         assert!(result.is_err());
     }
 
@@ -1176,10 +1218,10 @@ mod tests {
         data.extend_from_slice(&make_length(2));
         data.extend_from_slice(&make_f64(1.0));
         // 缺少 1 个浮点数
-        
+
         let mut cursor = Cursor::new(data);
         let result = parse_double_body(&mut cursor);
-        
+
         assert!(result.is_err());
     }
 }

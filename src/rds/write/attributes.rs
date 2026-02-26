@@ -3,13 +3,13 @@
 //! 写入 R 对象的属性（作为配对列表）。
 //! 对应 rds2cpp 的属性写入逻辑。
 
-use std::io::Write;
+use super::shared_info::SharedWriteInfo;
+use super::utils::{write_header, write_pairlist_header};
 use crate::rds::error::Result;
 use crate::rds::r_object::{Attributes, RObject};
-use crate::rds::string_encoding::StringEncoding;
-use super::utils::{write_header, write_pairlist_header};
-use super::shared_info::SharedWriteInfo;
 use crate::rds::sexp_type::SEXPType;
+use crate::rds::string_encoding::StringEncoding;
+use std::io::Write;
 
 /// 写入属性（作为配对列表）
 ///
@@ -30,7 +30,11 @@ where
     }
     for i in 0..attrs.names.len() {
         write_pairlist_header(true, writer)?;
-        let enc = attrs.encodings.get(i).copied().unwrap_or(StringEncoding::Utf8);
+        let enc = attrs
+            .encodings
+            .get(i)
+            .copied()
+            .unwrap_or(StringEncoding::Utf8);
         shared.write_symbol(&attrs.names[i], enc, writer)?;
         write_obj(&attrs.values[i], writer, shared)?;
     }
@@ -41,12 +45,16 @@ where
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::io::Cursor;
-    use crate::rds::symbol::Symbol;
     use crate::rds::environment::Environment;
     use crate::rds::external_pointer::ExternalPointer;
+    use crate::rds::symbol::Symbol;
+    use std::io::Cursor;
 
-    fn mk<'a>(s: &'a [Symbol], e: &'a [Environment], p: &'a [ExternalPointer]) -> SharedWriteInfo<'a> {
+    fn mk<'a>(
+        s: &'a [Symbol],
+        e: &'a [Environment],
+        p: &'a [ExternalPointer],
+    ) -> SharedWriteInfo<'a> {
         SharedWriteInfo::new(s, e, p)
     }
     fn nw(_: &RObject, w: &mut Cursor<Vec<u8>>, _: &mut SharedWriteInfo) -> Result<()> {

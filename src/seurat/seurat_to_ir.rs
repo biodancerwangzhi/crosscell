@@ -6,7 +6,7 @@ use crate::ir::{
     DataFrame, DatasetMetadata, Embedding, ExpressionMatrix, PairwiseMatrix, SingleCellData,
     SpatialData,
 };
-use crate::rds::{RObject, RdsFile, parse_rds};
+use crate::rds::{parse_rds, RObject, RdsFile};
 use crate::seurat::error::SeuratError;
 use crate::seurat::extract::get_named_list_items;
 use arrow::datatypes::Int32Type;
@@ -19,7 +19,7 @@ use std::sync::Arc;
 /// and converts it to CrossCell IR format.
 pub fn seurat_rds_to_ir(path: &str) -> Result<SingleCellData, SeuratError> {
     use std::path::Path;
-    
+
     let file = parse_rds(Path::new(path))
         .map_err(|e| SeuratError::ParseError(format!("Failed to read RDS: {}", e)))?;
 
@@ -64,8 +64,8 @@ fn parse_simplified_seurat(robj: &RObject, file: &RdsFile) -> Result<SingleCellD
             "graphs" => {
                 graphs = Some(*value);
             }
-            "class" | "active_ident" | "active.ident" | "neighbors"
-            | "misc" | "version" | "commands" | "tools" => {
+            "class" | "active_ident" | "active.ident" | "neighbors" | "misc" | "version"
+            | "commands" | "tools" => {
                 // Skip these fields
             }
             _ => {
@@ -75,12 +75,10 @@ fn parse_simplified_seurat(robj: &RObject, file: &RdsFile) -> Result<SingleCellD
     }
 
     // Validate required fields
-    let assays = assays.ok_or_else(|| {
-        SeuratError::ParseError("Missing required field: assays".to_string())
-    })?;
-    let meta_data = meta_data.ok_or_else(|| {
-        SeuratError::ParseError("Missing required field: meta_data".to_string())
-    })?;
+    let assays = assays
+        .ok_or_else(|| SeuratError::ParseError("Missing required field: assays".to_string()))?;
+    let meta_data = meta_data
+        .ok_or_else(|| SeuratError::ParseError("Missing required field: meta_data".to_string()))?;
 
     // Parse assays (extract first assay as main expression matrix)
     let (expression, gene_metadata, layers) = parse_assays(assays, file)?;
@@ -93,7 +91,10 @@ fn parse_simplified_seurat(robj: &RObject, file: &RdsFile) -> Result<SingleCellD
     let (embeddings, gene_loadings) = if let Some(red) = reductions {
         let embs = parse_reductions(red, n_cells, file)?;
         let loads = parse_reduction_loadings(red, file);
-        (Some(embs), if loads.is_empty() { None } else { Some(loads) })
+        (
+            Some(embs),
+            if loads.is_empty() { None } else { Some(loads) },
+        )
     } else {
         (None, None)
     };
@@ -143,11 +144,15 @@ fn parse_simplified_seurat(robj: &RObject, file: &RdsFile) -> Result<SingleCellD
 }
 
 /// Get fields from an RObject (handles List with names, PairList, etc.)
-fn get_fields_from_object<'a>(robj: &'a RObject, file: &'a RdsFile) -> Result<Vec<(&'a str, &'a RObject)>, SeuratError> {
+fn get_fields_from_object<'a>(
+    robj: &'a RObject,
+    file: &'a RdsFile,
+) -> Result<Vec<(&'a str, &'a RObject)>, SeuratError> {
     match robj {
         RObject::GenericVector(gv) => {
             if let Some(names) = gv.attributes.get_names() {
-                Ok(names.iter()
+                Ok(names
+                    .iter()
                     .zip(gv.data.iter())
                     .map(|(n, v)| (n.as_str(), v))
                     .collect())
@@ -160,15 +165,18 @@ fn get_fields_from_object<'a>(robj: &'a RObject, file: &'a RdsFile) -> Result<Ve
                 ))
             }
         }
-        RObject::PairList(pl) => {
-            Ok(pl.tag_names.iter()
-                .zip(pl.data.iter())
-                .map(|(n, v)| (n.as_str(), v))
-                .collect())
-        }
+        RObject::PairList(pl) => Ok(pl
+            .tag_names
+            .iter()
+            .zip(pl.data.iter())
+            .map(|(n, v)| (n.as_str(), v))
+            .collect()),
         RObject::S4Object(s4) => {
             // S4 objects store slots as attributes
-            Ok(s4.attributes.names.iter()
+            Ok(s4
+                .attributes
+                .names
+                .iter()
                 .zip(s4.attributes.values.iter())
                 .map(|(n, v)| (n.as_str(), v))
                 .collect())
@@ -201,8 +209,14 @@ fn extract_string_scalar(robj: &RObject) -> Result<String, SeuratError> {
 fn parse_assays(
     robj: &RObject,
     file: &RdsFile,
-) -> Result<(ExpressionMatrix, DataFrame, Option<HashMap<String, ExpressionMatrix>>), SeuratError>
-{
+) -> Result<
+    (
+        ExpressionMatrix,
+        DataFrame,
+        Option<HashMap<String, ExpressionMatrix>>,
+    ),
+    SeuratError,
+> {
     let assay_list = get_fields_from_object(robj, file)?;
 
     if assay_list.is_empty() {
@@ -231,13 +245,18 @@ fn parse_assays(
 }
 
 /// Parse single assay
-fn parse_single_assay(robj: &RObject, file: &RdsFile) -> Result<(ExpressionMatrix, DataFrame), SeuratError> {
-    use crate::seurat::assay5::{detect_assay_type, extract_assay5_main_matrix, extract_assay5_gene_metadata, AssayType};
-    
+fn parse_single_assay(
+    robj: &RObject,
+    file: &RdsFile,
+) -> Result<(ExpressionMatrix, DataFrame), SeuratError> {
+    use crate::seurat::assay5::{
+        detect_assay_type, extract_assay5_gene_metadata, extract_assay5_main_matrix, AssayType,
+    };
+
     // 检Assay 类型
     let assay_type = detect_assay_type(robj);
     log::debug!("Detected assay type: {:?}", assay_type);
-    
+
     match assay_type {
         AssayType::Assay5 => {
             // 使用 Assay5 提取逻辑
@@ -245,7 +264,7 @@ fn parse_single_assay(robj: &RObject, file: &RdsFile) -> Result<(ExpressionMatri
             let expression = extract_assay5_main_matrix(robj, file)?;
             let (n_cells, n_genes) = expression.shape();
             log::debug!("Assay5 matrix: {} cells × {} genes", n_cells, n_genes);
-            
+
             let gene_metadata = extract_assay5_gene_metadata(robj, n_genes, file)?;
             Ok((expression, gene_metadata))
         }
@@ -258,7 +277,10 @@ fn parse_single_assay(robj: &RObject, file: &RdsFile) -> Result<(ExpressionMatri
 }
 
 /// Parse legacy (V3/V4) assay
-fn parse_legacy_assay(robj: &RObject, file: &RdsFile) -> Result<(ExpressionMatrix, DataFrame), SeuratError> {
+fn parse_legacy_assay(
+    robj: &RObject,
+    file: &RdsFile,
+) -> Result<(ExpressionMatrix, DataFrame), SeuratError> {
     let assay_fields = get_fields_from_object(robj, file)?;
 
     let mut counts = None;
@@ -296,11 +318,10 @@ fn parse_legacy_assay(robj: &RObject, file: &RdsFile) -> Result<(ExpressionMatri
     }
 
     // Extract counts matrix
-    let counts = counts.ok_or_else(|| {
-        SeuratError::ParseError("Missing counts matrix in assay".to_string())
-    })?;
+    let counts = counts
+        .ok_or_else(|| SeuratError::ParseError("Missing counts matrix in assay".to_string()))?;
     let expression = parse_dgcmatrix(counts)?;
-    
+
     let (n_cells, n_genes) = expression.shape();
     log::debug!("After transpose: {} cells × {} genes", n_cells, n_genes);
 
@@ -326,14 +347,18 @@ pub fn parse_dgcmatrix(robj: &RObject) -> Result<ExpressionMatrix, SeuratError> 
     // dgCMatrix is an S4 object with slots: i, p, x, Dim
     let (i, p, x, dim) = match robj {
         RObject::S4Object(s4) => {
-            let i = s4.attributes.get("i")
-                .ok_or_else(|| SeuratError::ParseError("Missing 'i' slot in dgCMatrix".to_string()))?;
-            let p = s4.attributes.get("p")
-                .ok_or_else(|| SeuratError::ParseError("Missing 'p' slot in dgCMatrix".to_string()))?;
-            let x = s4.attributes.get("x")
-                .ok_or_else(|| SeuratError::ParseError("Missing 'x' slot in dgCMatrix".to_string()))?;
-            let dim = s4.attributes.get("Dim")
-                .ok_or_else(|| SeuratError::ParseError("Missing 'Dim' slot in dgCMatrix".to_string()))?;
+            let i = s4.attributes.get("i").ok_or_else(|| {
+                SeuratError::ParseError("Missing 'i' slot in dgCMatrix".to_string())
+            })?;
+            let p = s4.attributes.get("p").ok_or_else(|| {
+                SeuratError::ParseError("Missing 'p' slot in dgCMatrix".to_string())
+            })?;
+            let x = s4.attributes.get("x").ok_or_else(|| {
+                SeuratError::ParseError("Missing 'x' slot in dgCMatrix".to_string())
+            })?;
+            let dim = s4.attributes.get("Dim").ok_or_else(|| {
+                SeuratError::ParseError("Missing 'Dim' slot in dgCMatrix".to_string())
+            })?;
             (i, p, x, dim)
         }
         _ => {
@@ -360,9 +385,17 @@ pub fn parse_dgcmatrix(robj: &RObject) -> Result<ExpressionMatrix, SeuratError> 
     // R dgCMatrix dimensions: [n_genes, n_cells]
     let n_genes = dimensions[0] as usize;
     let n_cells = dimensions[1] as usize;
-    
-    log::debug!("dgCMatrix dimensions from R: {} genes × {} cells", n_genes, n_cells);
-    log::debug!("R col_ptrs length: {} (expected {})", r_col_ptrs.len(), n_cells + 1);
+
+    log::debug!(
+        "dgCMatrix dimensions from R: {} genes × {} cells",
+        n_genes,
+        n_cells
+    );
+    log::debug!(
+        "R col_ptrs length: {} (expected {})",
+        r_col_ptrs.len(),
+        n_cells + 1
+    );
 
     // Convert to usize
     let r_row_indices: Vec<usize> = r_row_indices.iter().map(|&x| x as usize).collect();
@@ -370,7 +403,7 @@ pub fn parse_dgcmatrix(robj: &RObject) -> Result<ExpressionMatrix, SeuratError> 
 
     use crate::ir::SparseMatrixCSR;
     use crate::sparse::convert::csr_to_csc;
-    
+
     // Interpret R dgCMatrix as CSR (cells × genes)
     let csr = SparseMatrixCSR {
         n_rows: n_cells,
@@ -379,14 +412,26 @@ pub fn parse_dgcmatrix(robj: &RObject) -> Result<ExpressionMatrix, SeuratError> 
         indices: r_row_indices,
         data,
     };
-    
-    log::debug!("Interpreted as CSR: {} cells × {} genes", csr.n_rows, csr.n_cols);
-    
+
+    log::debug!(
+        "Interpreted as CSR: {} cells × {} genes",
+        csr.n_rows,
+        csr.n_cols
+    );
+
     // Convert CSR to CSC
     let csc = csr_to_csc(&csr);
-    
-    log::debug!("Converted to CSC: {} cells × {} genes", csc.n_rows, csc.n_cols);
-    log::debug!("CSC indptr length: {} (expected {})", csc.indptr.len(), csc.n_cols + 1);
+
+    log::debug!(
+        "Converted to CSC: {} cells × {} genes",
+        csc.n_rows,
+        csc.n_cols
+    );
+    log::debug!(
+        "CSC indptr length: {} (expected {})",
+        csc.indptr.len(),
+        csc.n_cols + 1
+    );
 
     Ok(ExpressionMatrix::SparseCSC(csc))
 }
@@ -425,7 +470,11 @@ fn extract_string_vector(robj: &RObject) -> Result<Vec<String>, SeuratError> {
 }
 
 /// Parse metadata (data.frame)
-fn parse_metadata(robj: &RObject, expected_rows: usize, file: &RdsFile) -> Result<DataFrame, SeuratError> {
+fn parse_metadata(
+    robj: &RObject,
+    expected_rows: usize,
+    file: &RdsFile,
+) -> Result<DataFrame, SeuratError> {
     // data.frame is a named list with row.names attribute
     let columns = get_fields_from_object(robj, file).unwrap_or_default();
 
@@ -436,50 +485,44 @@ fn parse_metadata(robj: &RObject, expected_rows: usize, file: &RdsFile) -> Resul
 
     // Convert R columns to Arrow arrays
     use arrow::array::ArrayRef;
-    
+
     let mut col_names: Vec<String> = Vec::new();
     let mut col_arrays: Vec<ArrayRef> = Vec::new();
-    
+
     for (col_name, col_value) in columns {
         // Skip internal columns like _row_id
         if col_name.starts_with('_') {
             continue;
         }
-        
+
         let array = robject_to_arrow_array(col_value, col_name, expected_rows)?;
         col_names.push(col_name.to_string());
         col_arrays.push(array);
     }
-    
+
     // Build DataFrame from Arrow arrays
     if col_names.is_empty() {
         return Ok(DataFrame::empty(expected_rows));
     }
-    
+
     let df = DataFrame::new(col_names, col_arrays, expected_rows)
         .map_err(|e| SeuratError::ParseError(format!("Failed to create DataFrame: {}", e)))?;
-    
+
     Ok(df)
 }
 
 /// Convert RObject to Arrow array
 fn robject_to_arrow_array(
-    robj: &RObject, 
-    col_name: &str, 
-    expected_len: usize
+    robj: &RObject,
+    col_name: &str,
+    expected_len: usize,
 ) -> Result<Arc<dyn arrow::array::Array>, SeuratError> {
     use arrow::array::*;
-    
+
     match robj {
-        RObject::IntegerVector(iv) => {
-            Ok(Arc::new(Int32Array::from(iv.data.clone())))
-        }
-        RObject::DoubleVector(dv) => {
-            Ok(Arc::new(Float64Array::from(dv.data.clone())))
-        }
-        RObject::StringVector(sv) => {
-            Ok(Arc::new(StringArray::from(sv.data.clone())))
-        }
+        RObject::IntegerVector(iv) => Ok(Arc::new(Int32Array::from(iv.data.clone()))),
+        RObject::DoubleVector(dv) => Ok(Arc::new(Float64Array::from(dv.data.clone()))),
+        RObject::StringVector(sv) => Ok(Arc::new(StringArray::from(sv.data.clone()))),
         RObject::LogicalVector(lv) => {
             // Convert i32 to bool
             let bools: Vec<bool> = lv.data.iter().map(|&v| v != 0).collect();
@@ -489,20 +532,24 @@ fn robject_to_arrow_array(
             // Check if it has attributes (might be a factor)
             if let Some(attrs) = robj.attributes() {
                 let has_levels = attrs.get("levels").is_some();
-                let is_factor = attrs.get_class()
+                let is_factor = attrs
+                    .get_class()
                     .map(|c| c.iter().any(|s| s == "factor"))
                     .unwrap_or(false);
-                
+
                 if has_levels || is_factor {
                     return robject_factor_to_arrow(robj, col_name, expected_len);
                 }
             }
-            
+
             // Unsupported type - create string array with placeholder values
-            eprintln!("Warning: Unsupported RObject type for column {}: {:?}, using placeholder", col_name, robj.type_name());
-            let placeholder: Vec<String> = (0..expected_len)
-                .map(|i| format!("Value_{}", i))
-                .collect();
+            eprintln!(
+                "Warning: Unsupported RObject type for column {}: {:?}, using placeholder",
+                col_name,
+                robj.type_name()
+            );
+            let placeholder: Vec<String> =
+                (0..expected_len).map(|i| format!("Value_{}", i)).collect();
             Ok(Arc::new(StringArray::from(placeholder)))
         }
     }
@@ -515,17 +562,18 @@ fn robject_factor_to_arrow(
     _expected_len: usize,
 ) -> Result<Arc<dyn arrow::array::Array>, SeuratError> {
     use arrow::array::*;
-    
+
     // Get the integer codes (1-based in R)
     let codes = match robj {
         RObject::IntegerVector(iv) => &iv.data,
         _ => {
             return Err(SeuratError::ParseError(format!(
-                "Expected integer codes for factor column {}", col_name
+                "Expected integer codes for factor column {}",
+                col_name
             )));
         }
     };
-    
+
     // Get the levels from attributes
     let levels = if let Some(attrs) = robj.attributes() {
         if let Some(RObject::StringVector(sv)) = attrs.get("levels") {
@@ -536,25 +584,28 @@ fn robject_factor_to_arrow(
     } else {
         Vec::new()
     };
-    
+
     // Convert 1-based R codes to 0-based, handling NA
-    let keys: Vec<Option<i32>> = codes.iter()
+    let keys: Vec<Option<i32>> = codes
+        .iter()
         .map(|&v| {
             if v <= 0 || v == i32::MIN {
-                None  // NA
+                None // NA
             } else {
-                Some(v - 1)  // Convert 1-based to 0-based
+                Some(v - 1) // Convert 1-based to 0-based
             }
         })
         .collect();
-    
+
     // Create dictionary array
     let keys_array = Int32Array::from(keys);
     let values_array = StringArray::from(levels);
-    
+
     let dict_array = DictionaryArray::<Int32Type>::try_new(keys_array, Arc::new(values_array))
-        .map_err(|e| SeuratError::ParseError(format!("Failed to create dictionary array: {}", e)))?;
-    
+        .map_err(|e| {
+            SeuratError::ParseError(format!("Failed to create dictionary array: {}", e))
+        })?;
+
     Ok(Arc::new(dict_array))
 }
 
@@ -568,7 +619,7 @@ fn parse_reductions(
     if matches!(robj, RObject::Null) {
         return Ok(HashMap::new());
     }
-    
+
     let reduction_list = match get_fields_from_object(robj, file) {
         Ok(list) if list.is_empty() => return Ok(HashMap::new()),
         Ok(list) => list,
@@ -586,7 +637,11 @@ fn parse_reductions(
 }
 
 /// Parse single reduction
-fn parse_single_reduction(robj: &RObject, _expected_rows: usize, file: &RdsFile) -> Result<Embedding, SeuratError> {
+fn parse_single_reduction(
+    robj: &RObject,
+    _expected_rows: usize,
+    file: &RdsFile,
+) -> Result<Embedding, SeuratError> {
     let reduction_fields = get_fields_from_object(robj, file)?;
 
     let mut cell_embeddings = None;
@@ -612,7 +667,7 @@ fn parse_single_reduction(robj: &RObject, _expected_rows: usize, file: &RdsFile)
 
     // Parse matrix
     let matrix = parse_dense_matrix(cell_embeddings)?;
-    
+
     // Flatten matrix to Vec<f64> (row-major order)
     let n_rows = matrix.len();
     let n_cols = if n_rows > 0 { matrix[0].len() } else { 0 };
@@ -634,21 +689,21 @@ fn parse_single_reduction(robj: &RObject, _expected_rows: usize, file: &RdsFile)
 /// Returns a HashMap mapping reduction key (e.g., "PCs") to Embedding.
 fn parse_reduction_loadings(robj: &RObject, file: &RdsFile) -> HashMap<String, Embedding> {
     let mut loadings = HashMap::new();
-    
+
     if matches!(robj, RObject::Null) {
         return loadings;
     }
-    
+
     let reduction_list = match get_fields_from_object(robj, file) {
         Ok(list) if !list.is_empty() => list,
         _ => return loadings,
     };
-    
+
     for (name, reduction) in reduction_list {
         if let Ok(fields) = get_fields_from_object(reduction, file) {
             let mut feature_loadings = None;
             let mut key = name.to_string();
-            
+
             for (fname, fvalue) in &fields {
                 match *fname {
                     "feature.loadings" | "feature_loadings" => {
@@ -662,7 +717,7 @@ fn parse_reduction_loadings(robj: &RObject, file: &RdsFile) -> HashMap<String, E
                     _ => {}
                 }
             }
-            
+
             if let Some(fl) = feature_loadings {
                 if let Ok(matrix) = parse_dense_matrix(fl) {
                     let n_rows = matrix.len();
@@ -673,11 +728,12 @@ fn parse_reduction_loadings(robj: &RObject, file: &RdsFile) -> HashMap<String, E
                             data.extend(row);
                         }
                         // Use "PCs" as key for PCA loadings (AnnData convention)
-                        let varm_key = if name == "pca" || key.starts_with("pca") || key.starts_with("PC") {
-                            "PCs".to_string()
-                        } else {
-                            name.to_string()
-                        };
+                        let varm_key =
+                            if name == "pca" || key.starts_with("pca") || key.starts_with("PC") {
+                                "PCs".to_string()
+                            } else {
+                                name.to_string()
+                            };
                         if let Ok(emb) = Embedding::new(varm_key.clone(), data, n_rows, n_cols) {
                             loadings.insert(varm_key, emb);
                         }
@@ -686,7 +742,7 @@ fn parse_reduction_loadings(robj: &RObject, file: &RdsFile) -> HashMap<String, E
             }
         }
     }
-    
+
     loadings
 }
 
@@ -701,14 +757,14 @@ fn parse_graphs(
     if matches!(robj, RObject::Null) {
         return Ok(None);
     }
-    
+
     let graph_list = match get_fields_from_object(robj, file) {
         Ok(list) if !list.is_empty() => list,
         _ => return Ok(None),
     };
-    
+
     let mut pairwise = HashMap::new();
-    
+
     for (name, graph_obj) in graph_list {
         // Try to parse as a sparse matrix (dgCMatrix)
         if let Ok(matrix) = parse_sparse_matrix_from_s4(graph_obj) {
@@ -720,7 +776,7 @@ fn parse_graphs(
             }
         }
     }
-    
+
     if pairwise.is_empty() {
         Ok(None)
     } else {
@@ -731,36 +787,56 @@ fn parse_graphs(
 /// Parse a sparse matrix from an S4 object (dgCMatrix format)
 fn parse_sparse_matrix_from_s4(robj: &RObject) -> Result<ExpressionMatrix, SeuratError> {
     use crate::ir::SparseMatrixCSC;
-    
+
     let s4 = match robj {
         RObject::S4Object(s4) => s4,
-        _ => return Err(SeuratError::ParseError("Expected S4 for sparse matrix".to_string())),
+        _ => {
+            return Err(SeuratError::ParseError(
+                "Expected S4 for sparse matrix".to_string(),
+            ))
+        }
     };
-    
+
     // Extract i (row indices), p (column pointers), x (values), Dim
-    let i = s4.attributes.get("i")
+    let i = s4
+        .attributes
+        .get("i")
         .ok_or_else(|| SeuratError::ParseError("Missing 'i' in dgCMatrix".to_string()))?;
-    let p = s4.attributes.get("p")
+    let p = s4
+        .attributes
+        .get("p")
         .ok_or_else(|| SeuratError::ParseError("Missing 'p' in dgCMatrix".to_string()))?;
-    let x = s4.attributes.get("x")
+    let x = s4
+        .attributes
+        .get("x")
         .ok_or_else(|| SeuratError::ParseError("Missing 'x' in dgCMatrix".to_string()))?;
-    let dim = s4.attributes.get("Dim")
+    let dim = s4
+        .attributes
+        .get("Dim")
         .ok_or_else(|| SeuratError::ParseError("Missing 'Dim' in dgCMatrix".to_string()))?;
-    
+
     let dim_vec = extract_integer_vector(dim)?;
     if dim_vec.len() < 2 {
-        return Err(SeuratError::ParseError("Dim must have 2 elements".to_string()));
+        return Err(SeuratError::ParseError(
+            "Dim must have 2 elements".to_string(),
+        ));
     }
     let n_rows = dim_vec[0] as usize;
     let n_cols = dim_vec[1] as usize;
-    
-    let indices: Vec<usize> = extract_integer_vector(i)?.into_iter().map(|v| v as usize).collect();
-    let indptr: Vec<usize> = extract_integer_vector(p)?.into_iter().map(|v| v as usize).collect();
+
+    let indices: Vec<usize> = extract_integer_vector(i)?
+        .into_iter()
+        .map(|v| v as usize)
+        .collect();
+    let indptr: Vec<usize> = extract_integer_vector(p)?
+        .into_iter()
+        .map(|v| v as usize)
+        .collect();
     let values: Vec<f64> = extract_real_vector(x)?;
-    
+
     let csc = SparseMatrixCSC::new(values, indices, indptr, n_rows, n_cols)
         .map_err(|e| SeuratError::ParseError(format!("Invalid CSC matrix: {}", e)))?;
-    
+
     Ok(ExpressionMatrix::SparseCSC(csc))
 }
 
@@ -863,14 +939,17 @@ fn parse_single_image(
     }
 
     // Parse coordinates
-    let coords = coordinates.ok_or_else(|| {
-        SeuratError::ParseError("Missing coordinates in image".to_string())
-    })?;
-    
+    let coords = coordinates
+        .ok_or_else(|| SeuratError::ParseError("Missing coordinates in image".to_string()))?;
+
     let coord_matrix = parse_dense_matrix(coords)?;
     let n_cells = coord_matrix.len();
-    let n_dims = if n_cells > 0 { coord_matrix[0].len() } else { 2 };
-    
+    let n_dims = if n_cells > 0 {
+        coord_matrix[0].len()
+    } else {
+        2
+    };
+
     // Flatten coordinates
     let mut flat_coords = Vec::with_capacity(n_cells * n_dims);
     for row in coord_matrix {

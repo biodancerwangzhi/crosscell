@@ -4,13 +4,13 @@
 //! 语言对象以配对列表形式写入：第一个元素是函数名符号，
 //! 后续元素是参数。
 
-use std::io::Write;
+use super::attributes::write_attributes;
+use super::shared_info::SharedWriteInfo;
+use super::utils::{write_header, write_pairlist_header};
 use crate::rds::error::Result;
 use crate::rds::r_object::{LanguageObject, RObject};
 use crate::rds::sexp_type::SEXPType;
-use super::utils::{write_header, write_pairlist_header};
-use super::shared_info::SharedWriteInfo;
-use super::attributes::write_attributes;
+use std::io::Write;
 
 /// 写入语言对象体
 ///
@@ -64,13 +64,17 @@ where
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::io::Cursor;
-    use crate::rds::string_encoding::StringEncoding;
-    use crate::rds::symbol::Symbol;
     use crate::rds::environment::Environment;
     use crate::rds::external_pointer::ExternalPointer;
+    use crate::rds::string_encoding::StringEncoding;
+    use crate::rds::symbol::Symbol;
+    use std::io::Cursor;
 
-    fn mk<'a>(s: &'a [Symbol], e: &'a [Environment], p: &'a [ExternalPointer]) -> SharedWriteInfo<'a> {
+    fn mk<'a>(
+        s: &'a [Symbol],
+        e: &'a [Environment],
+        p: &'a [ExternalPointer],
+    ) -> SharedWriteInfo<'a> {
         SharedWriteInfo::new(s, e, p)
     }
     fn nw(_: &RObject, w: &mut Cursor<Vec<u8>>, _: &mut SharedWriteInfo) -> Result<()> {

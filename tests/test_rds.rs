@@ -2,7 +2,7 @@
 //!
 //! 测试 rds 模块的功能
 
-use crosscell::rds::{parse_rds, write_rds, RdsFile, RObject, SEXPType};
+use crosscell::rds::{parse_rds, write_rds, RObject, RdsFile, SEXPType};
 use std::path::Path;
 use tempfile::tempdir;
 
@@ -14,13 +14,13 @@ fn test_parse_simple_int() {
         eprintln!("Skipping test: {} not found", path.display());
         return;
     }
-    
+
     let result = parse_rds(path);
     assert!(result.is_ok(), "Failed to parse: {:?}", result.err());
-    
+
     let file = result.unwrap();
     assert_eq!(file.format_version, 3);
-    
+
     if let RObject::IntegerVector(vec) = &file.object {
         assert!(!vec.data.is_empty());
         println!("Parsed integer vector with {} elements", vec.data.len());
@@ -37,12 +37,12 @@ fn test_parse_string() {
         eprintln!("Skipping test: {} not found", path.display());
         return;
     }
-    
+
     let result = parse_rds(path);
     assert!(result.is_ok(), "Failed to parse: {:?}", result.err());
-    
+
     let file = result.unwrap();
-    
+
     if let RObject::StringVector(vec) = &file.object {
         assert!(!vec.data.is_empty());
         println!("Parsed string vector: {:?}", vec.data);
@@ -59,15 +59,15 @@ fn test_parse_list() {
         eprintln!("Skipping test: {} not found", path.display());
         return;
     }
-    
+
     let result = parse_rds(path);
     assert!(result.is_ok(), "Failed to parse: {:?}", result.err());
-    
+
     let file = result.unwrap();
-    
+
     if let RObject::GenericVector(vec) = &file.object {
         println!("Parsed list with {} elements", vec.data.len());
-        
+
         if let Some(names) = vec.attributes.get_names() {
             println!("List names: {:?}", names);
         }
@@ -84,10 +84,10 @@ fn test_parse_null() {
         eprintln!("Skipping test: {} not found", path.display());
         return;
     }
-    
+
     let result = parse_rds(path);
     assert!(result.is_ok(), "Failed to parse: {:?}", result.err());
-    
+
     let file = result.unwrap();
     assert!(matches!(file.object, RObject::Null));
 }
@@ -100,19 +100,26 @@ fn test_parse_dgcmatrix() {
         eprintln!("Skipping test: {} not found", path.display());
         return;
     }
-    
+
     let result = parse_rds(path);
-    
+
     if let Err(ref e) = result {
         eprintln!("Note: dgCMatrix file may be in old format: {:?}", e);
         return;
     }
-    
+
     let file = result.unwrap();
-    
+
     if let RObject::S4Object(s4) = &file.object {
         println!("Parsed S4 object with class: {}", s4.class_name);
-        assert!(s4.class_name.contains("dgCMatrix") || s4.attributes.get_class().map(|c| c.iter().any(|s| s.contains("dgCMatrix"))).unwrap_or(false));
+        assert!(
+            s4.class_name.contains("dgCMatrix")
+                || s4
+                    .attributes
+                    .get_class()
+                    .map(|c| c.iter().any(|s| s.contains("dgCMatrix")))
+                    .unwrap_or(false)
+        );
     } else {
         panic!("Expected S4 object, got {:?}", file.object.type_name());
     }
@@ -126,12 +133,12 @@ fn test_parse_seurat() {
         eprintln!("Skipping test: {} not found", path.display());
         return;
     }
-    
+
     let result = parse_rds(path);
     assert!(result.is_ok(), "Failed to parse: {:?}", result.err());
-    
+
     let file = result.unwrap();
-    
+
     if let RObject::S4Object(s4) = &file.object {
         println!("Parsed Seurat object");
         println!("  Class: {}", s4.class_name);
@@ -150,21 +157,26 @@ fn test_roundtrip_integer() {
         eprintln!("Skipping test: {} not found", path.display());
         return;
     }
-    
+
     let original = parse_rds(path).expect("Failed to parse original");
-    
+
     let temp_dir = tempdir().expect("Failed to create temp dir");
     let temp_path = temp_dir.path().join("roundtrip.rds");
-    
+
     write_rds(&original, &temp_path).expect("Failed to write");
-    
+
     let roundtrip = parse_rds(&temp_path).expect("Failed to parse roundtrip");
-    
+
     assert_eq!(original.format_version, roundtrip.format_version);
-    
-    if let (RObject::IntegerVector(orig_vec), RObject::IntegerVector(rt_vec)) = (&original.object, &roundtrip.object) {
+
+    if let (RObject::IntegerVector(orig_vec), RObject::IntegerVector(rt_vec)) =
+        (&original.object, &roundtrip.object)
+    {
         assert_eq!(orig_vec.data, rt_vec.data);
-        println!("Roundtrip successful: {} integers match", orig_vec.data.len());
+        println!(
+            "Roundtrip successful: {} integers match",
+            orig_vec.data.len()
+        );
     } else {
         panic!("Type mismatch after roundtrip");
     }
@@ -178,17 +190,19 @@ fn test_roundtrip_string() {
         eprintln!("Skipping test: {} not found", path.display());
         return;
     }
-    
+
     let original = parse_rds(path).expect("Failed to parse original");
-    
+
     let temp_dir = tempdir().expect("Failed to create temp dir");
     let temp_path = temp_dir.path().join("roundtrip_string.rds");
-    
+
     write_rds(&original, &temp_path).expect("Failed to write");
-    
+
     let roundtrip = parse_rds(&temp_path).expect("Failed to parse roundtrip");
-    
-    if let (RObject::StringVector(orig_vec), RObject::StringVector(rt_vec)) = (&original.object, &roundtrip.object) {
+
+    if let (RObject::StringVector(orig_vec), RObject::StringVector(rt_vec)) =
+        (&original.object, &roundtrip.object)
+    {
         assert_eq!(orig_vec.data, rt_vec.data);
         println!("Roundtrip successful: {:?}", orig_vec.data);
     } else {
@@ -204,19 +218,24 @@ fn test_roundtrip_list() {
         eprintln!("Skipping test: {} not found", path.display());
         return;
     }
-    
+
     let original = parse_rds(path).expect("Failed to parse original");
-    
+
     let temp_dir = tempdir().expect("Failed to create temp dir");
     let temp_path = temp_dir.path().join("roundtrip_list.rds");
-    
+
     write_rds(&original, &temp_path).expect("Failed to write");
-    
+
     let roundtrip = parse_rds(&temp_path).expect("Failed to parse roundtrip");
-    
-    if let (RObject::GenericVector(orig_vec), RObject::GenericVector(rt_vec)) = (&original.object, &roundtrip.object) {
+
+    if let (RObject::GenericVector(orig_vec), RObject::GenericVector(rt_vec)) =
+        (&original.object, &roundtrip.object)
+    {
         assert_eq!(orig_vec.data.len(), rt_vec.data.len());
-        println!("Roundtrip successful: list with {} elements", orig_vec.data.len());
+        println!(
+            "Roundtrip successful: list with {} elements",
+            orig_vec.data.len()
+        );
     } else {
         panic!("Type mismatch after roundtrip");
     }

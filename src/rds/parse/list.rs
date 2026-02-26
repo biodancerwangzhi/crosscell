@@ -1,29 +1,36 @@
 //! 列表解析
-use std::io::Read;
+use super::shared_info::SharedParseInfo;
+use super::utils::read_length;
 use crate::rds::error::Result;
 use crate::rds::r_object::{GenericVector, RObject};
-use super::utils::read_length;
-use super::shared_info::SharedParseInfo;
+use std::io::Read;
 
 /// 解析列表体（VEC 类型）
 pub fn parse_list_body<R: Read, F>(
-    reader: &mut R, shared: &mut SharedParseInfo, parse_fn: &mut F,
+    reader: &mut R,
+    shared: &mut SharedParseInfo,
+    parse_fn: &mut F,
 ) -> Result<GenericVector>
-where F: FnMut(&mut R, &mut SharedParseInfo) -> Result<RObject> {
+where
+    F: FnMut(&mut R, &mut SharedParseInfo) -> Result<RObject>,
+{
     let length = read_length(reader)?;
     let mut data = Vec::with_capacity(length);
     for _ in 0..length {
         data.push(parse_fn(reader, shared)?);
     }
-    Ok(GenericVector { data, attributes: Default::default() })
+    Ok(GenericVector {
+        data,
+        attributes: Default::default(),
+    })
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::io::Cursor;
-    use crate::rds::sexp_type::SEXPType;
     use crate::rds::parse::utils::read_header;
+    use crate::rds::sexp_type::SEXPType;
+    use std::io::Cursor;
 
     #[test]
     fn test_empty_list() {

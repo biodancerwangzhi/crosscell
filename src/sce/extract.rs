@@ -38,18 +38,26 @@ pub fn ensure_sce_class(obj: &RObject) -> Result<()> {
 }
 
 /// 从 S4 对象中提取槽
-pub fn extract_slot<'a>(s4_obj: &'a RObject, slot_name: &str, _file: &'a RdsFile) -> Result<&'a RObject> {
+pub fn extract_slot<'a>(
+    s4_obj: &'a RObject,
+    slot_name: &str,
+    _file: &'a RdsFile,
+) -> Result<&'a RObject> {
     match s4_obj {
-        RObject::S4Object(s4) => {
-            s4.attributes.get(slot_name)
-                .ok_or_else(|| SceError::MissingSlot(slot_name.to_string()))
-        }
+        RObject::S4Object(s4) => s4
+            .attributes
+            .get(slot_name)
+            .ok_or_else(|| SceError::MissingSlot(slot_name.to_string())),
         _ => Err(SceError::NotS4Object),
     }
 }
 
 /// 从 S4 对象中提取可选槽
-pub fn extract_slot_optional<'a>(s4_obj: &'a RObject, slot_name: &str, _file: &'a RdsFile) -> Result<Option<&'a RObject>> {
+pub fn extract_slot_optional<'a>(
+    s4_obj: &'a RObject,
+    slot_name: &str,
+    _file: &'a RdsFile,
+) -> Result<Option<&'a RObject>> {
     match s4_obj {
         RObject::S4Object(s4) => Ok(s4.attributes.get(slot_name)),
         _ => Err(SceError::NotS4Object),
@@ -71,20 +79,24 @@ pub fn get_named_list_items<'a>(obj: &'a RObject) -> Option<Vec<(&'a str, &'a RO
     match obj {
         RObject::GenericVector(gv) => {
             if let Some(names) = gv.attributes.get_names() {
-                Some(names.iter()
-                    .zip(gv.data.iter())
-                    .map(|(n, v)| (n.as_str(), v))
-                    .collect())
+                Some(
+                    names
+                        .iter()
+                        .zip(gv.data.iter())
+                        .map(|(n, v)| (n.as_str(), v))
+                        .collect(),
+                )
             } else {
                 None
             }
         }
-        RObject::PairList(pl) => {
-            Some(pl.tag_names.iter()
+        RObject::PairList(pl) => Some(
+            pl.tag_names
+                .iter()
                 .zip(pl.data.iter())
                 .map(|(n, v)| (n.as_str(), v))
-                .collect())
-        }
+                .collect(),
+        ),
         _ => None,
     }
 }

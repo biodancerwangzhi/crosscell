@@ -163,9 +163,8 @@ mod tests {
 
     #[test]
     fn test_parse_with_context() {
-        let result: Result<i32> = parse_with_context("test context", || {
-            Err(RdsError::UnexpectedEof)
-        });
+        let result: Result<i32> =
+            parse_with_context("test context", || Err(RdsError::UnexpectedEof));
         assert!(result.is_err());
         let err = result.unwrap_err();
         assert!(matches!(err, RdsError::ParseError { .. }));
@@ -174,9 +173,8 @@ mod tests {
 
     #[test]
     fn test_write_with_context() {
-        let result: Result<i32> = write_with_context("test context", || {
-            Err(RdsError::UnexpectedEof)
-        });
+        let result: Result<i32> =
+            write_with_context("test context", || Err(RdsError::UnexpectedEof));
         assert!(result.is_err());
         let err = result.unwrap_err();
         assert!(matches!(err, RdsError::WriteError { .. }));

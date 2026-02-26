@@ -18,7 +18,7 @@ pub fn run(
     validate_schema: Option<String>,
 ) -> Result<()> {
     let start_time = Instant::now();
-    
+
     info!("Validating conversion");
     info!("Original: {}", original.display());
     info!("Converted: {}", converted.display());
@@ -36,10 +36,14 @@ pub fn run(
     // Detect file formats
     let original_format = detect_format(&original)?;
     let converted_format = detect_format(&converted)?;
-    
+
     println!("🔍 Validating Conversion");
     println!("  Original:  {} ({})", original.display(), original_format);
-    println!("  Converted: {} ({})", converted.display(), converted_format);
+    println!(
+        "  Converted: {} ({})",
+        converted.display(),
+        converted_format
+    );
     println!();
 
     // Read files and perform validation
@@ -49,25 +53,39 @@ pub fn run(
             "h5ad" => {
                 let original_str = original.to_str().context("Invalid original path")?;
                 let converted_str = converted.to_str().context("Invalid converted path")?;
-                validation::roundtrip::validate_h5ad_roundtrip(original_str, converted_str, tolerance)
-                    .map_err(|e| anyhow::anyhow!(e))?
+                validation::roundtrip::validate_h5ad_roundtrip(
+                    original_str,
+                    converted_str,
+                    tolerance,
+                )
+                .map_err(|e| anyhow::anyhow!(e))?
             }
             "rds" => {
                 let original_str = original.to_str().context("Invalid original path")?;
                 let converted_str = converted.to_str().context("Invalid converted path")?;
-                validation::roundtrip::validate_rds_roundtrip(original_str, converted_str, tolerance)
-                    .map_err(|e| anyhow::anyhow!(e))?
+                validation::roundtrip::validate_rds_roundtrip(
+                    original_str,
+                    converted_str,
+                    tolerance,
+                )
+                .map_err(|e| anyhow::anyhow!(e))?
             }
             _ => anyhow::bail!("Unsupported format for validation"),
         }
     } else {
         // Cross-format validation
         let (h5ad_path, rds_path) = if original_format == "h5ad" {
-            (original.to_str().context("Invalid path")?, converted.to_str().context("Invalid path")?)
+            (
+                original.to_str().context("Invalid path")?,
+                converted.to_str().context("Invalid path")?,
+            )
         } else {
-            (converted.to_str().context("Invalid path")?, original.to_str().context("Invalid path")?)
+            (
+                converted.to_str().context("Invalid path")?,
+                original.to_str().context("Invalid path")?,
+            )
         };
-        
+
         validation::roundtrip::validate_cross_format(h5ad_path, rds_path, tolerance)
             .map_err(|e| anyhow::anyhow!(e))?
     };
@@ -77,25 +95,29 @@ pub fn run(
     // Calculate ARI/NMI if cluster_column is specified
     let (ari_result, nmi_result) = if let Some(ref col_name) = cluster_column {
         info!("Calculating ARI/NMI for cluster column: {}", col_name);
-        
+
         // Load data to extract cluster labels
         let (orig_data, conv_data) = match (original_format.as_str(), converted_format.as_str()) {
             ("h5ad", "h5ad") => {
                 let orig = crosscell::anndata::reader::read_h5ad(
-                    original.to_str().context("Invalid path")?
-                ).context("Failed to read original H5AD")?;
+                    original.to_str().context("Invalid path")?,
+                )
+                .context("Failed to read original H5AD")?;
                 let conv = crosscell::anndata::reader::read_h5ad(
-                    converted.to_str().context("Invalid path")?
-                ).context("Failed to read converted H5AD")?;
+                    converted.to_str().context("Invalid path")?,
+                )
+                .context("Failed to read converted H5AD")?;
                 (orig, conv)
             }
             ("rds", "rds") => {
                 let orig = crosscell::seurat::seurat_to_ir::seurat_rds_to_ir(
-                    original.to_str().context("Invalid path")?
-                ).context("Failed to read original RDS")?;
+                    original.to_str().context("Invalid path")?,
+                )
+                .context("Failed to read original RDS")?;
                 let conv = crosscell::seurat::seurat_to_ir::seurat_rds_to_ir(
-                    converted.to_str().context("Invalid path")?
-                ).context("Failed to read converted RDS")?;
+                    converted.to_str().context("Invalid path")?,
+                )
+                .context("Failed to read converted RDS")?;
                 (orig, conv)
             }
             ("h5ad", "rds") | ("rds", "h5ad") => {
@@ -104,12 +126,13 @@ pub fn run(
                 } else {
                     (&converted, &original)
                 };
-                let h5ad_data = crosscell::anndata::reader::read_h5ad(
-                    h5ad_p.to_str().context("Invalid path")?
-                ).context("Failed to read H5AD")?;
+                let h5ad_data =
+                    crosscell::anndata::reader::read_h5ad(h5ad_p.to_str().context("Invalid path")?)
+                        .context("Failed to read H5AD")?;
                 let rds_data = crosscell::seurat::seurat_to_ir::seurat_rds_to_ir(
-                    rds_p.to_str().context("Invalid path")?
-                ).context("Failed to read RDS")?;
+                    rds_p.to_str().context("Invalid path")?,
+                )
+                .context("Failed to read RDS")?;
                 if original_format == "h5ad" {
                     (h5ad_data, rds_data)
                 } else {
@@ -154,10 +177,10 @@ pub fn run(
             println!("⚠️  Validation Completed with Warnings");
         }
     }
-    
+
     println!();
     println!("{}", report.summary());
-    
+
     if !report.passed() || strict {
         println!();
         println!("📋 Detailed Report:");
@@ -172,7 +195,10 @@ pub fn run(
     // Display ARI/NMI if calculated
     if let (Some(ari), Some(nmi)) = (ari_result, nmi_result) {
         println!();
-        println!("🔬 Cluster Metrics (column: {})", cluster_column.as_deref().unwrap_or(""));
+        println!(
+            "🔬 Cluster Metrics (column: {})",
+            cluster_column.as_deref().unwrap_or("")
+        );
         println!("  ├─ ARI: {:.6}", ari);
         println!("  └─ NMI: {:.6}", nmi);
     }
@@ -186,7 +212,7 @@ pub fn run(
     // Write validation report if requested
     if let Some(output_path) = output {
         info!("Writing validation report to: {}", output_path.display());
-        
+
         let json_report = json!({
             "passed": report.passed(),
             "original_file": original.to_str(),
@@ -204,10 +230,10 @@ pub fn run(
                 "missing_var_fields": sr.missing_var_fields,
             })),
         });
-        
+
         let json_str = serde_json::to_string_pretty(&json_report)?;
         fs::write(&output_path, json_str)?;
-        
+
         println!();
         println!("📝 Validation report saved to: {}", output_path.display());
     }
@@ -238,8 +264,9 @@ fn detect_format(path: &PathBuf) -> Result<String> {
 fn load_single_file_data(path: &PathBuf, format: &str) -> Result<crosscell::ir::SingleCellData> {
     let path_str = path.to_str().context("Invalid file path")?;
     match format {
-        "h5ad" => crosscell::anndata::reader::read_h5ad(path_str)
-            .context("Failed to read H5AD file"),
+        "h5ad" => {
+            crosscell::anndata::reader::read_h5ad(path_str).context("Failed to read H5AD file")
+        }
         "rds" => crosscell::seurat::seurat_to_ir::seurat_rds_to_ir(path_str)
             .context("Failed to read RDS file"),
         _ => anyhow::bail!("Unsupported format: {}", format),
@@ -251,41 +278,67 @@ fn extract_string_labels(df: &crosscell::ir::DataFrame, column_name: &str) -> Re
     use arrow::array::*;
     use arrow::datatypes::DataType;
 
-    let array = df.column(column_name)
+    let array = df
+        .column(column_name)
         .ok_or_else(|| anyhow::anyhow!("Column '{}' not found in obs metadata", column_name))?;
 
     match array.data_type() {
         DataType::Utf8 => {
-            let arr = array.as_any().downcast_ref::<StringArray>()
+            let arr = array
+                .as_any()
+                .downcast_ref::<StringArray>()
                 .context("Failed to downcast to StringArray")?;
-            Ok((0..arr.len()).map(|i| {
-                if arr.is_null(i) { String::new() } else { arr.value(i).to_string() }
-            }).collect())
+            Ok((0..arr.len())
+                .map(|i| {
+                    if arr.is_null(i) {
+                        String::new()
+                    } else {
+                        arr.value(i).to_string()
+                    }
+                })
+                .collect())
         }
         DataType::LargeUtf8 => {
-            let arr = array.as_any().downcast_ref::<LargeStringArray>()
+            let arr = array
+                .as_any()
+                .downcast_ref::<LargeStringArray>()
                 .context("Failed to downcast to LargeStringArray")?;
-            Ok((0..arr.len()).map(|i| {
-                if arr.is_null(i) { String::new() } else { arr.value(i).to_string() }
-            }).collect())
+            Ok((0..arr.len())
+                .map(|i| {
+                    if arr.is_null(i) {
+                        String::new()
+                    } else {
+                        arr.value(i).to_string()
+                    }
+                })
+                .collect())
         }
         DataType::Dictionary(_, _) => {
             // Try Int32 dictionary first (most common for categorical)
-            if let Some(dict) = array.as_any().downcast_ref::<DictionaryArray<arrow::datatypes::Int32Type>>() {
+            if let Some(dict) = array
+                .as_any()
+                .downcast_ref::<DictionaryArray<arrow::datatypes::Int32Type>>()
+            {
                 let values = dict.values();
                 if let Some(str_values) = values.as_any().downcast_ref::<StringArray>() {
-                    return Ok((0..dict.len()).map(|i| {
-                        if dict.is_null(i) {
-                            String::new()
-                        } else {
-                            let key = dict.keys().value(i) as usize;
-                            str_values.value(key).to_string()
-                        }
-                    }).collect());
+                    return Ok((0..dict.len())
+                        .map(|i| {
+                            if dict.is_null(i) {
+                                String::new()
+                            } else {
+                                let key = dict.keys().value(i) as usize;
+                                str_values.value(key).to_string()
+                            }
+                        })
+                        .collect());
                 }
             }
             anyhow::bail!("Unsupported dictionary type for column '{}'", column_name)
         }
-        dt => anyhow::bail!("Unsupported data type {:?} for cluster column '{}'", dt, column_name),
+        dt => anyhow::bail!(
+            "Unsupported data type {:?} for cluster column '{}'",
+            dt,
+            column_name
+        ),
     }
 }

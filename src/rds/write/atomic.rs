@@ -3,13 +3,13 @@
 //! 写入所有原子向量类型（整数、逻辑、浮点、原始、复数、字符串）。
 //! 对应 rds2cpp 的原子向量写入逻辑。
 
-use std::io::Write;
+use super::single_string::write_single_string;
+use super::utils::{write_bytes, write_f64, write_i32, write_length};
 use crate::rds::error::Result;
 use crate::rds::r_object::{
-    IntegerVector, LogicalVector, DoubleVector, RawVector, ComplexVector, StringVector,
+    ComplexVector, DoubleVector, IntegerVector, LogicalVector, RawVector, StringVector,
 };
-use super::utils::{write_i32, write_f64, write_length, write_bytes};
-use super::single_string::write_single_string;
+use std::io::Write;
 
 /// 写入整数向量体（不含头部）
 pub fn write_integer_body<W: Write>(vec: &IntegerVector, writer: &mut W) -> Result<()> {
@@ -69,28 +69,38 @@ pub fn write_string_body<W: Write>(vec: &StringVector, writer: &mut W) -> Result
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::io::Cursor;
-    use num_complex::Complex64;
-    use crate::rds::string_encoding::StringEncoding;
     use crate::rds::parse::atomic;
+    use crate::rds::string_encoding::StringEncoding;
+    use num_complex::Complex64;
+    use std::io::Cursor;
 
     fn rt_int(d: Vec<i32>) -> Vec<i32> {
-        let v = IntegerVector { data: d, attributes: Default::default() };
+        let v = IntegerVector {
+            data: d,
+            attributes: Default::default(),
+        };
         let mut b = Cursor::new(Vec::new());
         write_integer_body(&v, &mut b).unwrap();
-        atomic::parse_integer_body(&mut Cursor::new(b.into_inner())).unwrap().data
+        atomic::parse_integer_body(&mut Cursor::new(b.into_inner()))
+            .unwrap()
+            .data
     }
 
     #[test]
     fn test_integer_roundtrip() {
         assert_eq!(rt_int(vec![]), Vec::<i32>::new());
-        assert_eq!(rt_int(vec![1, -1, 0, i32::MAX, i32::MIN]),
-                   vec![1, -1, 0, i32::MAX, i32::MIN]);
+        assert_eq!(
+            rt_int(vec![1, -1, 0, i32::MAX, i32::MIN]),
+            vec![1, -1, 0, i32::MAX, i32::MIN]
+        );
     }
 
     #[test]
     fn test_logical_roundtrip() {
-        let v = LogicalVector { data: vec![0, 1, i32::MIN], attributes: Default::default() };
+        let v = LogicalVector {
+            data: vec![0, 1, i32::MIN],
+            attributes: Default::default(),
+        };
         let mut b = Cursor::new(Vec::new());
         write_logical_body(&v, &mut b).unwrap();
         let p = atomic::parse_logical_body(&mut Cursor::new(b.into_inner())).unwrap();
@@ -99,7 +109,10 @@ mod tests {
 
     #[test]
     fn test_double_roundtrip() {
-        let v = DoubleVector { data: vec![0.0, 1.5, -3.14, f64::INFINITY], attributes: Default::default() };
+        let v = DoubleVector {
+            data: vec![0.0, 1.5, -3.14, f64::INFINITY],
+            attributes: Default::default(),
+        };
         let mut b = Cursor::new(Vec::new());
         write_double_body(&v, &mut b).unwrap();
         let p = atomic::parse_double_body(&mut Cursor::new(b.into_inner())).unwrap();
@@ -108,7 +121,10 @@ mod tests {
 
     #[test]
     fn test_raw_roundtrip() {
-        let v = RawVector { data: vec![0x00, 0xFF, 0x42], attributes: Default::default() };
+        let v = RawVector {
+            data: vec![0x00, 0xFF, 0x42],
+            attributes: Default::default(),
+        };
         let mut b = Cursor::new(Vec::new());
         write_raw_body(&v, &mut b).unwrap();
         let p = atomic::parse_raw_body(&mut Cursor::new(b.into_inner())).unwrap();
@@ -131,7 +147,11 @@ mod tests {
     fn test_string_roundtrip() {
         let v = StringVector {
             data: vec!["hello".into(), "".into(), "world".into()],
-            encodings: vec![StringEncoding::Utf8, StringEncoding::Utf8, StringEncoding::Latin1],
+            encodings: vec![
+                StringEncoding::Utf8,
+                StringEncoding::Utf8,
+                StringEncoding::Latin1,
+            ],
             missing: vec![false, true, false],
             attributes: Default::default(),
         };

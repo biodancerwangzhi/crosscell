@@ -174,7 +174,10 @@ pub fn validate_r_to_arrow_compatible(r_type: &str) -> Result<()> {
 
 /// 生成类型兼容性报告
 pub fn type_compatibility_report(dtype: &DataType, target_format: &str) -> String {
-    let mut report = format!("Type Compatibility Report for {:?} → {}:\n", dtype, target_format);
+    let mut report = format!(
+        "Type Compatibility Report for {:?} → {}:\n",
+        dtype, target_format
+    );
 
     let result = match target_format {
         "hdf5" | "anndata" => validate_arrow_to_hdf5_type(dtype),
@@ -223,10 +226,7 @@ mod tests {
 
     #[test]
     fn test_validate_arrow_to_hdf5_dictionary() {
-        let dict_type = DataType::Dictionary(
-            Box::new(DataType::Int32),
-            Box::new(DataType::Utf8),
-        );
+        let dict_type = DataType::Dictionary(Box::new(DataType::Int32), Box::new(DataType::Utf8));
         assert!(validate_arrow_to_hdf5_type(&dict_type).is_ok());
     }
 
@@ -243,18 +243,21 @@ mod tests {
     fn test_validate_arrow_to_hdf5_datetime() {
         assert!(validate_arrow_to_hdf5_type(&DataType::Date32).is_ok());
         assert!(validate_arrow_to_hdf5_type(&DataType::Date64).is_ok());
-        assert!(validate_arrow_to_hdf5_type(&DataType::Timestamp(TimeUnit::Millisecond, None)).is_ok());
+        assert!(
+            validate_arrow_to_hdf5_type(&DataType::Timestamp(TimeUnit::Millisecond, None)).is_ok()
+        );
     }
 
     #[test]
     fn test_validate_arrow_to_hdf5_unsupported() {
-        use std::sync::Arc;
         use arrow::datatypes::Fields;
-        
+        use std::sync::Arc;
+
         // List type is not supported
-        assert!(validate_arrow_to_hdf5_type(&DataType::List(
-            Arc::new(arrow::datatypes::Field::new("item", DataType::Int32, true))
-        )).is_err());
+        assert!(validate_arrow_to_hdf5_type(&DataType::List(Arc::new(
+            arrow::datatypes::Field::new("item", DataType::Int32, true)
+        )))
+        .is_err());
 
         // Struct type is not supported
         let fields: Vec<Arc<arrow::datatypes::Field>> = vec![];
@@ -280,10 +283,7 @@ mod tests {
 
     #[test]
     fn test_validate_arrow_to_r_dictionary() {
-        let dict_type = DataType::Dictionary(
-            Box::new(DataType::Int32),
-            Box::new(DataType::Utf8),
-        );
+        let dict_type = DataType::Dictionary(Box::new(DataType::Int32), Box::new(DataType::Utf8));
         assert!(validate_arrow_to_r_type(&dict_type).is_ok());
     }
 

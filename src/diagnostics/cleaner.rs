@@ -2,9 +2,9 @@
 //!
 //! Provides automatic data cleaning and fixing capabilities.
 
-use crate::ir::{SingleCellData, DataFrame};
-use crate::diagnostics::detector::sanitize_column_name;
 use crate::diagnostics::audit::{AuditLog, Modification};
+use crate::diagnostics::detector::sanitize_column_name;
+use crate::ir::{DataFrame, SingleCellData};
 use std::collections::HashMap;
 
 /// Options for data cleaning
@@ -62,35 +62,35 @@ impl CleaningReport {
     /// Convert to audit log
     pub fn to_audit_log(&self) -> AuditLog {
         let mut log = AuditLog::new();
-        
+
         for (from, to) in &self.columns_renamed {
             log.add_modification(Modification::ColumnRenamed {
                 from: from.clone(),
                 to: to.clone(),
             });
         }
-        
+
         for name in &self.columns_dropped {
             log.add_modification(Modification::ColumnDropped {
                 name: name.clone(),
                 reason: "Empty column".to_string(),
             });
         }
-        
+
         for (from, to) in &self.duplicates_resolved {
             log.add_modification(Modification::ColumnRenamed {
                 from: from.clone(),
                 to: to.clone(),
             });
         }
-        
+
         for (from, to) in &self.names_truncated {
             log.add_modification(Modification::ColumnRenamed {
                 from: from.clone(),
                 to: to.clone(),
             });
         }
-        
+
         log
     }
 }
@@ -118,13 +118,13 @@ impl DataCleaner {
     /// Clean single-cell data and return a report
     pub fn clean(&self, data: &mut SingleCellData) -> CleaningReport {
         let mut report = CleaningReport::new();
-        
+
         // Clean cell metadata
         self.clean_dataframe(&mut data.cell_metadata, "obs", &mut report);
-        
+
         // Clean gene metadata
         self.clean_dataframe(&mut data.gene_metadata, "var", &mut report);
-        
+
         report
     }
 
@@ -133,46 +133,54 @@ impl DataCleaner {
         // Track name mappings for duplicate handling
         let mut name_counts: HashMap<String, usize> = HashMap::new();
         let mut new_columns = Vec::new();
-        
+
         for col_name in df.columns.iter() {
             let original_name = col_name.clone();
             let mut new_name = original_name.clone();
             let full_original = format!("{}.{}", prefix, original_name);
-            
+
             // Step 1: Sanitize special characters
             if self.options.sanitize_names {
                 let sanitized = sanitize_column_name(&new_name);
                 if sanitized != new_name {
-                    report.columns_renamed.push((full_original.clone(), format!("{}.{}", prefix, sanitized)));
+                    report
+                        .columns_renamed
+                        .push((full_original.clone(), format!("{}.{}", prefix, sanitized)));
                     report.total_modifications += 1;
                     new_name = sanitized;
                 }
             }
-            
+
             // Step 2: Truncate long names
             if self.options.truncate_long_names && new_name.len() > self.options.max_name_length {
                 let truncated = new_name[..self.options.max_name_length].to_string();
-                report.names_truncated.push((format!("{}.{}", prefix, new_name), format!("{}.{}", prefix, truncated)));
+                report.names_truncated.push((
+                    format!("{}.{}", prefix, new_name),
+                    format!("{}.{}", prefix, truncated),
+                ));
                 report.total_modifications += 1;
                 new_name = truncated;
             }
-            
+
             // Step 3: Handle duplicates
             if self.options.handle_duplicates {
                 let count = name_counts.entry(new_name.clone()).or_insert(0);
                 *count += 1;
-                
+
                 if *count > 1 {
                     let deduped = format!("{}_dup{}", new_name, count);
-                    report.duplicates_resolved.push((format!("{}.{}", prefix, new_name), format!("{}.{}", prefix, deduped)));
+                    report.duplicates_resolved.push((
+                        format!("{}.{}", prefix, new_name),
+                        format!("{}.{}", prefix, deduped),
+                    ));
                     report.total_modifications += 1;
                     new_name = deduped;
                 }
             }
-            
+
             new_columns.push(new_name);
         }
-        
+
         df.columns = new_columns;
     }
 
@@ -192,7 +200,7 @@ impl Default for DataCleaner {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::ir::{ExpressionMatrix, DenseMatrix, DatasetMetadata};
+    use crate::ir::{DatasetMetadata, DenseMatrix, ExpressionMatrix};
     use arrow::array::StringArray;
     use std::sync::Arc;
 
@@ -202,7 +210,7 @@ mod tests {
             n_rows: 2,
             n_cols: 2,
         });
-        
+
         // DataFrame with columns containing special characters
         let cell_metadata = DataFrame {
             columns: vec!["cell/type".to_string(), "batch".to_string()],
@@ -212,17 +220,17 @@ mod tests {
             ],
             n_rows: 2,
         };
-        
+
         let gene_metadata = DataFrame {
             columns: vec!["gene_name".to_string()],
             data: vec![
-                Arc::new(StringArray::from(vec!["geneA", "geneB"])) as arrow::array::ArrayRef,
+                Arc::new(StringArray::from(vec!["geneA", "geneB"])) as arrow::array::ArrayRef
             ],
             n_rows: 2,
         };
-        
+
         let metadata = DatasetMetadata::new(2, 2, "test".to_string());
-        
+
         SingleCellData {
             expression,
             layers: None,
@@ -243,11 +251,11 @@ mod tests {
         let mut data = create_test_data();
         let cleaner = DataCleaner::with_defaults();
         let report = cleaner.clean(&mut data);
-        
+
         assert!(report.has_modifications());
         assert_eq!(report.columns_renamed.len(), 1);
         assert!(report.columns_renamed[0].0.contains("cell/type"));
-        
+
         // Verify the column was renamed
         assert_eq!(data.cell_metadata.columns[0], "cell_type");
     }
@@ -257,7 +265,7 @@ mod tests {
         let data = create_test_data();
         let cleaner = DataCleaner::with_defaults();
         let report = cleaner.preview(&data);
-        
+
         assert!(report.has_modifications());
         // Original data should be unchanged
         assert_eq!(data.cell_metadata.columns[0], "cell/type");
@@ -270,7 +278,7 @@ mod tests {
             n_rows: 2,
             n_cols: 2,
         });
-        
+
         // DataFrame with duplicate column names
         let cell_metadata = DataFrame {
             columns: vec!["batch".to_string(), "batch".to_string()],
@@ -280,10 +288,10 @@ mod tests {
             ],
             n_rows: 2,
         };
-        
+
         let gene_metadata = DataFrame::empty(2);
         let metadata = DatasetMetadata::new(2, 2, "test".to_string());
-        
+
         let mut data = SingleCellData {
             expression,
             layers: None,
@@ -297,13 +305,13 @@ mod tests {
             unstructured: None,
             metadata,
         };
-        
+
         let cleaner = DataCleaner::with_defaults();
         let report = cleaner.clean(&mut data);
-        
+
         assert!(report.has_modifications());
         assert_eq!(report.duplicates_resolved.len(), 1);
-        
+
         // Verify duplicates were resolved
         assert_eq!(data.cell_metadata.columns[0], "batch");
         assert_eq!(data.cell_metadata.columns[1], "batch_dup2");

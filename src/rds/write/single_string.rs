@@ -3,10 +3,10 @@
 //! 写入 R 的单个字符串（CHARSXP）。
 //! 对应 rds2cpp 的单字符串写入逻辑。
 
-use std::io::Write;
-use crate::rds::error::{Result, RdsError};
+use super::utils::{write_bytes, write_i32, write_length, write_string_header};
+use crate::rds::error::{RdsError, Result};
 use crate::rds::string_encoding::StringEncoding;
-use super::utils::{write_string_header, write_i32, write_length, write_bytes};
+use std::io::Write;
 
 /// 写入单个字符串（CHARSXP）
 ///
@@ -50,8 +50,8 @@ pub fn write_single_string<W: Write>(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::io::Cursor;
     use crate::rds::parse::single_string::parse_single_string;
+    use std::io::Cursor;
 
     #[test]
     fn test_write_simple_string() {
@@ -143,9 +143,9 @@ mod tests {
         // 注意：解析器可能会将 Ascii 规范化为 Latin1 或 UTF8
         // 这是正确的行为，因为 ASCII 是 Latin1 和 UTF8 的子集
         assert!(
-            info.encoding == StringEncoding::Ascii 
-            || info.encoding == StringEncoding::Latin1 
-            || info.encoding == StringEncoding::Utf8,
+            info.encoding == StringEncoding::Ascii
+                || info.encoding == StringEncoding::Latin1
+                || info.encoding == StringEncoding::Utf8,
             "Encoding should be Ascii, Latin1 or UTF8, got {:?}",
             info.encoding
         );

@@ -49,7 +49,7 @@ pub fn csr_to_csc(csr: &SparseMatrixCSR) -> SparseMatrixCSC {
     }
 
     // 手动实现 CSR -> CSC 转换（不转置）
-    // 
+    //
     // CSR 格式：
     // - indptr: 长度 n_rows + 1，按行索引
     // - indices: 列索引
@@ -59,32 +59,32 @@ pub fn csr_to_csc(csr: &SparseMatrixCSR) -> SparseMatrixCSC {
     // - indptr: 长度 n_cols + 1，按列索引
     // - indices: 行索引
     // - data: 非零值
-    
+
     // 步骤 1: 统计每列的非零元素数量
     let mut col_counts = vec![0usize; n_cols];
     for &col_idx in &csr.indices {
         col_counts[col_idx] += 1;
     }
-    
+
     // 步骤 2: 计算列指针
     let mut csc_indptr = vec![0usize; n_cols + 1];
     for i in 0..n_cols {
         csc_indptr[i + 1] = csc_indptr[i] + col_counts[i];
     }
-    
+
     // 步骤 3: 填充 CSC 数据结构
     let mut csc_indices = vec![0usize; nnz];
     let mut csc_data = vec![0.0f64; nnz];
     let mut col_positions = csc_indptr[..n_cols].to_vec();
-    
+
     for row in 0..n_rows {
         let row_start = csr.indptr[row];
         let row_end = csr.indptr[row + 1];
-        
+
         for idx in row_start..row_end {
             let col = csr.indices[idx];
             let value = csr.data[idx];
-            
+
             let pos = col_positions[col];
             csc_indices[pos] = row;
             csc_data[pos] = value;
@@ -190,32 +190,32 @@ pub fn csc_to_csr(csc: &SparseMatrixCSC) -> SparseMatrixCSR {
     // - indptr: 长度 n_rows + 1，按行索引
     // - indices: 列索引
     // - data: 非零值
-    
+
     // 步骤 1: 统计每行的非零元素数量
     let mut row_counts = vec![0usize; n_rows];
     for &row_idx in &csc.indices {
         row_counts[row_idx] += 1;
     }
-    
+
     // 步骤 2: 计算行指针
     let mut csr_indptr = vec![0usize; n_rows + 1];
     for i in 0..n_rows {
         csr_indptr[i + 1] = csr_indptr[i] + row_counts[i];
     }
-    
+
     // 步骤 3: 填充 CSR 数据结构
     let mut csr_indices = vec![0usize; nnz];
     let mut csr_data = vec![0.0f64; nnz];
     let mut row_positions = csr_indptr[..n_rows].to_vec();
-    
+
     for col in 0..n_cols {
         let col_start = csc.indptr[col];
         let col_end = csc.indptr[col + 1];
-        
+
         for idx in col_start..col_end {
             let row = csc.indices[idx];
             let value = csc.data[idx];
-            
+
             let pos = row_positions[row];
             csr_indices[pos] = col;
             csr_data[pos] = value;
@@ -293,7 +293,7 @@ pub fn csc_to_csr_parallel(csc: &SparseMatrixCSC) -> SparseMatrixCSR {
 }
 
 /// 自动选择最优转换方法
-/// 
+///
 /// 根据矩阵大小自动选择串行或并行版本
 pub fn csr_to_csc_auto(csr: &SparseMatrixCSR) -> SparseMatrixCSC {
     if csr.data.len() > 10000 {
@@ -304,7 +304,7 @@ pub fn csr_to_csc_auto(csr: &SparseMatrixCSR) -> SparseMatrixCSC {
 }
 
 /// 自动选择最优转换方法
-/// 
+///
 /// 根据矩阵大小自动选择串行或并行版本
 pub fn csc_to_csr_auto(csc: &SparseMatrixCSC) -> SparseMatrixCSR {
     if csc.data.len() > 10000 {
@@ -474,7 +474,6 @@ mod tests {
     }
 }
 
-
 /// 稠密矩阵转 CSR
 ///
 /// 将稠密矩阵转换为 CSR 稀疏格式。
@@ -488,11 +487,11 @@ mod tests {
 pub fn dense_to_csr(dense: &crate::ir::expression::DenseMatrix) -> SparseMatrixCSR {
     let n_rows = dense.n_rows;
     let n_cols = dense.n_cols;
-    
+
     let mut data = Vec::new();
     let mut indices = Vec::new();
     let mut indptr = vec![0usize];
-    
+
     for row in 0..n_rows {
         for col in 0..n_cols {
             let value = dense.data[row * n_cols + col];
@@ -503,7 +502,7 @@ pub fn dense_to_csr(dense: &crate::ir::expression::DenseMatrix) -> SparseMatrixC
         }
         indptr.push(data.len());
     }
-    
+
     SparseMatrixCSR {
         data,
         indices,
@@ -525,20 +524,20 @@ pub fn dense_to_csr(dense: &crate::ir::expression::DenseMatrix) -> SparseMatrixC
 pub fn csr_to_dense(csr: &SparseMatrixCSR) -> crate::ir::expression::DenseMatrix {
     let n_rows = csr.n_rows;
     let n_cols = csr.n_cols;
-    
+
     let mut data = vec![0.0f64; n_rows * n_cols];
-    
+
     for row in 0..n_rows {
         let row_start = csr.indptr[row];
         let row_end = csr.indptr[row + 1];
-        
+
         for idx in row_start..row_end {
             let col = csr.indices[idx];
             let value = csr.data[idx];
             data[row * n_cols + col] = value;
         }
     }
-    
+
     crate::ir::expression::DenseMatrix {
         data,
         n_rows,
@@ -558,20 +557,20 @@ pub fn csr_to_dense(csr: &SparseMatrixCSR) -> crate::ir::expression::DenseMatrix
 pub fn csc_to_dense(csc: &SparseMatrixCSC) -> crate::ir::expression::DenseMatrix {
     let n_rows = csc.n_rows;
     let n_cols = csc.n_cols;
-    
+
     let mut data = vec![0.0f64; n_rows * n_cols];
-    
+
     for col in 0..n_cols {
         let col_start = csc.indptr[col];
         let col_end = csc.indptr[col + 1];
-        
+
         for idx in col_start..col_end {
             let row = csc.indices[idx];
             let value = csc.data[idx];
             data[row * n_cols + col] = value;
         }
     }
-    
+
     crate::ir::expression::DenseMatrix {
         data,
         n_rows,

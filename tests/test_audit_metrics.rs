@@ -3,8 +3,7 @@
 //! 测试 Task 5 的所有子任务：MSE、精确匹配率、ARI、NMI
 
 use crosscell::validation::accuracy::{
-    AccuracyMetrics, calculate_mse, calculate_exact_match_ratio,
-    calculate_ari, calculate_nmi,
+    calculate_ari, calculate_exact_match_ratio, calculate_mse, calculate_nmi, AccuracyMetrics,
 };
 
 // ============================================================================
@@ -15,7 +14,10 @@ use crosscell::validation::accuracy::{
 fn test_mse_identical() {
     let x = vec![1.0, 2.0, 3.0, 4.0, 5.0];
     let mse = calculate_mse(&x, &x);
-    assert!((mse - 0.0).abs() < 1e-15, "MSE of identical vectors should be 0");
+    assert!(
+        (mse - 0.0).abs() < 1e-15,
+        "MSE of identical vectors should be 0"
+    );
 }
 
 #[test]
@@ -33,14 +35,21 @@ fn test_mse_known_value_2() {
     let x = vec![0.0, 0.0];
     let y = vec![3.0, 4.0];
     let mse = calculate_mse(&x, &y);
-    assert!((mse - 12.5).abs() < 1e-15, "MSE should be 12.5, got {}", mse);
+    assert!(
+        (mse - 12.5).abs() < 1e-15,
+        "MSE should be 12.5, got {}",
+        mse
+    );
 }
 
 #[test]
 fn test_exact_match_ratio_identical() {
     let x = vec![1.0, 2.0, 3.0];
     let ratio = calculate_exact_match_ratio(&x, &x);
-    assert!((ratio - 1.0).abs() < 1e-15, "Exact match ratio of identical vectors should be 1.0");
+    assert!(
+        (ratio - 1.0).abs() < 1e-15,
+        "Exact match ratio of identical vectors should be 1.0"
+    );
 }
 
 #[test]
@@ -56,31 +65,69 @@ fn test_exact_match_ratio_partial() {
     let x = vec![1.0, 2.0, 3.0, 4.0];
     let y = vec![1.0, 2.0, 9.0, 9.0];
     let ratio = calculate_exact_match_ratio(&x, &y);
-    assert!((ratio - 0.5).abs() < 1e-15, "2/4 matches should give 0.5, got {}", ratio);
+    assert!(
+        (ratio - 0.5).abs() < 1e-15,
+        "2/4 matches should give 0.5, got {}",
+        ratio
+    );
 }
 
 #[test]
 fn test_ari_identical_labels() {
-    let labels = vec!["A".to_string(), "B".to_string(), "A".to_string(), "B".to_string(), "C".to_string()];
+    let labels = vec![
+        "A".to_string(),
+        "B".to_string(),
+        "A".to_string(),
+        "B".to_string(),
+        "C".to_string(),
+    ];
     let ari = calculate_ari(&labels, &labels);
-    assert!((ari - 1.0).abs() < 1e-10, "ARI of identical labels should be 1.0, got {}", ari);
+    assert!(
+        (ari - 1.0).abs() < 1e-10,
+        "ARI of identical labels should be 1.0, got {}",
+        ari
+    );
 }
 
 #[test]
 fn test_ari_completely_different() {
     // Two completely different clusterings
-    let a = vec!["A".to_string(), "A".to_string(), "B".to_string(), "B".to_string()];
-    let b = vec!["X".to_string(), "Y".to_string(), "X".to_string(), "Y".to_string()];
+    let a = vec![
+        "A".to_string(),
+        "A".to_string(),
+        "B".to_string(),
+        "B".to_string(),
+    ];
+    let b = vec![
+        "X".to_string(),
+        "Y".to_string(),
+        "X".to_string(),
+        "Y".to_string(),
+    ];
     let ari = calculate_ari(&a, &b);
     // ARI should be near -0.5 for this anti-correlated case (or at least < 0.5)
-    assert!(ari < 0.5, "ARI of anti-correlated labels should be low, got {}", ari);
+    assert!(
+        ari < 0.5,
+        "ARI of anti-correlated labels should be low, got {}",
+        ari
+    );
 }
 
 #[test]
 fn test_nmi_identical_labels() {
-    let labels = vec!["A".to_string(), "B".to_string(), "A".to_string(), "B".to_string(), "C".to_string()];
+    let labels = vec![
+        "A".to_string(),
+        "B".to_string(),
+        "A".to_string(),
+        "B".to_string(),
+        "C".to_string(),
+    ];
     let nmi = calculate_nmi(&labels, &labels);
-    assert!((nmi - 1.0).abs() < 1e-10, "NMI of identical labels should be 1.0, got {}", nmi);
+    assert!(
+        (nmi - 1.0).abs() < 1e-10,
+        "NMI of identical labels should be 1.0, got {}",
+        nmi
+    );
 }
 
 #[test]
@@ -89,7 +136,11 @@ fn test_nmi_single_cluster() {
     let a = vec!["A".to_string(), "A".to_string(), "A".to_string()];
     let b = vec!["A".to_string(), "A".to_string(), "A".to_string()];
     let nmi = calculate_nmi(&a, &b);
-    assert!((nmi - 1.0).abs() < 1e-10, "NMI of single cluster should be 1.0, got {}", nmi);
+    assert!(
+        (nmi - 1.0).abs() < 1e-10,
+        "NMI of single cluster should be 1.0, got {}",
+        nmi
+    );
 }
 
 #[test]
@@ -103,15 +154,26 @@ fn test_ari_none_when_no_cluster_column() {
 #[test]
 fn test_mse_empty_vectors() {
     let mse = calculate_mse(&[], &[]);
-    assert!((mse - 0.0).abs() < 1e-15, "MSE of empty vectors should be 0");
+    assert!(
+        (mse - 0.0).abs() < 1e-15,
+        "MSE of empty vectors should be 0"
+    );
 }
 
 #[test]
 fn test_summary_contains_new_metrics() {
     let metrics = AccuracyMetrics::perfect();
     let summary = metrics.summary();
-    assert!(summary.contains("MSE"), "Summary should contain MSE, got: {}", summary);
-    assert!(summary.contains("Exact Match"), "Summary should contain Exact Match, got: {}", summary);
+    assert!(
+        summary.contains("MSE"),
+        "Summary should contain MSE, got: {}",
+        summary
+    );
+    assert!(
+        summary.contains("Exact Match"),
+        "Summary should contain Exact Match, got: {}",
+        summary
+    );
 }
 
 // ============================================================================

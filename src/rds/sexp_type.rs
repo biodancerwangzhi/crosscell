@@ -21,7 +21,6 @@ pub enum SEXPType {
     // ========================================
     // 标准类型 (0-25)
     // ========================================
-    
     /// NULL 值 (NILSXP)
     Nil = 0,
     /// 符号 (SYMSXP) - 变量名、函数名等
@@ -75,7 +74,6 @@ pub enum SEXPType {
     // ========================================
     // 序列化特殊类型 (238-255)
     // ========================================
-    
     /// ALTREP 对象 - 替代表示（紧凑数据格式）
     Altrep = 238,
     /// 带属性的配对列表
@@ -152,7 +150,7 @@ impl SEXPType {
             23 => Some(Self::Weakref),
             24 => Some(Self::Raw),
             25 => Some(Self::S4),
-            
+
             // 序列化特殊类型 (238-255)
             238 => Some(Self::Altrep),
             239 => Some(Self::AttrList),
@@ -172,7 +170,7 @@ impl SEXPType {
             253 => Some(Self::GlobalEnv),
             254 => Some(Self::NilValue),
             255 => Some(Self::Ref),
-            
+
             // 未知类型
             _ => None,
         }
@@ -190,10 +188,7 @@ impl SEXPType {
     /// 检查是否为特殊环境类型
     #[inline]
     pub fn is_special_environment(&self) -> bool {
-        matches!(
-            self,
-            Self::GlobalEnv | Self::BaseEnv | Self::EmptyEnv
-        )
+        matches!(self, Self::GlobalEnv | Self::BaseEnv | Self::EmptyEnv)
     }
 
     /// 检查是否为序列化特殊类型
@@ -295,9 +290,9 @@ mod tests {
     #[test]
     fn test_from_u8_invalid_values() {
         // 测试无效值返回 None
-        assert_eq!(SEXPType::from_u8(11), None);  // 未使用
-        assert_eq!(SEXPType::from_u8(12), None);  // 未使用
-        assert_eq!(SEXPType::from_u8(26), None);  // 超出标准范围
+        assert_eq!(SEXPType::from_u8(11), None); // 未使用
+        assert_eq!(SEXPType::from_u8(12), None); // 未使用
+        assert_eq!(SEXPType::from_u8(26), None); // 超出标准范围
         assert_eq!(SEXPType::from_u8(100), None); // 中间未定义区域
         assert_eq!(SEXPType::from_u8(237), None); // 序列化类型之前
     }
@@ -310,7 +305,7 @@ mod tests {
         assert!(SEXPType::Cplx.is_atomic_vector());
         assert!(SEXPType::Str.is_atomic_vector());
         assert!(SEXPType::Raw.is_atomic_vector());
-        
+
         assert!(!SEXPType::Nil.is_atomic_vector());
         assert!(!SEXPType::Vec.is_atomic_vector());
         assert!(!SEXPType::List.is_atomic_vector());
@@ -321,7 +316,7 @@ mod tests {
         assert!(SEXPType::GlobalEnv.is_special_environment());
         assert!(SEXPType::BaseEnv.is_special_environment());
         assert!(SEXPType::EmptyEnv.is_special_environment());
-        
+
         assert!(!SEXPType::Env.is_special_environment());
         assert!(!SEXPType::Nil.is_special_environment());
     }
@@ -332,7 +327,7 @@ mod tests {
         assert!(SEXPType::Ref.is_serialization_type());
         assert!(SEXPType::NilValue.is_serialization_type());
         assert!(SEXPType::GlobalEnv.is_serialization_type());
-        
+
         assert!(!SEXPType::Nil.is_serialization_type());
         assert!(!SEXPType::Int.is_serialization_type());
         assert!(!SEXPType::S4.is_serialization_type());
@@ -353,8 +348,8 @@ mod tests {
     #[test]
     fn test_clone_and_copy() {
         let t1 = SEXPType::Int;
-        let t2 = t1;  // Copy
-        let t3 = t1.clone();  // Clone
+        let t2 = t1; // Copy
+        let t3 = t1.clone(); // Clone
         assert_eq!(t1, t2);
         assert_eq!(t1, t3);
     }
@@ -362,12 +357,12 @@ mod tests {
     #[test]
     fn test_eq_and_hash() {
         use std::collections::HashSet;
-        
+
         let mut set = HashSet::new();
         set.insert(SEXPType::Int);
         set.insert(SEXPType::Real);
-        set.insert(SEXPType::Int);  // 重复
-        
+        set.insert(SEXPType::Int); // 重复
+
         assert_eq!(set.len(), 2);
         assert!(set.contains(&SEXPType::Int));
         assert!(set.contains(&SEXPType::Real));
@@ -378,13 +373,18 @@ mod tests {
         // 测试所有有效类型的往返转换
         let valid_values: Vec<u8> = (0..=25)
             .chain(238..=255)
-            .filter(|&v| v != 11 && v != 12)  // 排除未使用的值
+            .filter(|&v| v != 11 && v != 12) // 排除未使用的值
             .collect();
-        
+
         for value in valid_values {
             let sexp_type = SEXPType::from_u8(value);
             assert!(sexp_type.is_some(), "Value {} should be valid", value);
-            assert_eq!(sexp_type.unwrap() as u8, value, "Roundtrip failed for {}", value);
+            assert_eq!(
+                sexp_type.unwrap() as u8,
+                value,
+                "Roundtrip failed for {}",
+                value
+            );
         }
     }
 }

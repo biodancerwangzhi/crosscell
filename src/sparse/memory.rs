@@ -142,19 +142,19 @@ pub fn format_memory_size(bytes: usize) -> String {
 pub struct MemoryEstimate {
     /// 非零元素数量
     pub nnz: usize,
-    
+
     /// 矩阵维度（行数，列数）
     pub dimensions: (usize, usize),
-    
+
     /// 估算的峰值内存使用量（字节）
     pub peak_memory_bytes: usize,
-    
+
     /// 数据数组大小（字节）
     pub data_size_bytes: usize,
-    
+
     /// 索引数组大小（字节）
     pub indices_size_bytes: usize,
-    
+
     /// 指针数组大小（字节）
     pub indptr_size_bytes: usize,
 }
@@ -232,19 +232,19 @@ impl MemoryEstimate {
 pub struct MemoryOptimizationAdvice {
     /// 是否建议使用 lazy loading
     pub use_lazy_loading: bool,
-    
+
     /// 是否建议使用分块处理
     pub use_chunked_processing: bool,
-    
+
     /// 建议的块大小（行数）
     pub recommended_chunk_size: usize,
-    
+
     /// 是否建议使用并行处理
     pub use_parallel: bool,
-    
+
     /// 建议的线程数
     pub recommended_threads: usize,
-    
+
     /// 详细建议信息
     pub advice_message: String,
 }
@@ -259,16 +259,16 @@ impl MemoryOptimizationAdvice {
     ) -> Self {
         let data_type_size = std::mem::size_of::<f64>();
         let estimated_peak = estimate_csr_memory_usage(nnz, n_rows, data_type_size);
-        
+
         // 计算内存比率
         let memory_ratio = estimated_peak as f64 / available_memory_bytes as f64;
-        
+
         // 决定是否使用 lazy loading
         let use_lazy_loading = memory_ratio > 0.5;
-        
+
         // 决定是否使用分块处理
         let use_chunked_processing = memory_ratio > 0.8;
-        
+
         // 计算建议的块大小
         let recommended_chunk_size = if use_chunked_processing {
             // 目标：每块使用约 20% 的可用内存
@@ -278,17 +278,17 @@ impl MemoryOptimizationAdvice {
         } else {
             n_rows // 不分块
         };
-        
+
         // 决定是否使用并行处理
         let use_parallel = nnz > 10_000;
-        
+
         // 建议的线程数
         let recommended_threads = if use_parallel {
             std::cmp::min(num_cpus::get(), 8)
         } else {
             1
         };
-        
+
         // 生成建议信息
         let advice_message = if memory_ratio > 1.0 {
             format!(
@@ -318,7 +318,7 @@ impl MemoryOptimizationAdvice {
                 format_memory_size(available_memory_bytes)
             )
         };
-        
+
         Self {
             use_lazy_loading,
             use_chunked_processing,
@@ -331,7 +331,7 @@ impl MemoryOptimizationAdvice {
 }
 
 /// 获取系统可用内存（字节）
-/// 
+///
 /// 注意：这是一个近似值，实际可用内存可能因系统状态而异
 pub fn get_available_memory() -> usize {
     // 使用 sysinfo 或类似库获取系统内存
@@ -351,21 +351,17 @@ pub fn get_available_memory() -> usize {
             }
         }
     }
-    
+
     // 默认返回 8 GB
     8 * 1024 * 1024 * 1024
 }
 
 /// 检查是否有足够的内存进行转换
-pub fn check_memory_sufficient(
-    n_rows: usize,
-    _n_cols: usize,
-    nnz: usize,
-) -> Result<(), String> {
+pub fn check_memory_sufficient(n_rows: usize, _n_cols: usize, nnz: usize) -> Result<(), String> {
     let data_type_size = std::mem::size_of::<f64>();
     let estimated_peak = estimate_csr_memory_usage(nnz, n_rows, data_type_size);
     let available = get_available_memory();
-    
+
     if estimated_peak > available {
         Err(format!(
             "内存不足：需要 {}，可用 {}。请使用 --lazy 选项或增加系统内存。",

@@ -1,14 +1,14 @@
 // Memory backend implementation for CrossCell
 // Pure in-memory storage for fast testing
 
-use std::path::{Path, PathBuf};
-use std::collections::HashMap;
-use std::sync::{Arc, RwLock};
-use crate::error::{Result, CrossCellError};
 use super::{
-    StorageBackend, StoreOp, GroupOp, DatasetOp, AttributeOp,
-    ScalarType, SelectInfo, DynArray, Value,
+    AttributeOp, DatasetOp, DynArray, GroupOp, ScalarType, SelectInfo, StorageBackend, StoreOp,
+    Value,
 };
+use crate::error::{CrossCellError, Result};
+use std::collections::HashMap;
+use std::path::{Path, PathBuf};
+use std::sync::{Arc, RwLock};
 
 /// Memory backend
 pub struct MemoryBackend;
@@ -50,11 +50,11 @@ pub struct MemoryDataset {
 
 impl StorageBackend for MemoryBackend {
     const NAME: &'static str = "memory";
-    
+
     type Store = MemoryStore;
     type Group = MemoryGroup;
     type Dataset = MemoryDataset;
-    
+
     fn new<P: AsRef<Path>>(path: P) -> Result<Self::Store> {
         Ok(MemoryStore {
             path: path.as_ref().to_path_buf(),
@@ -64,13 +64,17 @@ impl StorageBackend for MemoryBackend {
             })),
         })
     }
-    
+
     fn open<P: AsRef<Path>>(_path: P) -> Result<Self::Store> {
-        Err(CrossCellError::UnsupportedOperation("Memory backend cannot open existing files".to_string()))
+        Err(CrossCellError::UnsupportedOperation(
+            "Memory backend cannot open existing files".to_string(),
+        ))
     }
-    
+
     fn open_rw<P: AsRef<Path>>(_path: P) -> Result<Self::Store> {
-        Err(CrossCellError::UnsupportedOperation("Memory backend cannot open existing files".to_string()))
+        Err(CrossCellError::UnsupportedOperation(
+            "Memory backend cannot open existing files".to_string(),
+        ))
     }
 }
 
@@ -78,7 +82,7 @@ impl StoreOp<MemoryBackend> for MemoryStore {
     fn filename(&self) -> PathBuf {
         self.path.clone()
     }
-    
+
     fn close(self) -> Result<()> {
         // Nothing to do for memory backend
         Ok(())
@@ -90,10 +94,12 @@ impl GroupOp<MemoryBackend> for MemoryStore {
         let node = self.root.read().unwrap();
         match &*node {
             MemoryNode::Group { children, .. } => Ok(children.keys().cloned().collect()),
-            _ => Err(CrossCellError::InvalidFormat("Root is not a group".to_string())),
+            _ => Err(CrossCellError::InvalidFormat(
+                "Root is not a group".to_string(),
+            )),
         }
     }
-    
+
     fn new_group(&self, name: &str) -> Result<MemoryGroup> {
         let mut node = self.root.write().unwrap();
         match &mut *node {
@@ -104,45 +110,53 @@ impl GroupOp<MemoryBackend> for MemoryStore {
                 };
                 let group_arc = Arc::new(RwLock::new(new_group.clone()));
                 children.insert(name.to_string(), new_group);
-                
+
                 Ok(MemoryGroup {
                     path: vec![name.to_string()],
                     node: group_arc,
                 })
-            },
-            _ => Err(CrossCellError::InvalidFormat("Root is not a group".to_string())),
+            }
+            _ => Err(CrossCellError::InvalidFormat(
+                "Root is not a group".to_string(),
+            )),
         }
     }
-    
+
     fn open_group(&self, name: &str) -> Result<MemoryGroup> {
         let node = self.root.read().unwrap();
         match &*node {
             MemoryNode::Group { children, .. } => {
                 if let Some(child) = children.get(name) {
                     match child {
-                        MemoryNode::Group { .. } => {
-                            Ok(MemoryGroup {
-                                path: vec![name.to_string()],
-                                node: Arc::new(RwLock::new(child.clone())),
-                            })
-                        },
-                        _ => Err(CrossCellError::InvalidFormat(format!("'{}' is not a group", name))),
+                        MemoryNode::Group { .. } => Ok(MemoryGroup {
+                            path: vec![name.to_string()],
+                            node: Arc::new(RwLock::new(child.clone())),
+                        }),
+                        _ => Err(CrossCellError::InvalidFormat(format!(
+                            "'{}' is not a group",
+                            name
+                        ))),
                     }
                 } else {
-                    Err(CrossCellError::NotFound(format!("Group '{}' not found", name)))
+                    Err(CrossCellError::NotFound(format!(
+                        "Group '{}' not found",
+                        name
+                    )))
                 }
-            },
-            _ => Err(CrossCellError::InvalidFormat("Root is not a group".to_string())),
+            }
+            _ => Err(CrossCellError::InvalidFormat(
+                "Root is not a group".to_string(),
+            )),
         }
     }
-    
+
     fn new_dataset(&self, name: &str, shape: &[usize], dtype: ScalarType) -> Result<MemoryDataset> {
         let mut node = self.root.write().unwrap();
         match &mut *node {
             MemoryNode::Group { children, .. } => {
                 // Create empty data based on dtype
                 let data = create_empty_array(dtype, shape)?;
-                
+
                 let new_dataset = MemoryNode::Dataset {
                     data: data.clone(),
                     dtype,
@@ -151,38 +165,46 @@ impl GroupOp<MemoryBackend> for MemoryStore {
                 };
                 let dataset_arc = Arc::new(RwLock::new(new_dataset.clone()));
                 children.insert(name.to_string(), new_dataset);
-                
+
                 Ok(MemoryDataset {
                     path: vec![name.to_string()],
                     node: dataset_arc,
                 })
-            },
-            _ => Err(CrossCellError::InvalidFormat("Root is not a group".to_string())),
+            }
+            _ => Err(CrossCellError::InvalidFormat(
+                "Root is not a group".to_string(),
+            )),
         }
     }
-    
+
     fn open_dataset(&self, name: &str) -> Result<MemoryDataset> {
         let node = self.root.read().unwrap();
         match &*node {
             MemoryNode::Group { children, .. } => {
                 if let Some(child) = children.get(name) {
                     match child {
-                        MemoryNode::Dataset { .. } => {
-                            Ok(MemoryDataset {
-                                path: vec![name.to_string()],
-                                node: Arc::new(RwLock::new(child.clone())),
-                            })
-                        },
-                        _ => Err(CrossCellError::InvalidFormat(format!("'{}' is not a dataset", name))),
+                        MemoryNode::Dataset { .. } => Ok(MemoryDataset {
+                            path: vec![name.to_string()],
+                            node: Arc::new(RwLock::new(child.clone())),
+                        }),
+                        _ => Err(CrossCellError::InvalidFormat(format!(
+                            "'{}' is not a dataset",
+                            name
+                        ))),
                     }
                 } else {
-                    Err(CrossCellError::NotFound(format!("Dataset '{}' not found", name)))
+                    Err(CrossCellError::NotFound(format!(
+                        "Dataset '{}' not found",
+                        name
+                    )))
                 }
-            },
-            _ => Err(CrossCellError::InvalidFormat("Root is not a group".to_string())),
+            }
+            _ => Err(CrossCellError::InvalidFormat(
+                "Root is not a group".to_string(),
+            )),
         }
     }
-    
+
     fn exists(&self, name: &str) -> Result<bool> {
         let node = self.root.read().unwrap();
         match &*node {
@@ -190,15 +212,17 @@ impl GroupOp<MemoryBackend> for MemoryStore {
             _ => Ok(false),
         }
     }
-    
+
     fn delete(&self, name: &str) -> Result<()> {
         let mut node = self.root.write().unwrap();
         match &mut *node {
             MemoryNode::Group { children, .. } => {
                 children.remove(name);
                 Ok(())
-            },
-            _ => Err(CrossCellError::InvalidFormat("Root is not a group".to_string())),
+            }
+            _ => Err(CrossCellError::InvalidFormat(
+                "Root is not a group".to_string(),
+            )),
         }
     }
 }
@@ -211,7 +235,7 @@ impl GroupOp<MemoryBackend> for MemoryGroup {
             _ => Err(CrossCellError::InvalidFormat("Not a group".to_string())),
         }
     }
-    
+
     fn new_group(&self, name: &str) -> Result<MemoryGroup> {
         let mut node = self.node.write().unwrap();
         match &mut *node {
@@ -222,19 +246,19 @@ impl GroupOp<MemoryBackend> for MemoryGroup {
                 };
                 let group_arc = Arc::new(RwLock::new(new_group.clone()));
                 children.insert(name.to_string(), new_group);
-                
+
                 let mut path = self.path.clone();
                 path.push(name.to_string());
-                
+
                 Ok(MemoryGroup {
                     path,
                     node: group_arc,
                 })
-            },
+            }
             _ => Err(CrossCellError::InvalidFormat("Not a group".to_string())),
         }
     }
-    
+
     fn open_group(&self, name: &str) -> Result<MemoryGroup> {
         let node = self.node.read().unwrap();
         match &*node {
@@ -244,28 +268,34 @@ impl GroupOp<MemoryBackend> for MemoryGroup {
                         MemoryNode::Group { .. } => {
                             let mut path = self.path.clone();
                             path.push(name.to_string());
-                            
+
                             Ok(MemoryGroup {
                                 path,
                                 node: Arc::new(RwLock::new(child.clone())),
                             })
-                        },
-                        _ => Err(CrossCellError::InvalidFormat(format!("'{}' is not a group", name))),
+                        }
+                        _ => Err(CrossCellError::InvalidFormat(format!(
+                            "'{}' is not a group",
+                            name
+                        ))),
                     }
                 } else {
-                    Err(CrossCellError::NotFound(format!("Group '{}' not found", name)))
+                    Err(CrossCellError::NotFound(format!(
+                        "Group '{}' not found",
+                        name
+                    )))
                 }
-            },
+            }
             _ => Err(CrossCellError::InvalidFormat("Not a group".to_string())),
         }
     }
-    
+
     fn new_dataset(&self, name: &str, shape: &[usize], dtype: ScalarType) -> Result<MemoryDataset> {
         let mut node = self.node.write().unwrap();
         match &mut *node {
             MemoryNode::Group { children, .. } => {
                 let data = create_empty_array(dtype, shape)?;
-                
+
                 let new_dataset = MemoryNode::Dataset {
                     data: data.clone(),
                     dtype,
@@ -274,19 +304,19 @@ impl GroupOp<MemoryBackend> for MemoryGroup {
                 };
                 let dataset_arc = Arc::new(RwLock::new(new_dataset.clone()));
                 children.insert(name.to_string(), new_dataset);
-                
+
                 let mut path = self.path.clone();
                 path.push(name.to_string());
-                
+
                 Ok(MemoryDataset {
                     path,
                     node: dataset_arc,
                 })
-            },
+            }
             _ => Err(CrossCellError::InvalidFormat("Not a group".to_string())),
         }
     }
-    
+
     fn open_dataset(&self, name: &str) -> Result<MemoryDataset> {
         let node = self.node.read().unwrap();
         match &*node {
@@ -296,22 +326,28 @@ impl GroupOp<MemoryBackend> for MemoryGroup {
                         MemoryNode::Dataset { .. } => {
                             let mut path = self.path.clone();
                             path.push(name.to_string());
-                            
+
                             Ok(MemoryDataset {
                                 path,
                                 node: Arc::new(RwLock::new(child.clone())),
                             })
-                        },
-                        _ => Err(CrossCellError::InvalidFormat(format!("'{}' is not a dataset", name))),
+                        }
+                        _ => Err(CrossCellError::InvalidFormat(format!(
+                            "'{}' is not a dataset",
+                            name
+                        ))),
                     }
                 } else {
-                    Err(CrossCellError::NotFound(format!("Dataset '{}' not found", name)))
+                    Err(CrossCellError::NotFound(format!(
+                        "Dataset '{}' not found",
+                        name
+                    )))
                 }
-            },
+            }
             _ => Err(CrossCellError::InvalidFormat("Not a group".to_string())),
         }
     }
-    
+
     fn exists(&self, name: &str) -> Result<bool> {
         let node = self.node.read().unwrap();
         match &*node {
@@ -319,14 +355,14 @@ impl GroupOp<MemoryBackend> for MemoryGroup {
             _ => Ok(false),
         }
     }
-    
+
     fn delete(&self, name: &str) -> Result<()> {
         let mut node = self.node.write().unwrap();
         match &mut *node {
             MemoryNode::Group { children, .. } => {
                 children.remove(name);
                 Ok(())
-            },
+            }
             _ => Err(CrossCellError::InvalidFormat("Not a group".to_string())),
         }
     }
@@ -340,7 +376,7 @@ impl DatasetOp<MemoryBackend> for MemoryDataset {
             _ => Err(CrossCellError::InvalidFormat("Not a dataset".to_string())),
         }
     }
-    
+
     fn shape(&self) -> Vec<usize> {
         let node = self.node.read().unwrap();
         match &*node {
@@ -348,7 +384,7 @@ impl DatasetOp<MemoryBackend> for MemoryDataset {
             _ => vec![],
         }
     }
-    
+
     fn read_slice(&self, _selection: &[SelectInfo]) -> Result<DynArray> {
         let node = self.node.read().unwrap();
         match &*node {
@@ -356,14 +392,17 @@ impl DatasetOp<MemoryBackend> for MemoryDataset {
             _ => Err(CrossCellError::InvalidFormat("Not a dataset".to_string())),
         }
     }
-    
+
     fn write_slice(&self, data: &DynArray, _selection: &[SelectInfo]) -> Result<()> {
         let mut node = self.node.write().unwrap();
         match &mut *node {
-            MemoryNode::Dataset { data: ref mut stored_data, .. } => {
+            MemoryNode::Dataset {
+                data: ref mut stored_data,
+                ..
+            } => {
                 *stored_data = data.clone();
                 Ok(())
-            },
+            }
             _ => Err(CrossCellError::InvalidFormat("Not a dataset".to_string())),
         }
     }
@@ -373,26 +412,25 @@ impl AttributeOp<MemoryBackend> for MemoryGroup {
     fn get_attr(&self, name: &str) -> Result<Value> {
         let node = self.node.read().unwrap();
         match &*node {
-            MemoryNode::Group { attributes, .. } => {
-                attributes.get(name)
-                    .cloned()
-                    .ok_or_else(|| CrossCellError::NotFound(format!("Attribute '{}' not found", name)))
-            },
+            MemoryNode::Group { attributes, .. } => attributes
+                .get(name)
+                .cloned()
+                .ok_or_else(|| CrossCellError::NotFound(format!("Attribute '{}' not found", name))),
             _ => Err(CrossCellError::InvalidFormat("Not a group".to_string())),
         }
     }
-    
+
     fn set_attr(&mut self, name: &str, value: &Value) -> Result<()> {
         let mut node = self.node.write().unwrap();
         match &mut *node {
             MemoryNode::Group { attributes, .. } => {
                 attributes.insert(name.to_string(), value.clone());
                 Ok(())
-            },
+            }
             _ => Err(CrossCellError::InvalidFormat("Not a group".to_string())),
         }
     }
-    
+
     fn list_attrs(&self) -> Result<Vec<String>> {
         let node = self.node.read().unwrap();
         match &*node {
@@ -400,7 +438,7 @@ impl AttributeOp<MemoryBackend> for MemoryGroup {
             _ => Ok(Vec::new()),
         }
     }
-    
+
     fn has_attr(&self, name: &str) -> Result<bool> {
         let node = self.node.read().unwrap();
         match &*node {
@@ -414,26 +452,25 @@ impl AttributeOp<MemoryBackend> for MemoryDataset {
     fn get_attr(&self, name: &str) -> Result<Value> {
         let node = self.node.read().unwrap();
         match &*node {
-            MemoryNode::Dataset { attributes, .. } => {
-                attributes.get(name)
-                    .cloned()
-                    .ok_or_else(|| CrossCellError::NotFound(format!("Attribute '{}' not found", name)))
-            },
+            MemoryNode::Dataset { attributes, .. } => attributes
+                .get(name)
+                .cloned()
+                .ok_or_else(|| CrossCellError::NotFound(format!("Attribute '{}' not found", name))),
             _ => Err(CrossCellError::InvalidFormat("Not a dataset".to_string())),
         }
     }
-    
+
     fn set_attr(&mut self, name: &str, value: &Value) -> Result<()> {
         let mut node = self.node.write().unwrap();
         match &mut *node {
             MemoryNode::Dataset { attributes, .. } => {
                 attributes.insert(name.to_string(), value.clone());
                 Ok(())
-            },
+            }
             _ => Err(CrossCellError::InvalidFormat("Not a dataset".to_string())),
         }
     }
-    
+
     fn list_attrs(&self) -> Result<Vec<String>> {
         let node = self.node.read().unwrap();
         match &*node {
@@ -441,7 +478,7 @@ impl AttributeOp<MemoryBackend> for MemoryDataset {
             _ => Ok(Vec::new()),
         }
     }
-    
+
     fn has_attr(&self, name: &str) -> Result<bool> {
         let node = self.node.read().unwrap();
         match &*node {
@@ -454,7 +491,7 @@ impl AttributeOp<MemoryBackend> for MemoryDataset {
 // Helper function to create empty array
 fn create_empty_array(dtype: ScalarType, shape: &[usize]) -> Result<DynArray> {
     let total_size: usize = shape.iter().product();
-    
+
     match dtype {
         ScalarType::I32 => Ok(DynArray::I32(vec![0; total_size])),
         ScalarType::I64 => Ok(DynArray::I64(vec![0; total_size])),
@@ -462,6 +499,8 @@ fn create_empty_array(dtype: ScalarType, shape: &[usize]) -> Result<DynArray> {
         ScalarType::F64 => Ok(DynArray::F64(vec![0.0; total_size])),
         ScalarType::Bool => Ok(DynArray::Bool(vec![false; total_size])),
         ScalarType::String => Ok(DynArray::String(vec![String::new(); total_size])),
-        _ => Err(CrossCellError::UnsupportedType { type_name: format!("Unsupported dtype: {:?}", dtype) }),
+        _ => Err(CrossCellError::UnsupportedType {
+            type_name: format!("Unsupported dtype: {:?}", dtype),
+        }),
     }
 }

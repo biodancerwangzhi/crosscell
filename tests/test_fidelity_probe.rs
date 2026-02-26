@@ -6,9 +6,9 @@
 //! 目的：在投入完整审计框架之前，证明信息损失确实存在且可量化??
 
 use crosscell::anndata::{read_h5ad, write_h5ad};
-use crosscell::seurat::{seurat_rds_to_ir, write_seurat_rds, read_seurat_direct};
-use crosscell::validation::calculate_full_accuracy;
 use crosscell::ir::SingleCellData;
+use crosscell::seurat::{read_seurat_direct, seurat_rds_to_ir, write_seurat_rds};
+use crosscell::validation::calculate_full_accuracy;
 use std::path::Path;
 
 /// 打印 IR 的组件概??
@@ -17,8 +17,16 @@ fn print_ir_summary(label: &str, ir: &SingleCellData) {
     println!("\n=== {} ===", label);
     println!("  Cells: {}, Genes: {}", n_cells, n_genes);
     println!("  Expression NNZ: {}", ir.expression.nnz());
-    println!("  Cell metadata columns ({}): {:?}", ir.cell_metadata.n_cols(), ir.cell_metadata.columns);
-    println!("  Gene metadata columns ({}): {:?}", ir.gene_metadata.n_cols(), ir.gene_metadata.columns);
+    println!(
+        "  Cell metadata columns ({}): {:?}",
+        ir.cell_metadata.n_cols(),
+        ir.cell_metadata.columns
+    );
+    println!(
+        "  Gene metadata columns ({}): {:?}",
+        ir.gene_metadata.n_cols(),
+        ir.gene_metadata.columns
+    );
 
     if let Some(ref emb) = ir.embeddings {
         let names: Vec<_> = emb.keys().collect();
@@ -59,7 +67,12 @@ fn print_component_diff(original: &SingleCellData, roundtrip: &SingleCellData) {
     // Expression matrix
     let orig_nnz = original.expression.nnz();
     let rt_nnz = roundtrip.expression.nnz();
-    println!("  Expression NNZ: {} ??{} (delta: {})", orig_nnz, rt_nnz, rt_nnz as i64 - orig_nnz as i64);
+    println!(
+        "  Expression NNZ: {} ??{} (delta: {})",
+        orig_nnz,
+        rt_nnz,
+        rt_nnz as i64 - orig_nnz as i64
+    );
 
     // Cell metadata columns
     let orig_cols: std::collections::HashSet<_> = original.cell_metadata.columns.iter().collect();
@@ -86,14 +99,26 @@ fn print_component_diff(original: &SingleCellData, roundtrip: &SingleCellData) {
     }
 
     // Type changes in shared columns
-    print_type_changes("Cell metadata", &original.cell_metadata, &roundtrip.cell_metadata);
-    print_type_changes("Gene metadata", &original.gene_metadata, &roundtrip.gene_metadata);
+    print_type_changes(
+        "Cell metadata",
+        &original.cell_metadata,
+        &roundtrip.cell_metadata,
+    );
+    print_type_changes(
+        "Gene metadata",
+        &original.gene_metadata,
+        &roundtrip.gene_metadata,
+    );
 
     // Embeddings
-    let orig_emb_names: std::collections::HashSet<_> = original.embeddings.as_ref()
+    let orig_emb_names: std::collections::HashSet<_> = original
+        .embeddings
+        .as_ref()
         .map(|e| e.keys().collect())
         .unwrap_or_default();
-    let rt_emb_names: std::collections::HashSet<_> = roundtrip.embeddings.as_ref()
+    let rt_emb_names: std::collections::HashSet<_> = roundtrip
+        .embeddings
+        .as_ref()
         .map(|e| e.keys().collect())
         .unwrap_or_default();
     let lost_emb: Vec<_> = orig_emb_names.difference(&rt_emb_names).collect();
@@ -106,10 +131,14 @@ fn print_component_diff(original: &SingleCellData, roundtrip: &SingleCellData) {
     }
 
     // Layers
-    let orig_layer_names: std::collections::HashSet<_> = original.layers.as_ref()
+    let orig_layer_names: std::collections::HashSet<_> = original
+        .layers
+        .as_ref()
         .map(|l| l.keys().collect())
         .unwrap_or_default();
-    let rt_layer_names: std::collections::HashSet<_> = roundtrip.layers.as_ref()
+    let rt_layer_names: std::collections::HashSet<_> = roundtrip
+        .layers
+        .as_ref()
         .map(|l| l.keys().collect())
         .unwrap_or_default();
     let lost_layers: Vec<_> = orig_layer_names.difference(&rt_layer_names).collect();
@@ -119,7 +148,11 @@ fn print_component_diff(original: &SingleCellData, roundtrip: &SingleCellData) {
 }
 
 /// 打印共享列的类型变化
-fn print_type_changes(label: &str, original: &crosscell::ir::DataFrame, roundtrip: &crosscell::ir::DataFrame) {
+fn print_type_changes(
+    label: &str,
+    original: &crosscell::ir::DataFrame,
+    roundtrip: &crosscell::ir::DataFrame,
+) {
     let orig_cols: std::collections::HashSet<_> = original.columns.iter().cloned().collect();
     let rt_cols: std::collections::HashSet<_> = roundtrip.columns.iter().cloned().collect();
     let shared: Vec<_> = orig_cols.intersection(&rt_cols).collect();
@@ -160,8 +193,7 @@ fn test_fidelity_probe_rds_to_h5ad_roundtrip() {
     println!("{}", "=".repeat(70));
 
     // Step 1: RDS ??IR (original) using direct reader for native S4 Seurat objects
-    let direct_result = read_seurat_direct(rds_path, false)
-        .expect("Failed to load RDS as IR");
+    let direct_result = read_seurat_direct(rds_path, false).expect("Failed to load RDS as IR");
     let original_ir = direct_result.data;
     println!("  Seurat version: {:?}", direct_result.version);
     if direct_result.skipped.has_skipped() {
@@ -172,13 +204,11 @@ fn test_fidelity_probe_rds_to_h5ad_roundtrip() {
     // Step 2: IR ??H5AD (write to temp file)
     let temp_dir = tempfile::tempdir().expect("Failed to create temp dir");
     let h5ad_path = temp_dir.path().join("probe_roundtrip.h5ad");
-    write_h5ad(&original_ir, &h5ad_path)
-        .expect("Failed to write H5AD");
+    write_h5ad(&original_ir, &h5ad_path).expect("Failed to write H5AD");
     println!("\n  Wrote H5AD to: {:?}", h5ad_path);
 
     // Step 3: H5AD ??IR (read back)
-    let roundtrip_ir = read_h5ad(&h5ad_path)
-        .expect("Failed to read H5AD back as IR");
+    let roundtrip_ir = read_h5ad(&h5ad_path).expect("Failed to read H5AD back as IR");
     print_ir_summary("Roundtrip IR (from H5AD)", &roundtrip_ir);
 
     // Step 4: Compare
@@ -190,14 +220,28 @@ fn test_fidelity_probe_rds_to_h5ad_roundtrip() {
 
     // Print key fidelity numbers
     println!("\n--- Key Fidelity Numbers ---");
-    println!("  Expression correlation:    {:.8}", report.expression_accuracy.correlation);
-    println!("  Expression max abs error:  {:.2e}", report.expression_accuracy.max_absolute_error);
-    println!("  Expression mean abs error: {:.2e}", report.expression_accuracy.mean_absolute_error);
-    println!("  Sparsity preserved:        {:.4}%", report.expression_accuracy.sparsity_preserved * 100.0);
-    println!("  NNZ match:                 {} ({} vs {})",
+    println!(
+        "  Expression correlation:    {:.8}",
+        report.expression_accuracy.correlation
+    );
+    println!(
+        "  Expression max abs error:  {:.2e}",
+        report.expression_accuracy.max_absolute_error
+    );
+    println!(
+        "  Expression mean abs error: {:.2e}",
+        report.expression_accuracy.mean_absolute_error
+    );
+    println!(
+        "  Sparsity preserved:        {:.4}%",
+        report.expression_accuracy.sparsity_preserved * 100.0
+    );
+    println!(
+        "  NNZ match:                 {} ({} vs {})",
         report.expression_accuracy.nnz_match,
         report.expression_accuracy.original_nnz,
-        report.expression_accuracy.converted_nnz);
+        report.expression_accuracy.converted_nnz
+    );
 
     if let Some(ref meta) = report.cell_metadata_accuracy {
         println!("  Cell metadata cols match:  {}", meta.column_names_match);
@@ -217,8 +261,10 @@ fn test_fidelity_probe_rds_to_h5ad_roundtrip() {
     }
 
     for (name, acc) in &report.embedding_accuracies {
-        println!("  Embedding '{}': corr={:.8}, max_err={:.2e}, mean_err={:.2e}",
-            name, acc.correlation, acc.max_error, acc.mean_error);
+        println!(
+            "  Embedding '{}': corr={:.8}, max_err={:.2e}, mean_err={:.2e}",
+            name, acc.correlation, acc.max_error, acc.mean_error
+        );
     }
 
     // We do NOT assert pass/fail here ??this is a probe to discover what losses exist.
@@ -244,21 +290,18 @@ fn test_fidelity_probe_h5ad_to_rds_roundtrip() {
     println!("{}", "=".repeat(70));
 
     // Step 1: H5AD ??IR (original)
-    let original_ir = read_h5ad(h5ad_path)
-        .expect("Failed to load H5AD as IR");
+    let original_ir = read_h5ad(h5ad_path).expect("Failed to load H5AD as IR");
     print_ir_summary("Original IR (from H5AD)", &original_ir);
 
     // Step 2: IR ??RDS (write to temp file)
     let temp_dir = tempfile::tempdir().expect("Failed to create temp dir");
     let rds_path = temp_dir.path().join("probe_roundtrip.rds");
     let rds_path_str = rds_path.to_str().expect("Invalid path");
-    write_seurat_rds(&original_ir, rds_path_str)
-        .expect("Failed to write RDS");
+    write_seurat_rds(&original_ir, rds_path_str).expect("Failed to write RDS");
     println!("\n  Wrote RDS to: {:?}", rds_path);
 
     // Step 3: RDS ??IR (read back)
-    let roundtrip_ir = seurat_rds_to_ir(rds_path_str)
-        .expect("Failed to read RDS back as IR");
+    let roundtrip_ir = seurat_rds_to_ir(rds_path_str).expect("Failed to read RDS back as IR");
     print_ir_summary("Roundtrip IR (from RDS)", &roundtrip_ir);
 
     // Step 4: Compare
@@ -270,14 +313,28 @@ fn test_fidelity_probe_h5ad_to_rds_roundtrip() {
 
     // Print key fidelity numbers
     println!("\n--- Key Fidelity Numbers ---");
-    println!("  Expression correlation:    {:.8}", report.expression_accuracy.correlation);
-    println!("  Expression max abs error:  {:.2e}", report.expression_accuracy.max_absolute_error);
-    println!("  Expression mean abs error: {:.2e}", report.expression_accuracy.mean_absolute_error);
-    println!("  Sparsity preserved:        {:.4}%", report.expression_accuracy.sparsity_preserved * 100.0);
-    println!("  NNZ match:                 {} ({} vs {})",
+    println!(
+        "  Expression correlation:    {:.8}",
+        report.expression_accuracy.correlation
+    );
+    println!(
+        "  Expression max abs error:  {:.2e}",
+        report.expression_accuracy.max_absolute_error
+    );
+    println!(
+        "  Expression mean abs error: {:.2e}",
+        report.expression_accuracy.mean_absolute_error
+    );
+    println!(
+        "  Sparsity preserved:        {:.4}%",
+        report.expression_accuracy.sparsity_preserved * 100.0
+    );
+    println!(
+        "  NNZ match:                 {} ({} vs {})",
         report.expression_accuracy.nnz_match,
         report.expression_accuracy.original_nnz,
-        report.expression_accuracy.converted_nnz);
+        report.expression_accuracy.converted_nnz
+    );
 
     if let Some(ref meta) = report.cell_metadata_accuracy {
         println!("  Cell metadata cols match:  {}", meta.column_names_match);
@@ -297,8 +354,10 @@ fn test_fidelity_probe_h5ad_to_rds_roundtrip() {
     }
 
     for (name, acc) in &report.embedding_accuracies {
-        println!("  Embedding '{}': corr={:.8}, max_err={:.2e}, mean_err={:.2e}",
-            name, acc.correlation, acc.max_error, acc.mean_error);
+        println!(
+            "  Embedding '{}': corr={:.8}, max_err={:.2e}, mean_err={:.2e}",
+            name, acc.correlation, acc.max_error, acc.mean_error
+        );
     }
 
     println!("\n  Overall passed (accuracy check): {}", report.passed);

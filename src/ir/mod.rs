@@ -14,8 +14,8 @@ use std::fmt;
 // 重新导出常用类型
 pub use embeddings::Embedding;
 pub use expression::{
-    DenseMatrix, ExpressionMatrix, SparseMatrixCSC, SparseMatrixCSR, 
-    LazyMatrix, ChunkedMatrix, BackendType, SparseFormat, CachePolicy
+    BackendType, CachePolicy, ChunkedMatrix, DenseMatrix, ExpressionMatrix, LazyMatrix,
+    SparseFormat, SparseMatrixCSC, SparseMatrixCSR,
 };
 pub use metadata::{CategoricalMapping, DataFrame};
 pub use spatial::{SpatialData, SpatialImage};

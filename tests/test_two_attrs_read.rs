@@ -4,11 +4,11 @@ use std::path::Path;
 #[test]
 fn test_list_two_attrs() {
     let path = Path::new("tests/data/list_two_attrs.rds");
-    
+
     println!("\n========================================");
     println!("Reading list with two attributes");
     println!("========================================\n");
-    
+
     match read_rds(path) {
         Ok(robj) => {
             println!("✅ Successfully read RDS object");

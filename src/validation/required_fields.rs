@@ -177,7 +177,7 @@ pub fn required_fields_report(data: &SingleCellData) -> String {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::ir::{DatasetMetadata, DenseMatrix, DataFrame, ExpressionMatrix};
+    use crate::ir::{DataFrame, DatasetMetadata, DenseMatrix, ExpressionMatrix};
 
     fn create_valid_data() -> SingleCellData {
         SingleCellData {

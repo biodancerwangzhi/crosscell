@@ -3,15 +3,15 @@
 //! 维护解析过程中的共享状态，处理引用和循环结构。
 //! 对应 rds2cpp 的 SharedParseInfo 结构。
 
-use crate::rds::error::{RdsError, Result};
-use crate::rds::sexp_type::SEXPType;
-use crate::rds::symbol::Symbol;
-use crate::rds::environment::Environment;
-use crate::rds::external_pointer::ExternalPointer;
-use crate::rds::string_encoding::StringEncoding;
-use crate::rds::r_object::{RObject, SymbolIndex, EnvironmentIndex, ExternalPointerIndex};
-use super::utils::Header;
 use super::header::get_reference_index;
+use super::utils::Header;
+use crate::rds::environment::Environment;
+use crate::rds::error::{RdsError, Result};
+use crate::rds::external_pointer::ExternalPointer;
+use crate::rds::r_object::{EnvironmentIndex, ExternalPointerIndex, RObject, SymbolIndex};
+use crate::rds::sexp_type::SEXPType;
+use crate::rds::string_encoding::StringEncoding;
+use crate::rds::symbol::Symbol;
 
 /// 存储的字符串信息
 #[derive(Debug, Clone, Default)]
@@ -72,7 +72,6 @@ impl SharedParseInfo {
         index
     }
 
-
     /// 获取符号索引（从引用头部）
     ///
     /// 从 REF 类型的头部提取引用索引，并验证它指向一个符号。
@@ -88,21 +87,24 @@ impl SharedParseInfo {
     /// 如果引用索引无效返回错误
     pub fn get_symbol_index(&mut self, header: &Header) -> Result<usize> {
         let ref_index = get_reference_index(header);
-        
+
         if ref_index == 0 || ref_index > self.mappings.len() {
             return Err(RdsError::InvalidReference(ref_index));
         }
-        
+
         let (ref_type, index) = self.mappings[ref_index - 1];
-        
+
         match ref_type {
             ReferenceType::Symbol => Ok(index),
             ReferenceType::Char => {
                 // 引用指向 CHARSXP，创建一个新的 Symbol
-                let stored = self.strings.get(index)
+                let stored = self
+                    .strings
+                    .get(index)
                     .ok_or_else(|| RdsError::InvalidReference(ref_index))?;
                 let sym_index = self.symbols.len();
-                self.symbols.push(Symbol::new(stored.value.clone(), stored.encoding));
+                self.symbols
+                    .push(Symbol::new(stored.value.clone(), stored.encoding));
                 // 注意：不添加到 mappings，因为这是一个派生的 Symbol
                 Ok(sym_index)
             }
@@ -141,11 +143,11 @@ impl SharedParseInfo {
     /// 如果引用索引无效或不指向环境返回错误
     pub fn get_environment_index(&self, header: &Header) -> Result<usize> {
         let ref_index = get_reference_index(header);
-        
+
         if ref_index == 0 || ref_index > self.mappings.len() {
             return Err(RdsError::InvalidReference(ref_index));
         }
-        
+
         let (ref_type, index) = self.mappings[ref_index - 1];
         if ref_type != ReferenceType::Environment {
             return Err(RdsError::ParseError {
@@ -153,7 +155,7 @@ impl SharedParseInfo {
                 message: format!("Expected environment reference, got {:?}", ref_type),
             });
         }
-        
+
         Ok(index)
     }
 
@@ -171,7 +173,6 @@ impl SharedParseInfo {
         index
     }
 
-
     /// 获取外部指针索引（从引用头部）
     ///
     /// 从 REF 类型的头部提取引用索引，并验证它指向一个外部指针。
@@ -186,11 +187,11 @@ impl SharedParseInfo {
     /// 如果引用索引无效或不指向外部指针返回错误
     pub fn get_external_pointer_index(&self, header: &Header) -> Result<usize> {
         let ref_index = get_reference_index(header);
-        
+
         if ref_index == 0 || ref_index > self.mappings.len() {
             return Err(RdsError::InvalidReference(ref_index));
         }
-        
+
         let (ref_type, index) = self.mappings[ref_index - 1];
         if ref_type != ReferenceType::ExternalPointer {
             return Err(RdsError::ParseError {
@@ -198,7 +199,7 @@ impl SharedParseInfo {
                 message: format!("Expected external pointer reference, got {:?}", ref_type),
             });
         }
-        
+
         Ok(index)
     }
 
@@ -229,9 +230,19 @@ impl SharedParseInfo {
     /// * `value` - 字符串值
     /// * `encoding` - 字符串编码
     /// * `missing` - 是否为 NA
-    pub fn store_string(&mut self, index: usize, value: String, encoding: StringEncoding, missing: bool) {
+    pub fn store_string(
+        &mut self,
+        index: usize,
+        value: String,
+        encoding: StringEncoding,
+        missing: bool,
+    ) {
         if index < self.strings.len() {
-            self.strings[index] = StoredString { value, encoding, missing };
+            self.strings[index] = StoredString {
+                value,
+                encoding,
+                missing,
+            };
         }
     }
 
@@ -249,17 +260,18 @@ impl SharedParseInfo {
     /// 如果引用索引无效返回错误
     pub fn get_string(&self, header: &Header) -> Result<&StoredString> {
         let ref_index = get_reference_index(header);
-        
+
         if ref_index == 0 || ref_index > self.mappings.len() {
             return Err(RdsError::InvalidReference(ref_index));
         }
-        
+
         let (ref_type, index) = self.mappings[ref_index - 1];
-        
+
         match ref_type {
-            ReferenceType::Char => {
-                self.strings.get(index).ok_or_else(|| RdsError::InvalidReference(ref_index))
-            }
+            ReferenceType::Char => self
+                .strings
+                .get(index)
+                .ok_or_else(|| RdsError::InvalidReference(ref_index)),
             ReferenceType::Symbol => {
                 // 符号也可以作为字符串使用
                 // 返回一个临时的 StoredString 不太好，所以返回错误让调用者处理
@@ -287,21 +299,25 @@ impl SharedParseInfo {
     /// (字符串值, 编码, 是否为NA)
     pub fn get_string_or_symbol(&self, header: &Header) -> Result<(String, StringEncoding, bool)> {
         let ref_index = get_reference_index(header);
-        
+
         if ref_index == 0 || ref_index > self.mappings.len() {
             return Err(RdsError::InvalidReference(ref_index));
         }
-        
+
         let (ref_type, index) = self.mappings[ref_index - 1];
-        
+
         match ref_type {
             ReferenceType::Char => {
-                let stored = self.strings.get(index)
+                let stored = self
+                    .strings
+                    .get(index)
                     .ok_or_else(|| RdsError::InvalidReference(ref_index))?;
                 Ok((stored.value.clone(), stored.encoding, stored.missing))
             }
             ReferenceType::Symbol => {
-                let sym = self.symbols.get(index)
+                let sym = self
+                    .symbols
+                    .get(index)
                     .ok_or_else(|| RdsError::InvalidReference(ref_index))?;
                 Ok((sym.name.clone(), sym.encoding, false))
             }
@@ -328,18 +344,16 @@ impl SharedParseInfo {
     /// 引用对应的 RObject，如果引用无效则返回 Null
     pub fn resolve_reference(&self, header: &Header) -> Result<RObject> {
         let ref_index = get_reference_index(header);
-        
+
         if ref_index == 0 || ref_index > self.mappings.len() {
             // 返回 Null 而不是错误，以支持字节码解析中的容错
             return Ok(RObject::Null);
         }
-        
+
         let (ref_type, index) = self.mappings[ref_index - 1];
-        
+
         match ref_type {
-            ReferenceType::Symbol => {
-                Ok(RObject::SymbolIndex(SymbolIndex { index }))
-            }
+            ReferenceType::Symbol => Ok(RObject::SymbolIndex(SymbolIndex { index })),
             ReferenceType::Environment => {
                 // 对于环境引用，我们需要确定环境类型
                 // 默认使用 Env 类型，实际类型在解析时确定
@@ -349,7 +363,9 @@ impl SharedParseInfo {
                 }))
             }
             ReferenceType::ExternalPointer => {
-                Ok(RObject::ExternalPointerIndex(ExternalPointerIndex { index }))
+                Ok(RObject::ExternalPointerIndex(ExternalPointerIndex {
+                    index,
+                }))
             }
             ReferenceType::Char => {
                 // 字符串引用 - 返回字符串向量
@@ -449,7 +465,6 @@ impl SharedParseInfo {
     }
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -467,12 +482,12 @@ mod tests {
     #[test]
     fn test_request_symbol() {
         let mut info = SharedParseInfo::new();
-        
+
         let idx1 = info.request_symbol();
         assert_eq!(idx1, 0);
         assert_eq!(info.symbols.len(), 1);
         assert_eq!(info.reference_count(), 1);
-        
+
         let idx2 = info.request_symbol();
         assert_eq!(idx2, 1);
         assert_eq!(info.symbols.len(), 2);
@@ -482,12 +497,12 @@ mod tests {
     #[test]
     fn test_request_environment() {
         let mut info = SharedParseInfo::new();
-        
+
         let idx1 = info.request_environment();
         assert_eq!(idx1, 0);
         assert_eq!(info.environments.len(), 1);
         assert_eq!(info.reference_count(), 1);
-        
+
         let idx2 = info.request_environment();
         assert_eq!(idx2, 1);
         assert_eq!(info.environments.len(), 2);
@@ -497,12 +512,12 @@ mod tests {
     #[test]
     fn test_request_external_pointer() {
         let mut info = SharedParseInfo::new();
-        
+
         let idx1 = info.request_external_pointer();
         assert_eq!(idx1, 0);
         assert_eq!(info.external_pointers.len(), 1);
         assert_eq!(info.reference_count(), 1);
-        
+
         let idx2 = info.request_external_pointer();
         assert_eq!(idx2, 1);
         assert_eq!(info.external_pointers.len(), 2);
@@ -513,7 +528,7 @@ mod tests {
     fn test_get_symbol_index() {
         let mut info = SharedParseInfo::new();
         info.request_symbol();
-        
+
         // 引用索引从 1 开始，存储在头部的前 3 字节（大端序）
         let header: Header = [0x00, 0x00, 0x01, 0xFF]; // ref_index = 1
         let result = info.get_symbol_index(&header);
@@ -524,7 +539,7 @@ mod tests {
     #[test]
     fn test_get_symbol_index_invalid() {
         let mut info = SharedParseInfo::new();
-        
+
         // 没有注册任何引用
         let header: Header = [0x00, 0x00, 0x01, 0xFF];
         let result = info.get_symbol_index(&header);
@@ -535,7 +550,7 @@ mod tests {
     fn test_get_symbol_index_wrong_type() {
         let mut info = SharedParseInfo::new();
         info.request_environment(); // 注册环境而不是符号
-        
+
         let header: Header = [0x00, 0x00, 0x01, 0xFF];
         let result = info.get_symbol_index(&header);
         assert!(result.is_err());
@@ -548,19 +563,22 @@ mod tests {
         let sym_idx = info.request_symbol();
         let symbol = Symbol::new("test_symbol".to_string(), StringEncoding::Utf8);
         info.update_symbol(sym_idx, symbol);
-        
+
         // ref_index 1 -> first mapping (symbol at index 0)
         let header: Header = [0x00, 0x00, 0x01, 0xFF];
         let result = info.get_symbol_index(&header);
         assert!(result.is_ok());
-        assert_eq!(info.get_symbol(result.unwrap()).unwrap().name, "test_symbol");
+        assert_eq!(
+            info.get_symbol(result.unwrap()).unwrap().name,
+            "test_symbol"
+        );
     }
 
     #[test]
     fn test_get_environment_index() {
         let mut info = SharedParseInfo::new();
         info.request_environment();
-        
+
         let header: Header = [0x00, 0x00, 0x01, 0xFF];
         let result = info.get_environment_index(&header);
         assert!(result.is_ok());
@@ -571,7 +589,7 @@ mod tests {
     fn test_get_external_pointer_index() {
         let mut info = SharedParseInfo::new();
         info.request_external_pointer();
-        
+
         let header: Header = [0x00, 0x00, 0x01, 0xFF];
         let result = info.get_external_pointer_index(&header);
         assert!(result.is_ok());
@@ -582,11 +600,11 @@ mod tests {
     fn test_resolve_reference_symbol() {
         let mut info = SharedParseInfo::new();
         info.request_symbol();
-        
+
         let header: Header = [0x00, 0x00, 0x01, 0xFF];
         let result = info.resolve_reference(&header);
         assert!(result.is_ok());
-        
+
         match result.unwrap() {
             RObject::SymbolIndex(idx) => assert_eq!(idx.index, 0),
             _ => panic!("Expected SymbolIndex"),
@@ -597,11 +615,11 @@ mod tests {
     fn test_resolve_reference_environment() {
         let mut info = SharedParseInfo::new();
         info.request_environment();
-        
+
         let header: Header = [0x00, 0x00, 0x01, 0xFF];
         let result = info.resolve_reference(&header);
         assert!(result.is_ok());
-        
+
         match result.unwrap() {
             RObject::EnvironmentIndex(idx) => {
                 assert_eq!(idx.index, 0);
@@ -615,11 +633,11 @@ mod tests {
     fn test_resolve_reference_external_pointer() {
         let mut info = SharedParseInfo::new();
         info.request_external_pointer();
-        
+
         let header: Header = [0x00, 0x00, 0x01, 0xFF];
         let result = info.resolve_reference(&header);
         assert!(result.is_ok());
-        
+
         match result.unwrap() {
             RObject::ExternalPointerIndex(idx) => assert_eq!(idx.index, 0),
             _ => panic!("Expected ExternalPointerIndex"),
@@ -629,7 +647,7 @@ mod tests {
     #[test]
     fn test_resolve_reference_invalid() {
         let info = SharedParseInfo::new();
-        
+
         // resolve_reference returns Ok(Null) for invalid refs (bytecode tolerance)
         let header: Header = [0x00, 0x00, 0x01, 0xFF];
         let result = info.resolve_reference(&header);
@@ -641,10 +659,10 @@ mod tests {
     fn test_update_symbol() {
         let mut info = SharedParseInfo::new();
         let idx = info.request_symbol();
-        
+
         let symbol = Symbol::new("test".to_string(), StringEncoding::Utf8);
         info.update_symbol(idx, symbol.clone());
-        
+
         assert_eq!(info.get_symbol(idx).unwrap().name, "test");
     }
 
@@ -652,11 +670,11 @@ mod tests {
     fn test_update_environment() {
         let mut info = SharedParseInfo::new();
         let idx = info.request_environment();
-        
+
         let mut env = Environment::new();
         env.locked = true;
         info.update_environment(idx, env);
-        
+
         assert!(info.get_environment(idx).unwrap().locked);
     }
 
@@ -664,42 +682,51 @@ mod tests {
     fn test_update_external_pointer() {
         let mut info = SharedParseInfo::new();
         let idx = info.request_external_pointer();
-        
+
         let ptr = ExternalPointer::with_values(RObject::Null, RObject::Null);
         info.update_external_pointer(idx, ptr);
-        
+
         assert!(info.get_external_pointer(idx).is_some());
     }
 
     #[test]
     fn test_mixed_references() {
         let mut info = SharedParseInfo::new();
-        
+
         // 注册不同类型的引用
         let sym_idx = info.request_symbol();
         let env_idx = info.request_environment();
         let ptr_idx = info.request_external_pointer();
-        
+
         assert_eq!(sym_idx, 0);
         assert_eq!(env_idx, 0);
         assert_eq!(ptr_idx, 0);
         assert_eq!(info.reference_count(), 3);
-        
+
         // 验证引用解析（大端序）
         let header1: Header = [0x00, 0x00, 0x01, 0xFF]; // ref 1 -> symbol
         let header2: Header = [0x00, 0x00, 0x02, 0xFF]; // ref 2 -> environment
         let header3: Header = [0x00, 0x00, 0x03, 0xFF]; // ref 3 -> external pointer
-        
-        assert!(matches!(info.resolve_reference(&header1).unwrap(), RObject::SymbolIndex(_)));
-        assert!(matches!(info.resolve_reference(&header2).unwrap(), RObject::EnvironmentIndex(_)));
-        assert!(matches!(info.resolve_reference(&header3).unwrap(), RObject::ExternalPointerIndex(_)));
+
+        assert!(matches!(
+            info.resolve_reference(&header1).unwrap(),
+            RObject::SymbolIndex(_)
+        ));
+        assert!(matches!(
+            info.resolve_reference(&header2).unwrap(),
+            RObject::EnvironmentIndex(_)
+        ));
+        assert!(matches!(
+            info.resolve_reference(&header3).unwrap(),
+            RObject::ExternalPointerIndex(_)
+        ));
     }
 
     #[test]
     fn test_reference_index_zero() {
         let mut info = SharedParseInfo::new();
         info.request_symbol();
-        
+
         // resolve_reference returns Ok(Null) for ref_index 0 (bytecode tolerance)
         let header: Header = [0x00, 0x00, 0x00, 0xFF];
         let result = info.resolve_reference(&header);

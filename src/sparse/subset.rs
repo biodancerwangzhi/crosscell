@@ -1,4 +1,4 @@
-﻿//! High-performance sparse matrix subset algorithms
+//! High-performance sparse matrix subset algorithms
 
 use crate::ir::expression::SparseMatrixCSR;
 use std::collections::HashMap;
@@ -164,13 +164,7 @@ pub fn subset_sparse_columns_in_place(
             max_col,
         )
     } else if target_cols.len() < 2048 {
-        subset_sparse_with_binary_search(
-            row_offsets,
-            col_indices,
-            values,
-            row_indices,
-            target_cols,
-        )
+        subset_sparse_with_binary_search(row_offsets, col_indices, values, row_indices, target_cols)
     } else {
         subset_sparse_with_hash_lookup(row_offsets, col_indices, values, row_indices, target_cols)
     }

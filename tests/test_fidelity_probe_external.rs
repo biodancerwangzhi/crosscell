@@ -10,9 +10,9 @@
 //!   docker-compose run --rm dev cargo test --test test_fidelity_probe_external -- --nocapture
 
 use crosscell::anndata::read_h5ad;
+use crosscell::ir::SingleCellData;
 use crosscell::seurat::read_seurat_direct;
 use crosscell::validation::calculate_full_accuracy;
-use crosscell::ir::SingleCellData;
 use std::path::Path;
 
 /// 对比原始 RDS IR 和某工具转换??H5AD IR
@@ -27,8 +27,7 @@ fn probe_tool(tool_name: &str, rds_path: &str, h5ad_path: &str) {
     }
 
     // Load original RDS as IR
-    let original = read_seurat_direct(rds_path, false)
-        .expect("Failed to load original RDS");
+    let original = read_seurat_direct(rds_path, false).expect("Failed to load original RDS");
     let original_ir = &original.data;
     let (orig_cells, orig_genes) = original_ir.expression.shape();
 
@@ -43,8 +42,18 @@ fn probe_tool(tool_name: &str, rds_path: &str, h5ad_path: &str) {
     };
     let (conv_cells, conv_genes) = converted_ir.expression.shape();
 
-    println!("  Original:  {} cells × {} genes, NNZ={}", orig_cells, orig_genes, original_ir.expression.nnz());
-    println!("  Converted: {} cells × {} genes, NNZ={}", conv_cells, conv_genes, converted_ir.expression.nnz());
+    println!(
+        "  Original:  {} cells × {} genes, NNZ={}",
+        orig_cells,
+        orig_genes,
+        original_ir.expression.nnz()
+    );
+    println!(
+        "  Converted: {} cells × {} genes, NNZ={}",
+        conv_cells,
+        conv_genes,
+        converted_ir.expression.nnz()
+    );
 
     // Dimension check
     if orig_cells != conv_cells || orig_genes != conv_genes {
@@ -53,10 +62,26 @@ fn probe_tool(tool_name: &str, rds_path: &str, h5ad_path: &str) {
         println!("    Gene diff: {} ??{}", orig_genes, conv_genes);
 
         // Still try to report metadata
-        println!("  Original cell meta cols ({}): {:?}", original_ir.cell_metadata.n_cols(), original_ir.cell_metadata.columns);
-        println!("  Converted cell meta cols ({}): {:?}", converted_ir.cell_metadata.n_cols(), converted_ir.cell_metadata.columns);
-        println!("  Original gene meta cols ({}): {:?}", original_ir.gene_metadata.n_cols(), original_ir.gene_metadata.columns);
-        println!("  Converted gene meta cols ({}): {:?}", converted_ir.gene_metadata.n_cols(), converted_ir.gene_metadata.columns);
+        println!(
+            "  Original cell meta cols ({}): {:?}",
+            original_ir.cell_metadata.n_cols(),
+            original_ir.cell_metadata.columns
+        );
+        println!(
+            "  Converted cell meta cols ({}): {:?}",
+            converted_ir.cell_metadata.n_cols(),
+            converted_ir.cell_metadata.columns
+        );
+        println!(
+            "  Original gene meta cols ({}): {:?}",
+            original_ir.gene_metadata.n_cols(),
+            original_ir.gene_metadata.columns
+        );
+        println!(
+            "  Converted gene meta cols ({}): {:?}",
+            converted_ir.gene_metadata.n_cols(),
+            converted_ir.gene_metadata.columns
+        );
 
         if let Some(ref emb) = original_ir.embeddings {
             let names: Vec<_> = emb.keys().collect();
@@ -73,14 +98,28 @@ fn probe_tool(tool_name: &str, rds_path: &str, h5ad_path: &str) {
     let report = calculate_full_accuracy(original_ir, &converted_ir, tool_name);
 
     println!("\n  --- Expression ---");
-    println!("    Correlation:     {:.8}", report.expression_accuracy.correlation);
-    println!("    Max abs error:   {:.2e}", report.expression_accuracy.max_absolute_error);
-    println!("    Mean abs error:  {:.2e}", report.expression_accuracy.mean_absolute_error);
-    println!("    Sparsity:        {:.4}%", report.expression_accuracy.sparsity_preserved * 100.0);
-    println!("    NNZ match:       {} ({} vs {})",
+    println!(
+        "    Correlation:     {:.8}",
+        report.expression_accuracy.correlation
+    );
+    println!(
+        "    Max abs error:   {:.2e}",
+        report.expression_accuracy.max_absolute_error
+    );
+    println!(
+        "    Mean abs error:  {:.2e}",
+        report.expression_accuracy.mean_absolute_error
+    );
+    println!(
+        "    Sparsity:        {:.4}%",
+        report.expression_accuracy.sparsity_preserved * 100.0
+    );
+    println!(
+        "    NNZ match:       {} ({} vs {})",
         report.expression_accuracy.nnz_match,
         report.expression_accuracy.original_nnz,
-        report.expression_accuracy.converted_nnz);
+        report.expression_accuracy.converted_nnz
+    );
 
     if let Some(ref meta) = report.cell_metadata_accuracy {
         println!("\n  --- Cell Metadata ---");
@@ -111,15 +150,20 @@ fn probe_tool(tool_name: &str, rds_path: &str, h5ad_path: &str) {
     if !report.embedding_accuracies.is_empty() {
         println!("\n  --- Embeddings ---");
         for (name, acc) in &report.embedding_accuracies {
-            println!("    {}: corr={:.8}, max_err={:.2e}, mean_err={:.2e}",
-                name, acc.correlation, acc.max_error, acc.mean_error);
+            println!(
+                "    {}: corr={:.8}, max_err={:.2e}, mean_err={:.2e}",
+                name, acc.correlation, acc.max_error, acc.mean_error
+            );
         }
     }
 
     if !report.layer_accuracies.is_empty() {
         println!("\n  --- Layers ---");
         for (name, acc) in &report.layer_accuracies {
-            println!("    {}: corr={:.6}, max_err={:.2e}", name, acc.correlation, acc.max_absolute_error);
+            println!(
+                "    {}: corr={:.6}, max_err={:.2e}",
+                name, acc.correlation, acc.max_absolute_error
+            );
         }
     }
 
@@ -140,15 +184,21 @@ fn test_fidelity_probe_external_tools() {
         return;
     }
 
-    probe_tool("anndataR",
+    probe_tool(
+        "anndataR",
         rds_path,
-        &format!("{}/anndatar_output.h5ad", probe_dir));
+        &format!("{}/anndatar_output.h5ad", probe_dir),
+    );
 
-    probe_tool("zellkonverter",
+    probe_tool(
+        "zellkonverter",
         rds_path,
-        &format!("{}/zellkonverter_output.h5ad", probe_dir));
+        &format!("{}/zellkonverter_output.h5ad", probe_dir),
+    );
 
-    probe_tool("convert2anndata",
+    probe_tool(
+        "convert2anndata",
         rds_path,
-        &format!("{}/convert2anndata_output.h5ad", probe_dir));
+        &format!("{}/convert2anndata_output.h5ad", probe_dir),
+    );
 }

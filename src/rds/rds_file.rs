@@ -100,7 +100,10 @@ mod tests {
     #[test]
     fn test_rds_file_with_object() {
         use super::super::r_object::IntegerVector;
-        let vec = IntegerVector { data: vec![1, 2, 3], ..Default::default() };
+        let vec = IntegerVector {
+            data: vec![1, 2, 3],
+            ..Default::default()
+        };
         let file = RdsFile::with_object(RObject::IntegerVector(vec));
         assert!(matches!(file.object, RObject::IntegerVector(_)));
     }

@@ -6,7 +6,10 @@ use std::path::Path;
 
 #[test]
 fn test_write_and_read_with_encoding_string() {
-    let obj = RObject::IntegerVector(IntegerVector { data: vec![1, 2, 3, 4, 5], ..Default::default() });
+    let obj = RObject::IntegerVector(IntegerVector {
+        data: vec![1, 2, 3, 4, 5],
+        ..Default::default()
+    });
     let temp_path = Path::new("tests/data/test_encoding_string.rds");
 
     write_rds(temp_path, &obj).expect("Failed to write RDS");

@@ -4,49 +4,48 @@
 //! 对应 rds2cpp 的解析相关文件。
 
 // 工具函数
-pub mod utils;
-pub mod shared_info;
 pub mod header;
+pub mod shared_info;
+pub mod utils;
 
 // 解析入口
-pub mod rds;
 pub mod object;
+pub mod rds;
 
 // 基础类型解析
-pub mod single_string;
 pub mod atomic;
+pub mod single_string;
 
 // 复合类型解析
-pub mod symbol;
-pub mod attributes;
-pub mod pairlist;
-pub mod list;
-pub mod builtin;
-pub mod expression;
-pub mod language;
-pub mod environment;
-pub mod external_pointer;
-pub mod s4;
 pub mod altrep;
+pub mod attributes;
+pub mod builtin;
+pub mod environment;
+pub mod expression;
+pub mod external_pointer;
+pub mod language;
+pub mod list;
+pub mod pairlist;
+pub mod s4;
+pub mod symbol;
 
 // 重新导出公共解析函数
 pub use utils::{
-    Header, is_little_endian, read_i32_be, read_f64_be, read_i32, read_f64,
-    read_length, quick_extract, as_char, read_header, get_sexp_type, get_flags,
-    get_gp_high, get_gp_low,
+    as_char, get_flags, get_gp_high, get_gp_low, get_sexp_type, is_little_endian, quick_extract,
+    read_f64, read_f64_be, read_header, read_i32, read_i32_be, read_length, Header,
 };
 
 pub use header::{
-    ParsedHeader, parse_header, has_attributes, has_tag, is_object, get_reference_index,
+    get_reference_index, has_attributes, has_tag, is_object, parse_header, ParsedHeader,
 };
 
-pub use shared_info::{SharedParseInfo, ReferenceType, StoredString};
+pub use shared_info::{ReferenceType, SharedParseInfo, StoredString};
 
-pub use single_string::{StringInfo, parse_single_string, parse_single_string_with_header};
+pub use single_string::{parse_single_string, parse_single_string_with_header, StringInfo};
 
 pub use atomic::{
-    parse_integer_body, parse_logical_body, parse_double_body,
-    parse_raw_body, parse_complex_body, parse_string_body, parse_string_body_with_ref,
+    parse_complex_body, parse_double_body, parse_integer_body, parse_logical_body, parse_raw_body,
+    parse_string_body, parse_string_body_with_ref,
 };
 
 pub use symbol::parse_symbol_body;
@@ -64,8 +63,8 @@ pub use expression::parse_expression_body;
 pub use language::parse_language_body;
 
 pub use environment::{
-    parse_new_environment_body, parse_global_environment_body,
-    parse_base_environment_body, parse_empty_environment_body,
+    parse_base_environment_body, parse_empty_environment_body, parse_global_environment_body,
+    parse_new_environment_body,
 };
 
 pub use external_pointer::parse_external_pointer_body;

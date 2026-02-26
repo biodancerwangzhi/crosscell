@@ -3,7 +3,7 @@
 //! 测试 Rust 生成的 RDS 文件能否被 R 读取
 //! 测试 R 生成的 RDS 文件能否被 Rust 读取
 
-use crosscell::rds::{IntegerVector, DoubleVector, StringVector, StringEncoding};
+use crosscell::rds::{DoubleVector, IntegerVector, StringEncoding, StringVector};
 use crosscell::{read_rds, write_rds, RObject};
 use std::path::Path;
 
@@ -27,7 +27,9 @@ fn test_read_r_integer() {
 #[test]
 fn test_read_r_real() {
     let path = Path::new("tests/data/r_real.rds");
-    if !path.exists() { return; }
+    if !path.exists() {
+        return;
+    }
     let result = read_rds(path).expect("Failed to read R real file");
     match result {
         RObject::DoubleVector(dv) => {
@@ -44,7 +46,9 @@ fn test_read_r_real() {
 #[test]
 fn test_read_r_string() {
     let path = Path::new("tests/data/r_string.rds");
-    if !path.exists() { return; }
+    if !path.exists() {
+        return;
+    }
     let result = read_rds(path).expect("Failed to read R string file");
     match result {
         RObject::StringVector(sv) => {
@@ -59,7 +63,9 @@ fn test_read_r_string() {
 #[test]
 fn test_read_r_logical() {
     let path = Path::new("tests/data/r_logical.rds");
-    if !path.exists() { return; }
+    if !path.exists() {
+        return;
+    }
     let result = read_rds(path).expect("Failed to read R logical file");
     match result {
         RObject::LogicalVector(lv) => {
@@ -74,7 +80,9 @@ fn test_read_r_logical() {
 #[test]
 fn test_read_r_empty() {
     let path = Path::new("tests/data/r_empty_int.rds");
-    if !path.exists() { return; }
+    if !path.exists() {
+        return;
+    }
     let result = read_rds(path).expect("Failed to read R empty file");
     match result {
         RObject::IntegerVector(iv) => {
@@ -87,7 +95,9 @@ fn test_read_r_empty() {
 #[test]
 fn test_read_r_null() {
     let path = Path::new("tests/data/r_null.rds");
-    if !path.exists() { return; }
+    if !path.exists() {
+        return;
+    }
     let result = read_rds(path).expect("Failed to read R NULL file");
     assert!(matches!(result, RObject::Null));
 }
@@ -97,17 +107,27 @@ fn generate_rust_test_files() {
     use std::fs;
     fs::create_dir_all("tests/data").expect("Failed to create tests/data directory");
 
-    let int_obj = RObject::IntegerVector(IntegerVector { data: vec![10, 20, 30, 40, 50], ..Default::default() });
+    let int_obj = RObject::IntegerVector(IntegerVector {
+        data: vec![10, 20, 30, 40, 50],
+        ..Default::default()
+    });
     write_rds(Path::new("tests/data/rust_integer.rds"), &int_obj).expect("Failed to write");
 
-    let real_obj = RObject::DoubleVector(DoubleVector { data: vec![1.5, 2.5, 3.5, 4.5, 5.5], ..Default::default() });
+    let real_obj = RObject::DoubleVector(DoubleVector {
+        data: vec![1.5, 2.5, 3.5, 4.5, 5.5],
+        ..Default::default()
+    });
     write_rds(Path::new("tests/data/rust_real.rds"), &real_obj).expect("Failed to write");
 
     let mut sv = StringVector::default();
     sv.add("alpha".to_string(), StringEncoding::Utf8);
     sv.add("beta".to_string(), StringEncoding::Utf8);
     sv.add("gamma".to_string(), StringEncoding::Utf8);
-    write_rds(Path::new("tests/data/rust_string.rds"), &RObject::StringVector(sv)).expect("Failed to write");
+    write_rds(
+        Path::new("tests/data/rust_string.rds"),
+        &RObject::StringVector(sv),
+    )
+    .expect("Failed to write");
 
     let empty_obj = RObject::IntegerVector(IntegerVector::default());
     write_rds(Path::new("tests/data/rust_empty.rds"), &empty_obj).expect("Failed to write");
@@ -119,7 +139,9 @@ fn generate_rust_test_files() {
 fn test_roundtrip_integer() {
     let r_path = Path::new("tests/data/r_integer.rds");
     let rust_path = Path::new("tests/data/roundtrip_int.rds");
-    if !r_path.exists() { return; }
+    if !r_path.exists() {
+        return;
+    }
 
     let obj = read_rds(r_path).expect("Failed to read R file");
     write_rds(rust_path, &obj).expect("Failed to write Rust file");
@@ -137,7 +159,9 @@ fn test_roundtrip_integer() {
 fn test_roundtrip_real() {
     let r_path = Path::new("tests/data/r_real.rds");
     let rust_path = Path::new("tests/data/roundtrip_real.rds");
-    if !r_path.exists() { return; }
+    if !r_path.exists() {
+        return;
+    }
 
     let obj = read_rds(r_path).expect("Failed to read");
     write_rds(rust_path, &obj).expect("Failed to write");
@@ -158,7 +182,9 @@ fn test_roundtrip_real() {
 fn test_roundtrip_string() {
     let r_path = Path::new("tests/data/r_string.rds");
     let rust_path = Path::new("tests/data/roundtrip_string.rds");
-    if !r_path.exists() { return; }
+    if !r_path.exists() {
+        return;
+    }
 
     let obj = read_rds(r_path).expect("Failed to read");
     write_rds(rust_path, &obj).expect("Failed to write");

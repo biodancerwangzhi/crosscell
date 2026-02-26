@@ -288,7 +288,15 @@ fn main() {
             strict,
             cluster_column,
             validate_schema,
-        } => validate::run(original, converted, tolerance, output, strict, cluster_column, validate_schema),
+        } => validate::run(
+            original,
+            converted,
+            tolerance,
+            output,
+            strict,
+            cluster_column,
+            validate_schema,
+        ),
 
         Commands::SimplifySeurat {
             input,

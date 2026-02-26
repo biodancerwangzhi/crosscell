@@ -3,13 +3,13 @@
 //! 写入 R 的配对列表。每个元素是一个 (tag, value) 对，
 //! 以 NILVALUE 终止。
 
-use std::io::Write;
+use super::attributes::write_attributes;
+use super::shared_info::SharedWriteInfo;
+use super::utils::{write_header, write_pairlist_header};
 use crate::rds::error::Result;
 use crate::rds::r_object::{PairList, RObject};
 use crate::rds::sexp_type::SEXPType;
-use super::utils::{write_header, write_pairlist_header};
-use super::shared_info::SharedWriteInfo;
-use super::attributes::write_attributes;
+use std::io::Write;
 
 /// 写入配对列表
 ///
@@ -63,13 +63,17 @@ where
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::io::Cursor;
-    use crate::rds::string_encoding::StringEncoding;
-    use crate::rds::symbol::Symbol;
     use crate::rds::environment::Environment;
     use crate::rds::external_pointer::ExternalPointer;
+    use crate::rds::string_encoding::StringEncoding;
+    use crate::rds::symbol::Symbol;
+    use std::io::Cursor;
 
-    fn mk<'a>(s: &'a [Symbol], e: &'a [Environment], p: &'a [ExternalPointer]) -> SharedWriteInfo<'a> {
+    fn mk<'a>(
+        s: &'a [Symbol],
+        e: &'a [Environment],
+        p: &'a [ExternalPointer],
+    ) -> SharedWriteInfo<'a> {
         SharedWriteInfo::new(s, e, p)
     }
     fn nw(_: &RObject, w: &mut Cursor<Vec<u8>>, _: &mut SharedWriteInfo) -> Result<()> {

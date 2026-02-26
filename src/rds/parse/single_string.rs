@@ -2,12 +2,12 @@
 //!
 //! 解析 R 的单个字符串（CHARSXP）。
 
-use std::io::Read;
-use crate::rds::error::{Result, RdsError};
+use super::header::{encoding_flags, ParsedHeader};
+use super::utils::{get_sexp_type, quick_extract, read_header};
+use crate::rds::error::{RdsError, Result};
 use crate::rds::sexp_type::SEXPType;
 use crate::rds::string_encoding::StringEncoding;
-use super::utils::{read_header, get_sexp_type, quick_extract};
-use super::header::{ParsedHeader, encoding_flags};
+use std::io::Read;
 
 /// 解析后的字符串信息
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -19,26 +19,43 @@ pub struct StringInfo {
 
 impl Default for StringInfo {
     fn default() -> Self {
-        Self { value: String::new(), encoding: StringEncoding::Utf8, missing: false }
+        Self {
+            value: String::new(),
+            encoding: StringEncoding::Utf8,
+            missing: false,
+        }
     }
 }
 
 impl StringInfo {
     pub fn na() -> Self {
-        Self { value: String::new(), encoding: StringEncoding::None, missing: true }
+        Self {
+            value: String::new(),
+            encoding: StringEncoding::None,
+            missing: true,
+        }
     }
 
     pub fn new(value: String, encoding: StringEncoding) -> Self {
-        Self { value, encoding, missing: false }
+        Self {
+            value,
+            encoding,
+            missing: false,
+        }
     }
 }
 
 fn get_string_encoding(header: &[u8; 4]) -> StringEncoding {
     let gp = header[1];
-    if (gp & encoding_flags::UTF8) != 0 { StringEncoding::Utf8 }
-    else if (gp & encoding_flags::LATIN1) != 0 { StringEncoding::Latin1 }
-    else if (gp & encoding_flags::ASCII) != 0 { StringEncoding::Ascii }
-    else { StringEncoding::Utf8 }
+    if (gp & encoding_flags::UTF8) != 0 {
+        StringEncoding::Utf8
+    } else if (gp & encoding_flags::LATIN1) != 0 {
+        StringEncoding::Latin1
+    } else if (gp & encoding_flags::ASCII) != 0 {
+        StringEncoding::Ascii
+    } else {
+        StringEncoding::Utf8
+    }
 }
 
 /// 解析单个字符串（CHARSXP）
@@ -52,17 +69,17 @@ pub fn parse_single_string<R: Read>(reader: &mut R) -> Result<StringInfo> {
         });
     }
     let encoding = get_string_encoding(&header);
-    
+
     // 读取长度（直接读取 i32 以检测 NA）
     let mut len_buf = [0u8; 4];
     reader.read_exact(&mut len_buf)?;
     let length_i32 = i32::from_be_bytes(len_buf);
-    
+
     // -1 表示 NA 字符串
     if length_i32 == -1 {
         return Ok(StringInfo::na());
     }
-    
+
     let length = length_i32 as usize;
     let bytes = quick_extract(reader, length)?;
     let value = String::from_utf8_lossy(&bytes).into_owned();
@@ -71,7 +88,8 @@ pub fn parse_single_string<R: Read>(reader: &mut R) -> Result<StringInfo> {
 
 /// 解析单个字符串（带已解析的头部）
 pub fn parse_single_string_with_header<R: Read>(
-    reader: &mut R, header: &ParsedHeader,
+    reader: &mut R,
+    header: &ParsedHeader,
 ) -> Result<StringInfo> {
     if header.sexp_type != SEXPType::Char {
         return Err(RdsError::ParseError {
@@ -80,23 +98,22 @@ pub fn parse_single_string_with_header<R: Read>(
         });
     }
     let encoding = header.get_encoding();
-    
+
     // 读取长度（直接读取 i32 以检测 NA）
     let mut len_buf = [0u8; 4];
     reader.read_exact(&mut len_buf)?;
     let length_i32 = i32::from_be_bytes(len_buf);
-    
+
     // -1 表示 NA 字符串
     if length_i32 == -1 {
         return Ok(StringInfo::na());
     }
-    
+
     let length = length_i32 as usize;
     let bytes = quick_extract(reader, length)?;
     let value = String::from_utf8_lossy(&bytes).into_owned();
     Ok(StringInfo::new(value, encoding))
 }
-
 
 #[cfg(test)]
 mod tests {
@@ -113,7 +130,9 @@ mod tests {
         [0x00, gp, 0x00, SEXPType::Char as u8]
     }
 
-    fn make_length(len: i32) -> [u8; 4] { len.to_be_bytes() }
+    fn make_length(len: i32) -> [u8; 4] {
+        len.to_be_bytes()
+    }
 
     #[test]
     fn test_string_info_default() {
@@ -184,9 +203,18 @@ mod tests {
 
     #[test]
     fn test_get_string_encoding_variants() {
-        assert_eq!(get_string_encoding(&[0, encoding_flags::UTF8, 0, 9]), StringEncoding::Utf8);
-        assert_eq!(get_string_encoding(&[0, encoding_flags::LATIN1, 0, 9]), StringEncoding::Latin1);
-        assert_eq!(get_string_encoding(&[0, encoding_flags::ASCII, 0, 9]), StringEncoding::Ascii);
+        assert_eq!(
+            get_string_encoding(&[0, encoding_flags::UTF8, 0, 9]),
+            StringEncoding::Utf8
+        );
+        assert_eq!(
+            get_string_encoding(&[0, encoding_flags::LATIN1, 0, 9]),
+            StringEncoding::Latin1
+        );
+        assert_eq!(
+            get_string_encoding(&[0, encoding_flags::ASCII, 0, 9]),
+            StringEncoding::Ascii
+        );
         assert_eq!(get_string_encoding(&[0, 0, 0, 9]), StringEncoding::Utf8);
     }
 }

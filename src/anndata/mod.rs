@@ -16,10 +16,10 @@ pub mod reader;
 pub mod streaming;
 pub mod writer;
 
-pub use reader::{read_h5ad, read_h5ad_partial, inspect_h5ad, PartialLoadOptions, H5adInfo};
+pub use reader::{inspect_h5ad, read_h5ad, read_h5ad_partial, H5adInfo, PartialLoadOptions};
 pub use streaming::{
-    DataChunk, StreamingH5adReader, StreamingH5adWriter, StreamingMetadata,
-    StreamingRdsReader, streaming_convert, streaming_rds_to_h5ad, streaming_h5ad_to_rds,
+    streaming_convert, streaming_h5ad_to_rds, streaming_rds_to_h5ad, DataChunk,
+    StreamingH5adReader, StreamingH5adWriter, StreamingMetadata, StreamingRdsReader,
     DEFAULT_CHUNK_SIZE,
 };
 pub use writer::write_h5ad;

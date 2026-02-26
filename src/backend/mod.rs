@@ -2,8 +2,8 @@
 // Inspired by anndata-rs backend design
 // Provides unified interface for different storage formats (HDF5, RDS, Memory)
 
-use std::path::{Path, PathBuf};
 use crate::error::Result;
+use std::path::{Path, PathBuf};
 
 /// Scalar data types supported by backends
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -32,9 +32,13 @@ pub struct SelectInfo {
 
 impl SelectInfo {
     pub fn new(start: usize, end: usize) -> Self {
-        Self { start, end, step: 1 }
+        Self {
+            start,
+            end,
+            step: 1,
+        }
     }
-    
+
     pub fn with_step(start: usize, end: usize, step: usize) -> Self {
         Self { start, end, step }
     }
@@ -64,28 +68,28 @@ pub enum Value {
 }
 
 /// Main storage backend trait
-/// 
+///
 /// This trait defines the interface for different storage backends.
 /// Each backend must implement this trait to provide storage operations.
 pub trait StorageBackend: 'static + Sized {
     /// Backend name (e.g., "hdf5", "rds", "memory")
     const NAME: &'static str;
-    
+
     /// Store type (file handle)
     type Store: StoreOp<Self> + GroupOp<Self>;
-    
+
     /// Group type (container for datasets)
     type Group: GroupOp<Self> + AttributeOp<Self>;
-    
+
     /// Dataset type (actual data storage)
     type Dataset: DatasetOp<Self> + AttributeOp<Self>;
-    
+
     /// Create a new store at the given path
     fn new<P: AsRef<Path>>(path: P) -> Result<Self::Store>;
-    
+
     /// Open an existing store in read-only mode
     fn open<P: AsRef<Path>>(path: P) -> Result<Self::Store>;
-    
+
     /// Open an existing store in read-write mode
     fn open_rw<P: AsRef<Path>>(path: P) -> Result<Self::Store>;
 }
@@ -94,7 +98,7 @@ pub trait StorageBackend: 'static + Sized {
 pub trait StoreOp<B: StorageBackend> {
     /// Get the file path
     fn filename(&self) -> PathBuf;
-    
+
     /// Close the store and flush all changes
     fn close(self) -> Result<()>;
 }
@@ -103,22 +107,22 @@ pub trait StoreOp<B: StorageBackend> {
 pub trait GroupOp<B: StorageBackend> {
     /// List all items in this group
     fn list(&self) -> Result<Vec<String>>;
-    
+
     /// Create a new subgroup
     fn new_group(&self, name: &str) -> Result<B::Group>;
-    
+
     /// Open an existing subgroup
     fn open_group(&self, name: &str) -> Result<B::Group>;
-    
+
     /// Create a new dataset
     fn new_dataset(&self, name: &str, shape: &[usize], dtype: ScalarType) -> Result<B::Dataset>;
-    
+
     /// Open an existing dataset
     fn open_dataset(&self, name: &str) -> Result<B::Dataset>;
-    
+
     /// Check if an item exists
     fn exists(&self, name: &str) -> Result<bool>;
-    
+
     /// Delete an item
     fn delete(&self, name: &str) -> Result<()>;
 }
@@ -127,37 +131,33 @@ pub trait GroupOp<B: StorageBackend> {
 pub trait DatasetOp<B: StorageBackend> {
     /// Get the data type
     fn dtype(&self) -> Result<ScalarType>;
-    
+
     /// Get the shape (dimensions)
     fn shape(&self) -> Vec<usize>;
-    
+
     /// Read a slice of data
     fn read_slice(&self, selection: &[SelectInfo]) -> Result<DynArray>;
-    
+
     /// Write a slice of data
     fn write_slice(&self, data: &DynArray, selection: &[SelectInfo]) -> Result<()>;
-    
+
     /// Read all data
     fn read_all(&self) -> Result<DynArray> {
         let shape = self.shape();
-        let selection: Vec<SelectInfo> = shape.iter()
-            .map(|&dim| SelectInfo::new(0, dim))
-            .collect();
+        let selection: Vec<SelectInfo> = shape.iter().map(|&dim| SelectInfo::new(0, dim)).collect();
         self.read_slice(&selection)
     }
-    
+
     /// Write all data
     fn write_all(&self, data: &DynArray) -> Result<()> {
         let shape = self.shape();
-        let selection: Vec<SelectInfo> = shape.iter()
-            .map(|&dim| SelectInfo::new(0, dim))
-            .collect();
+        let selection: Vec<SelectInfo> = shape.iter().map(|&dim| SelectInfo::new(0, dim)).collect();
         self.write_slice(data, &selection)
     }
 }
 
 /// 分块读取器
-/// 
+///
 /// 用于按块读取大型矩阵，降低内存占用
 pub struct ChunkedReader {
     /// 矩阵总维度
@@ -175,7 +175,7 @@ impl ChunkedReader {
     pub fn new(total_shape: (usize, usize), chunk_size: (usize, usize)) -> Self {
         let row_chunks = (total_shape.0 + chunk_size.0 - 1) / chunk_size.0.max(1);
         let col_chunks = (total_shape.1 + chunk_size.1 - 1) / chunk_size.1.max(1);
-        
+
         Self {
             total_shape,
             chunk_size,
@@ -260,22 +260,21 @@ impl ChunkSelection {
 pub trait AttributeOp<B: StorageBackend> {
     /// Get an attribute value
     fn get_attr(&self, name: &str) -> Result<Value>;
-    
+
     /// Set an attribute value
     fn set_attr(&mut self, name: &str, value: &Value) -> Result<()>;
-    
+
     /// List all attribute names
     fn list_attrs(&self) -> Result<Vec<String>>;
-    
+
     /// Check if an attribute exists
     fn has_attr(&self, name: &str) -> Result<bool>;
 }
 
 // Re-export submodules
 pub mod hdf5;
-pub mod rds;
 pub mod memory;
-
+pub mod rds;
 
 #[cfg(test)]
 mod tests {
@@ -285,11 +284,11 @@ mod tests {
     fn test_chunked_reader_basic() {
         // 10x10 矩阵，每块 3x3
         let mut reader = ChunkedReader::new((10, 10), (3, 3));
-        
+
         // 应该有 4x4 = 16 个块
         assert_eq!(reader.total_chunk_count(), 16);
         assert!(reader.has_more());
-        
+
         // 第一个块
         let chunk = reader.next_selection().unwrap();
         assert_eq!(chunk.row_range, (0, 3));
@@ -301,7 +300,7 @@ mod tests {
     #[test]
     fn test_chunked_reader_all_chunks() {
         let mut reader = ChunkedReader::new((10, 10), (3, 3));
-        
+
         let mut count = 0;
         while let Some(chunk) = reader.next_selection() {
             count += 1;
@@ -311,7 +310,7 @@ mod tests {
             assert!(chunk.row_range.1 <= 10);
             assert!(chunk.col_range.1 <= 10);
         }
-        
+
         assert_eq!(count, 16);
         assert!(!reader.has_more());
     }
@@ -321,12 +320,12 @@ mod tests {
         // 10x10 矩阵，每块 3x3
         // 最后一个块应该是 (9, 10) x (9, 10)，即 1x1
         let mut reader = ChunkedReader::new((10, 10), (3, 3));
-        
+
         let mut last_chunk = None;
         while let Some(chunk) = reader.next_selection() {
             last_chunk = Some(chunk);
         }
-        
+
         let last = last_chunk.unwrap();
         assert_eq!(last.row_range, (9, 10));
         assert_eq!(last.col_range, (9, 10));
@@ -337,16 +336,16 @@ mod tests {
     fn test_chunked_reader_exact_fit() {
         // 9x9 矩阵，每块 3x3，正好整除
         let mut reader = ChunkedReader::new((9, 9), (3, 3));
-        
+
         assert_eq!(reader.total_chunk_count(), 9);
-        
+
         let mut count = 0;
         while let Some(chunk) = reader.next_selection() {
             count += 1;
             // 每个块都应该是 3x3
             assert_eq!(chunk.shape(), (3, 3));
         }
-        
+
         assert_eq!(count, 9);
     }
 
@@ -354,29 +353,29 @@ mod tests {
     fn test_chunked_reader_single_chunk() {
         // 小矩阵，一个块就够了
         let mut reader = ChunkedReader::new((5, 5), (10, 10));
-        
+
         assert_eq!(reader.total_chunk_count(), 1);
-        
+
         let chunk = reader.next_selection().unwrap();
         assert_eq!(chunk.row_range, (0, 5));
         assert_eq!(chunk.col_range, (0, 5));
         assert_eq!(chunk.shape(), (5, 5));
-        
+
         assert!(reader.next_selection().is_none());
     }
 
     #[test]
     fn test_chunked_reader_reset() {
         let mut reader = ChunkedReader::new((10, 10), (5, 5));
-        
+
         // 读取所有块
         while reader.next_selection().is_some() {}
         assert!(!reader.has_more());
-        
+
         // 重置
         reader.reset();
         assert!(reader.has_more());
-        
+
         // 第一个块应该又是 (0, 0)
         let chunk = reader.next_selection().unwrap();
         assert_eq!(chunk.chunk_index, (0, 0));
@@ -386,9 +385,9 @@ mod tests {
     fn test_chunked_reader_row_only() {
         // 只按行分块
         let mut reader = ChunkedReader::new((100, 50), (10, 50));
-        
+
         assert_eq!(reader.total_chunk_count(), 10);
-        
+
         let chunk = reader.next_selection().unwrap();
         assert_eq!(chunk.row_range, (0, 10));
         assert_eq!(chunk.col_range, (0, 50));
@@ -401,7 +400,7 @@ mod tests {
             col_range: (5, 15),
             chunk_index: (1, 0),
         };
-        
+
         let select_info = selection.to_select_info();
         assert_eq!(select_info.len(), 2);
         assert_eq!(select_info[0].start, 10);
@@ -414,7 +413,7 @@ mod tests {
     fn test_chunked_reader_empty_matrix() {
         // 空矩阵
         let mut reader = ChunkedReader::new((0, 0), (10, 10));
-        
+
         // 应该至少有一个块（即使是空的）
         assert_eq!(reader.total_chunk_count(), 1);
     }
@@ -423,10 +422,10 @@ mod tests {
     fn test_chunked_reader_large_matrix() {
         // 大矩阵：100000 x 30000，每块 10000 x 5000
         let mut reader = ChunkedReader::new((100000, 30000), (10000, 5000));
-        
+
         // 10 x 6 = 60 个块
         assert_eq!(reader.total_chunk_count(), 60);
-        
+
         let mut count = 0;
         while reader.next_selection().is_some() {
             count += 1;

@@ -25,17 +25,17 @@
 //! let data = converter.read(Path::new("data.h5ad"))?;
 //! ```
 
-mod registry;
 mod anndata;
-mod seurat;
-mod sce;
 mod loom;
+mod registry;
+mod sce;
+mod seurat;
 
-pub use registry::{FormatRegistry, create_default_registry};
 pub use anndata::AnndataConverter;
-pub use seurat::SeuratConverter;
-pub use sce::SceConverter;
 pub use loom::LoomConverter;
+pub use registry::{create_default_registry, FormatRegistry};
+pub use sce::SceConverter;
+pub use seurat::SeuratConverter;
 
 use crate::error::CrossCellError;
 use crate::ir::SingleCellData;
@@ -47,37 +47,39 @@ use std::path::Path;
 pub trait FormatConverter: Send + Sync {
     /// 格式名称（用于 CLI 参数）
     fn name(&self) -> &str;
-    
+
     /// 格式显示名称（用于用户界面）
     fn display_name(&self) -> &str {
         self.name()
     }
-    
+
     /// 支持的文件扩展名
     fn extensions(&self) -> &[&str];
-    
+
     /// 是否支持读取
     fn can_read(&self) -> bool;
-    
+
     /// 是否支持写入
     fn can_write(&self) -> bool;
-    
+
     /// 格式描述
     fn description(&self) -> &str {
         ""
     }
-    
+
     /// 从文件读取数据
     fn read(&self, path: &Path) -> Result<SingleCellData, CrossCellError>;
-    
+
     /// 将数据写入文件
     fn write(&self, data: &SingleCellData, path: &Path) -> Result<(), CrossCellError>;
-    
+
     /// 检测文件是否为此格式
     fn detect(&self, path: &Path) -> bool {
         if let Some(ext) = path.extension() {
             let ext_str = format!(".{}", ext.to_string_lossy().to_lowercase());
-            self.extensions().iter().any(|e| e.to_lowercase() == ext_str)
+            self.extensions()
+                .iter()
+                .any(|e| e.to_lowercase() == ext_str)
         } else {
             false
         }
@@ -101,13 +103,17 @@ impl FormatInfo {
         Self {
             name: converter.name().to_string(),
             display_name: converter.display_name().to_string(),
-            extensions: converter.extensions().iter().map(|s| s.to_string()).collect(),
+            extensions: converter
+                .extensions()
+                .iter()
+                .map(|s| s.to_string())
+                .collect(),
             can_read: converter.can_read(),
             can_write: converter.can_write(),
             description: converter.description().to_string(),
         }
     }
-    
+
     /// 格式化为显示字符串
     pub fn format_display(&self) -> String {
         let exts = self.extensions.join(", ");

@@ -5,14 +5,14 @@
 use extendr_api::prelude::*;
 use std::path::Path;
 
-pub mod convert_to_r;
 pub mod convert_from_r;
+pub mod convert_to_r;
 
 #[cfg(test)]
 mod tests;
 
-use convert_to_r::{ir_to_seurat, ir_to_sce};
-use convert_from_r::{seurat_to_ir, sce_to_ir};
+use convert_from_r::{sce_to_ir, seurat_to_ir};
+use convert_to_r::{ir_to_sce, ir_to_seurat};
 
 // ============================================================================
 // read_h5ad_as_seurat and read_h5ad_as_sce
@@ -43,7 +43,12 @@ fn read_h5ad_as_seurat(
     let mut ir = crosscell::anndata::read_h5ad(path)
         .map_err(|e| Error::Other(format!("Failed to read H5AD: {}", e)))?;
 
-    apply_transforms(&mut ir, normalize.unwrap_or(false), top_genes, gene_id_column)?;
+    apply_transforms(
+        &mut ir,
+        normalize.unwrap_or(false),
+        top_genes,
+        gene_id_column,
+    )?;
 
     ir_to_seurat(&ir)
 }
@@ -101,7 +106,12 @@ fn read_rds_fast(
         .map_err(|e| Error::Other(format!("Failed to read RDS: {}", e)))?;
 
     let mut data = result.data;
-    apply_transforms(&mut data, normalize.unwrap_or(false), top_genes, gene_id_column)?;
+    apply_transforms(
+        &mut data,
+        normalize.unwrap_or(false),
+        top_genes,
+        gene_id_column,
+    )?;
 
     ir_to_seurat(&data)
 }
@@ -138,7 +148,12 @@ fn write_as_h5ad(
         return Err("Expected Seurat or SingleCellExperiment object".into());
     };
 
-    apply_transforms(&mut ir, normalize.unwrap_or(false), top_genes, gene_id_column)?;
+    apply_transforms(
+        &mut ir,
+        normalize.unwrap_or(false),
+        top_genes,
+        gene_id_column,
+    )?;
 
     crosscell::anndata::write_h5ad(&ir, path)
         .map_err(|e| Error::Other(format!("Failed to write H5AD: {}", e)))?;
@@ -195,7 +210,11 @@ fn inspect_file(path: &str) -> Result<Robj> {
     } else if path_lower.ends_with(".rds") {
         inspect_rds(path)
     } else {
-        Err(format!("Unsupported file format. Expected .h5ad or .rds, got: {}", path).into())
+        Err(format!(
+            "Unsupported file format. Expected .h5ad or .rds, got: {}",
+            path
+        )
+        .into())
     }
 }
 
@@ -234,9 +253,7 @@ fn validate_conversion(
     let orig_data = load_ir_from_path(original)?;
     let conv_data = load_ir_from_path(converted)?;
 
-    let report = crosscell::validation::roundtrip::validate_roundtrip(
-        &orig_data, &conv_data, tol,
-    );
+    let report = crosscell::validation::roundtrip::validate_roundtrip(&orig_data, &conv_data, tol);
 
     let passed = report.passed();
     let summary = report.summary();
@@ -313,29 +330,46 @@ fn extract_string_labels_from_ir(
     data: &crosscell::ir::SingleCellData,
     column: &str,
 ) -> Result<Vec<String>> {
-    use arrow::array::{Array, StringArray, LargeStringArray, DictionaryArray};
+    use arrow::array::{Array, DictionaryArray, LargeStringArray, StringArray};
     use arrow::datatypes::Int32Type;
 
-    let col_idx = data
-        .cell_metadata
-        .column_index(column)
-        .ok_or_else(|| Error::Other(format!(
+    let col_idx = data.cell_metadata.column_index(column).ok_or_else(|| {
+        Error::Other(format!(
             "Column '{}' not found in obs. Available: {:?}",
             column, data.cell_metadata.columns
-        )))?;
+        ))
+    })?;
 
     let col_data = &data.cell_metadata.data[col_idx];
 
     if let Some(arr) = col_data.as_any().downcast_ref::<StringArray>() {
         Ok((0..arr.len())
-            .map(|i| if arr.is_null(i) { String::new() } else { arr.value(i).to_string() })
+            .map(|i| {
+                if arr.is_null(i) {
+                    String::new()
+                } else {
+                    arr.value(i).to_string()
+                }
+            })
             .collect())
     } else if let Some(arr) = col_data.as_any().downcast_ref::<LargeStringArray>() {
         Ok((0..arr.len())
-            .map(|i| if arr.is_null(i) { String::new() } else { arr.value(i).to_string() })
+            .map(|i| {
+                if arr.is_null(i) {
+                    String::new()
+                } else {
+                    arr.value(i).to_string()
+                }
+            })
             .collect())
-    } else if let Some(arr) = col_data.as_any().downcast_ref::<DictionaryArray<Int32Type>>() {
-        let values = arr.values().as_any().downcast_ref::<StringArray>()
+    } else if let Some(arr) = col_data
+        .as_any()
+        .downcast_ref::<DictionaryArray<Int32Type>>()
+    {
+        let values = arr
+            .values()
+            .as_any()
+            .downcast_ref::<StringArray>()
             .ok_or_else(|| Error::Other("Dictionary values are not strings".to_string()))?;
         Ok((0..arr.len())
             .map(|i| {
@@ -367,12 +401,14 @@ fn inspect_h5ad(path: &str) -> Result<Robj> {
     let has_embeddings = ir.embeddings.is_some();
     let has_layers = ir.layers.is_some();
 
-    let embedding_names: Vec<String> = ir.embeddings
+    let embedding_names: Vec<String> = ir
+        .embeddings
         .as_ref()
         .map(|e| e.keys().cloned().collect())
         .unwrap_or_default();
 
-    let layer_names: Vec<String> = ir.layers
+    let layer_names: Vec<String> = ir
+        .layers
         .as_ref()
         .map(|l| l.keys().cloned().collect())
         .unwrap_or_default();
@@ -403,12 +439,14 @@ fn inspect_rds(path: &str) -> Result<Robj> {
     let has_embeddings = ir.embeddings.is_some();
     let has_layers = ir.layers.is_some();
 
-    let embedding_names: Vec<String> = ir.embeddings
+    let embedding_names: Vec<String> = ir
+        .embeddings
         .as_ref()
         .map(|e| e.keys().cloned().collect())
         .unwrap_or_default();
 
-    let layer_names: Vec<String> = ir.layers
+    let layer_names: Vec<String> = ir
+        .layers
         .as_ref()
         .map(|l| l.keys().cloned().collect())
         .unwrap_or_default();

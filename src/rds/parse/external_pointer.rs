@@ -1,17 +1,22 @@
 //! 外部指针解析
-use std::io::Read;
-use crate::rds::error::Result;
-use crate::rds::r_object::{ExternalPointerIndex, RObject};
-use crate::rds::external_pointer::ExternalPointer;
-use super::header::{ParsedHeader, has_attributes};
-use super::shared_info::SharedParseInfo;
 use super::attributes::parse_attributes;
+use super::header::{has_attributes, ParsedHeader};
+use super::shared_info::SharedParseInfo;
+use crate::rds::error::Result;
+use crate::rds::external_pointer::ExternalPointer;
+use crate::rds::r_object::{ExternalPointerIndex, RObject};
+use std::io::Read;
 
 /// 解析外部指针体
 pub fn parse_external_pointer_body<R: Read, F>(
-    reader: &mut R, header: &ParsedHeader, shared: &mut SharedParseInfo, parse_fn: &mut F,
+    reader: &mut R,
+    header: &ParsedHeader,
+    shared: &mut SharedParseInfo,
+    parse_fn: &mut F,
 ) -> Result<ExternalPointerIndex>
-where F: FnMut(&mut R, &mut SharedParseInfo) -> Result<RObject> {
+where
+    F: FnMut(&mut R, &mut SharedParseInfo) -> Result<RObject>,
+{
     let index = shared.request_external_pointer();
     let protection = Box::new(parse_fn(reader, shared)?);
     let tag = Box::new(parse_fn(reader, shared)?);
@@ -26,9 +31,9 @@ where F: FnMut(&mut R, &mut SharedParseInfo) -> Result<RObject> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use std::io::Cursor;
-    use crate::rds::sexp_type::SEXPType;
     use crate::rds::parse::utils::read_header;
+    use crate::rds::sexp_type::SEXPType;
+    use std::io::Cursor;
 
     #[test]
     fn test_external_pointer() {

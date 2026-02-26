@@ -9,9 +9,18 @@ use std::path::Path;
 
 /// Large CellxGENE datasets - marked #[ignore] since they take longer
 const CELLXGENE_DATASETS: &[(&str, &str)] = &[
-    ("data/generated/cellxgene_pbmc_15k.h5ad", "tests/data/multi_val/cellxgene_pbmc_15k.rds"),
-    ("data/generated/cellxgene_heart_23k.h5ad", "tests/data/multi_val/cellxgene_heart_23k.rds"),
-    ("data/generated/cellxgene_brain_40k.h5ad", "tests/data/multi_val/cellxgene_brain_40k.rds"),
+    (
+        "data/generated/cellxgene_pbmc_15k.h5ad",
+        "tests/data/multi_val/cellxgene_pbmc_15k.rds",
+    ),
+    (
+        "data/generated/cellxgene_heart_23k.h5ad",
+        "tests/data/multi_val/cellxgene_heart_23k.rds",
+    ),
+    (
+        "data/generated/cellxgene_brain_40k.h5ad",
+        "tests/data/multi_val/cellxgene_brain_40k.rds",
+    ),
 ];
 
 #[test]
@@ -57,6 +66,9 @@ fn test_convert_cellxgene_to_rds() {
     }
 
     println!("\n=== CellxGENE Summary ===");
-    println!("Success: {}, Skipped: {}, Failed: {}", success, skipped, failed);
+    println!(
+        "Success: {}, Skipped: {}, Failed: {}",
+        success, skipped, failed
+    );
     assert_eq!(failed, 0, "{} CellxGENE datasets failed conversion", failed);
 }

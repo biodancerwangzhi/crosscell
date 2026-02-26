@@ -3,8 +3,8 @@
 //! 提供底层解析工具，包括字节序转换、长度读取等。
 //! 对应 rds2cpp 的解析工具函数。
 
-use std::io::Read;
 use crate::rds::error::Result;
+use std::io::Read;
 
 /// 4 字节头部类型
 pub type Header = [u8; 4];
@@ -43,7 +43,6 @@ pub fn read_i32_be(bytes: &[u8; 4]) -> i32 {
 pub fn read_f64_be(bytes: &[u8; 8]) -> f64 {
     f64::from_be_bytes(*bytes)
 }
-
 
 /// 从 reader 读取大端序 i32
 ///
@@ -93,7 +92,7 @@ pub fn read_f64<R: Read>(reader: &mut R) -> Result<f64> {
 /// 如果读取失败返回 IO 错误
 pub fn read_length<R: Read>(reader: &mut R) -> Result<usize> {
     let len = read_i32(reader)?;
-    
+
     if len == -1 {
         // 大长度格式：读取 8 字节（两个 4 字节整数）
         let high = read_i32(reader)? as u32 as u64;
@@ -103,7 +102,6 @@ pub fn read_length<R: Read>(reader: &mut R) -> Result<usize> {
         Ok(len as usize)
     }
 }
-
 
 /// 快速提取指定长度的字节
 ///
@@ -200,7 +198,6 @@ pub fn get_gp_low(header: &Header) -> u8 {
     header[0]
 }
 
-
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -227,11 +224,20 @@ mod tests {
     #[test]
     fn test_read_f64_be() {
         // 测试 0.0
-        assert_eq!(read_f64_be(&[0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00]), 0.0);
+        assert_eq!(
+            read_f64_be(&[0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00]),
+            0.0
+        );
         // 测试 1.0 (IEEE 754: 0x3FF0000000000000)
-        assert_eq!(read_f64_be(&[0x3F, 0xF0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00]), 1.0);
+        assert_eq!(
+            read_f64_be(&[0x3F, 0xF0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00]),
+            1.0
+        );
         // 测试 -1.0 (IEEE 754: 0xBFF0000000000000)
-        assert_eq!(read_f64_be(&[0xBF, 0xF0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00]), -1.0);
+        assert_eq!(
+            read_f64_be(&[0xBF, 0xF0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00]),
+            -1.0
+        );
     }
 
     #[test]

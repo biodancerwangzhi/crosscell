@@ -1,9 +1,9 @@
 //! RDS - R Data Serialization 格式支持
 //!
 //! 本模块是 rds2cpp (C++) 库的 Rust 移植版本，提供完整的 RDS 文件解析和写入功能。
-//! 
+//!
 //! ## 架构
-//! 
+//!
 //! 模块结构与 rds2cpp 一一对应：
 //! - `sexp_type` - R 数据类型枚举 (对应 SEXPType.hpp)
 //! - `string_encoding` - 字符串编码类型 (对应 StringEncoding.hpp)
@@ -31,14 +31,14 @@
 //! ```
 
 // 核心类型定义模块
+pub mod environment;
 pub mod error;
+pub mod external_pointer;
+pub mod r_object;
+pub mod rds_file;
 pub mod sexp_type;
 pub mod string_encoding;
-pub mod r_object;
 pub mod symbol;
-pub mod environment;
-pub mod external_pointer;
-pub mod rds_file;
 
 // 解析和写入子模块
 pub mod parse;
@@ -49,18 +49,18 @@ pub mod write;
 mod proptest;
 
 // 重新导出核心类型，便于外部使用
+pub use environment::Environment;
 pub use error::{RdsError, Result};
+pub use external_pointer::ExternalPointer;
+pub use r_object::{
+    Attributes, BuiltInFunction, ComplexVector, DoubleVector, EnvironmentIndex, ExpressionVector,
+    ExternalPointerIndex, GenericVector, IntegerVector, LanguageObject, LogicalVector, PairList,
+    RObject, RawVector, S4Object, StringVector, SymbolIndex,
+};
+pub use rds_file::RdsFile;
 pub use sexp_type::SEXPType;
 pub use string_encoding::StringEncoding;
-pub use r_object::{
-    Attributes, RObject, SymbolIndex, EnvironmentIndex, ExternalPointerIndex,
-    IntegerVector, LogicalVector, DoubleVector, RawVector, ComplexVector, StringVector,
-    GenericVector, PairList, S4Object, BuiltInFunction, LanguageObject, ExpressionVector,
-};
 pub use symbol::Symbol;
-pub use environment::Environment;
-pub use external_pointer::ExternalPointer;
-pub use rds_file::RdsFile;
 
 // 便捷函数
 use std::path::Path;

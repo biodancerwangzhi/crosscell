@@ -4,18 +4,26 @@ use crate::rds::{RObject, RdsFile};
 use crate::seurat::error::{Result, SeuratError};
 
 /// S4 对象中提取槽
-pub fn extract_slot<'a>(s4_obj: &'a RObject, slot_name: &str, _file: &'a RdsFile) -> Result<&'a RObject> {
+pub fn extract_slot<'a>(
+    s4_obj: &'a RObject,
+    slot_name: &str,
+    _file: &'a RdsFile,
+) -> Result<&'a RObject> {
     match s4_obj {
-        RObject::S4Object(s4) => {
-            s4.attributes.get(slot_name)
-                .ok_or_else(|| SeuratError::MissingSlot(slot_name.to_string()))
-        }
+        RObject::S4Object(s4) => s4
+            .attributes
+            .get(slot_name)
+            .ok_or_else(|| SeuratError::MissingSlot(slot_name.to_string())),
         _ => Err(SeuratError::NotS4Object),
     }
 }
 
 /// S4 对象中提取可选槽
-pub fn extract_slot_optional<'a>(s4_obj: &'a RObject, slot_name: &str, _file: &'a RdsFile) -> Result<Option<&'a RObject>> {
+pub fn extract_slot_optional<'a>(
+    s4_obj: &'a RObject,
+    slot_name: &str,
+    _file: &'a RdsFile,
+) -> Result<Option<&'a RObject>> {
     match s4_obj {
         RObject::S4Object(s4) => Ok(s4.attributes.get(slot_name)),
         _ => Err(SeuratError::NotS4Object),
@@ -58,14 +66,20 @@ pub fn extract_project_name(seurat: &RObject, file: &RdsFile) -> Result<String> 
 }
 
 /// 从列表中提取命名元素
-pub fn extract_from_list<'a>(list: &'a RObject, name: &str, _file: &'a RdsFile) -> Result<&'a RObject> {
+pub fn extract_from_list<'a>(
+    list: &'a RObject,
+    name: &str,
+    _file: &'a RdsFile,
+) -> Result<&'a RObject> {
     match list {
         RObject::GenericVector(gv) => {
             // Check if it has names attribute
             if let Some(names) = gv.attributes.get_names() {
                 for (i, n) in names.iter().enumerate() {
                     if n == name {
-                        return gv.data.get(i)
+                        return gv
+                            .data
+                            .get(i)
                             .ok_or_else(|| SeuratError::MissingSlot(name.to_string()));
                     }
                 }
@@ -100,20 +114,24 @@ pub fn get_named_list_items<'a>(obj: &'a RObject) -> Option<Vec<(&'a str, &'a RO
     match obj {
         RObject::GenericVector(gv) => {
             if let Some(names) = gv.attributes.get_names() {
-                Some(names.iter()
-                    .zip(gv.data.iter())
-                    .map(|(n, v)| (n.as_str(), v))
-                    .collect())
+                Some(
+                    names
+                        .iter()
+                        .zip(gv.data.iter())
+                        .map(|(n, v)| (n.as_str(), v))
+                        .collect(),
+                )
             } else {
                 None
             }
         }
-        RObject::PairList(pl) => {
-            Some(pl.tag_names.iter()
+        RObject::PairList(pl) => Some(
+            pl.tag_names
+                .iter()
                 .zip(pl.data.iter())
                 .map(|(n, v)| (n.as_str(), v))
-                .collect())
-        }
+                .collect(),
+        ),
         // S4 对象可能包含 .Data slot（当 S4 类继承自 list 时）
         // 例如 Seurat assays slot 是一S4 Assays 容器
         RObject::S4Object(s4) => {
@@ -133,10 +151,13 @@ pub fn get_named_list_items<'a>(obj: &'a RObject) -> Option<Vec<(&'a str, &'a RO
                         if let Some(list_obj) = s4.attributes.get(attr_name) {
                             if let RObject::GenericVector(gv) = list_obj {
                                 if gv.data.len() == names.len() {
-                                    return Some(names.iter()
-                                        .zip(gv.data.iter())
-                                        .map(|(n, v)| (n.as_str(), v))
-                                        .collect());
+                                    return Some(
+                                        names
+                                            .iter()
+                                            .zip(gv.data.iter())
+                                            .map(|(n, v)| (n.as_str(), v))
+                                            .collect(),
+                                    );
                                 }
                             }
                         }
