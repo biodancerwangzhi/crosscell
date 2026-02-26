@@ -1,0 +1,140 @@
+{
+  "cellxgene_brain_40k.h5ad": {
+    "file": "cellxgene_brain_40k.h5ad",
+    "nnz": 206406364,
+    "n_cells": 40165,
+    "n_genes": 58232
+  },
+  "cellxgene_brain_dlpfc_172k.h5ad": {
+    "file": "cellxgene_brain_dlpfc_172k.h5ad",
+    "nnz": 520675422,
+    "n_cells": 172120,
+    "n_genes": 37490
+  },
+  "cellxgene_brain_multiome_102k.h5ad": {
+    "file": "cellxgene_brain_multiome_102k.h5ad",
+    "nnz": 245403659,
+    "n_cells": 101924,
+    "n_genes": 35451
+  },
+  "cellxgene_combat_pbmc_836k.h5ad": {
+    "file": "cellxgene_combat_pbmc_836k.h5ad",
+    "nnz": 1138306915,
+    "n_cells": 836148,
+    "n_genes": 36306
+  },
+  "cellxgene_eqtl_autoimmune_1.2M.h5ad": {
+    "file": "cellxgene_eqtl_autoimmune_1.2M.h5ad",
+    "nnz": 1183532685,
+    "n_cells": 1248980,
+    "n_genes": 35528
+  },
+  "cellxgene_heart_23k.h5ad": {
+    "file": "cellxgene_heart_23k.h5ad",
+    "nnz": 35404110,
+    "n_cells": 23483,
+    "n_genes": 32330
+  },
+  "cellxgene_heart_486k.h5ad": {
+    "file": "cellxgene_heart_486k.h5ad",
+    "nnz": 609804351,
+    "n_cells": 486134,
+    "n_genes": 32383
+  },
+  "cellxgene_hlca_core_585k.h5ad": {
+    "file": "cellxgene_hlca_core_585k.h5ad",
+    "nnz": 1138668948,
+    "n_cells": 584944,
+    "n_genes": 27402
+  },
+  "cellxgene_kidney_atacseq_37k.h5ad": {
+    "file": "cellxgene_kidney_atacseq_37k.h5ad",
+    "nnz": 222457717,
+    "n_cells": 37747,
+    "n_genes": 19276
+  },
+  "cellxgene_pancreas_122k.h5ad": {
+    "file": "cellxgene_pancreas_122k.h5ad",
+    "nnz": 159234395,
+    "n_cells": 121916,
+    "n_genes": 32356
+  },
+  "cellxgene_retina_244k.h5ad": {
+    "file": "cellxgene_retina_244k.h5ad",
+    "nnz": 3755517838,
+    "n_cells": 244474,
+    "n_genes": 30172
+  },
+  "cellxgene_skin_bcc_10k.h5ad": {
+    "file": "cellxgene_skin_bcc_10k.h5ad",
+    "nnz": 18325816,
+    "n_cells": 9841,
+    "n_genes": 26886
+  },
+  "cellxgene_tabula_liver_22k.h5ad": {
+    "file": "cellxgene_tabula_liver_22k.h5ad",
+    "nnz": 62532776,
+    "n_cells": 22214,
+    "n_genes": 60606
+  },
+  "scanpy_pbmc3k.h5ad": {
+    "file": "scanpy_pbmc3k.h5ad",
+    "nnz": 2286884,
+    "n_cells": 2700,
+    "n_genes": 32738
+  },
+  "scanpy_pbmc3k_processed.h5ad": {
+    "file": "scanpy_pbmc3k_processed.h5ad",
+    "nnz": 4848644,
+    "n_cells": 2638,
+    "n_genes": 1838
+  },
+  "scvelo_dentategyrus.h5ad": {
+    "file": "scvelo_dentategyrus.h5ad",
+    "nnz": 4122695,
+    "n_cells": 2930,
+    "n_genes": 13913
+  },
+  "scvelo_pancreas.h5ad": {
+    "file": "scvelo_pancreas.h5ad",
+    "nnz": 9298890,
+    "n_cells": 3696,
+    "n_genes": 27998
+  },
+  "squidpy_imc.h5ad": {
+    "file": "squidpy_imc.h5ad",
+    "nnz": 156306,
+    "n_cells": 4668,
+    "n_genes": 34
+  },
+  "squidpy_merfish.h5ad": {
+    "file": "squidpy_merfish.h5ad",
+    "nnz": 4660375,
+    "n_cells": 73655,
+    "n_genes": 161
+  },
+  "squidpy_mibitof.h5ad": {
+    "file": "squidpy_mibitof.h5ad",
+    "nnz": 119124,
+    "n_cells": 3309,
+    "n_genes": 36
+  },
+  "squidpy_seqfish.h5ad": {
+    "file": "squidpy_seqfish.h5ad",
+    "nnz": 1890790,
+    "n_cells": 19416,
+    "n_genes": 351
+  },
+  "squidpy_slideseqv2.h5ad": {
+    "file": "squidpy_slideseqv2.h5ad",
+    "nnz": 4410433,
+    "n_cells": 41786,
+    "n_genes": 4000
+  },
+  "squidpy_visium_hne.h5ad": {
+    "file": "squidpy_visium_hne.h5ad",
+    "nnz": 15411927,
+    "n_cells": 2688,
+    "n_genes": 18078
+  }
+}

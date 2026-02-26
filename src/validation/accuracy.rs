@@ -37,7 +37,16 @@ pub struct AccuracyMetrics {
     pub original_nnz: usize,
     /// 转换后非零元素数量
     pub converted_nnz: usize,
+    /// 均方误差
+    pub mse: f64,
+    /// 精确匹配比率 (0.0 - 1.0)
+    pub exact_match_ratio: f64,
+    /// 调整兰德指数（可选，需要聚类标签）
+    pub ari: Option<f64>,
+    /// 归一化互信息（可选，需要聚类标签）
+    pub nmi: Option<f64>,
 }
+
 
 impl AccuracyMetrics {
     /// 创建默认的准确性指标（全部通过）
@@ -54,6 +63,10 @@ impl AccuracyMetrics {
             nnz_match: true,
             original_nnz: 0,
             converted_nnz: 0,
+            mse: 0.0,
+            exact_match_ratio: 1.0,
+            ari: None,
+            nmi: None,
         }
     }
     
@@ -67,16 +80,20 @@ impl AccuracyMetrics {
             && self.categorical_match
             && self.embedding_error < tolerance
             && self.nnz_match
+            && self.mse < tolerance * tolerance
+            && self.exact_match_ratio > 0.999
     }
     
     /// 生成摘要报告
     pub fn summary(&self) -> String {
-        format!(
+        let mut s = format!(
             "AccuracyMetrics:\n\
              - Correlation: {:.6}\n\
              - Mean Relative Error: {:.2e}\n\
              - Mean Absolute Error: {:.2e}\n\
              - Max Absolute Error: {:.2e}\n\
+             - MSE: {:.2e}\n\
+             - Exact Match Ratio: {:.6}\n\
              - Sparsity Preserved: {:.4}%\n\
              - Metadata Match: {}\n\
              - Categorical Match: {}\n\
@@ -86,6 +103,8 @@ impl AccuracyMetrics {
             self.mean_relative_error,
             self.mean_absolute_error,
             self.max_absolute_error,
+            self.mse,
+            self.exact_match_ratio,
             self.sparsity_preserved * 100.0,
             if self.metadata_match { "✓" } else { "✗" },
             if self.categorical_match { "✓" } else { "✗" },
@@ -93,7 +112,14 @@ impl AccuracyMetrics {
             if self.nnz_match { "✓" } else { "✗" },
             self.original_nnz,
             self.converted_nnz,
-        )
+        );
+        if let Some(ari) = self.ari {
+            s.push_str(&format!("\n - ARI: {:.6}", ari));
+        }
+        if let Some(nmi) = self.nmi {
+            s.push_str(&format!("\n - NMI: {:.6}", nmi));
+        }
+        s
     }
 }
 
@@ -308,6 +334,141 @@ pub fn calculate_sparsity(nnz: usize, total: usize) -> f64 {
     1.0 - (nnz as f64 / total as f64)
 }
 
+/// 计算均方误差
+pub fn calculate_mse(x: &[f64], y: &[f64]) -> f64 {
+    if x.len() != y.len() || x.is_empty() {
+        return 0.0;
+    }
+    let sum_sq: f64 = x.iter().zip(y.iter()).map(|(a, b)| (a - b).powi(2)).sum();
+    sum_sq / x.len() as f64
+}
+
+/// 计算精确匹配比率
+pub fn calculate_exact_match_ratio(x: &[f64], y: &[f64]) -> f64 {
+    if x.len() != y.len() || x.is_empty() {
+        return 0.0;
+    }
+    let matches = x.iter().zip(y.iter()).filter(|(a, b)| (*a - *b).abs() < f64::EPSILON).count();
+    matches as f64 / x.len() as f64
+}
+
+/// 计算调整兰德指数 (ARI)
+///
+/// ARI = (RI - Expected_RI) / (Max_RI - Expected_RI)
+/// 基于列联表和配对计数
+pub fn calculate_ari(labels_a: &[String], labels_b: &[String]) -> f64 {
+    if labels_a.len() != labels_b.len() || labels_a.is_empty() {
+        return 0.0;
+    }
+    let n = labels_a.len();
+
+    // 构建列联表
+    let mut label_a_map: HashMap<&str, usize> = HashMap::new();
+    let mut label_b_map: HashMap<&str, usize> = HashMap::new();
+    let mut a_idx = 0usize;
+    let mut b_idx = 0usize;
+
+    let mut a_indices = Vec::with_capacity(n);
+    let mut b_indices = Vec::with_capacity(n);
+
+    for (a, b) in labels_a.iter().zip(labels_b.iter()) {
+        let ai = *label_a_map.entry(a.as_str()).or_insert_with(|| { let v = a_idx; a_idx += 1; v });
+        let bi = *label_b_map.entry(b.as_str()).or_insert_with(|| { let v = b_idx; b_idx += 1; v });
+        a_indices.push(ai);
+        b_indices.push(bi);
+    }
+
+    let n_a = a_idx;
+    let n_b = b_idx;
+
+    // 列联表 nij
+    let mut contingency = vec![vec![0i64; n_b]; n_a];
+    for i in 0..n {
+        contingency[a_indices[i]][b_indices[i]] += 1;
+    }
+
+    // 行和 a_i, 列和 b_j
+    let a_sums: Vec<i64> = contingency.iter().map(|row| row.iter().sum()).collect();
+    let b_sums: Vec<i64> = (0..n_b).map(|j| contingency.iter().map(|row| row[j]).sum()).collect();
+
+    // C(n, 2) helper
+    let comb2 = |x: i64| -> i64 { x * (x - 1) / 2 };
+
+    let sum_comb_nij: i64 = contingency.iter()
+        .flat_map(|row| row.iter())
+        .map(|&v| comb2(v))
+        .sum();
+    let sum_comb_ai: i64 = a_sums.iter().map(|&v| comb2(v)).sum();
+    let sum_comb_bj: i64 = b_sums.iter().map(|&v| comb2(v)).sum();
+    let comb_n = comb2(n as i64);
+
+    if comb_n == 0 {
+        return 0.0;
+    }
+
+    let expected = (sum_comb_ai as f64 * sum_comb_bj as f64) / comb_n as f64;
+    let max_index = (sum_comb_ai as f64 + sum_comb_bj as f64) / 2.0;
+    let denominator = max_index - expected;
+
+    if denominator.abs() < f64::EPSILON {
+        // 完全一致或退化情况
+        if (sum_comb_nij as f64 - expected).abs() < f64::EPSILON {
+            return 1.0;
+        }
+        return 0.0;
+    }
+
+    (sum_comb_nij as f64 - expected) / denominator
+}
+
+/// 计算归一化互信息 (NMI)
+///
+/// NMI = 2 * MI(A, B) / (H(A) + H(B))
+pub fn calculate_nmi(labels_a: &[String], labels_b: &[String]) -> f64 {
+    if labels_a.len() != labels_b.len() || labels_a.is_empty() {
+        return 0.0;
+    }
+    let n = labels_a.len() as f64;
+
+    // 计算联合分布和边缘分布
+    let mut joint: HashMap<(&str, &str), usize> = HashMap::new();
+    let mut count_a: HashMap<&str, usize> = HashMap::new();
+    let mut count_b: HashMap<&str, usize> = HashMap::new();
+
+    for (a, b) in labels_a.iter().zip(labels_b.iter()) {
+        *joint.entry((a.as_str(), b.as_str())).or_insert(0) += 1;
+        *count_a.entry(a.as_str()).or_insert(0) += 1;
+        *count_b.entry(b.as_str()).or_insert(0) += 1;
+    }
+
+    // H(A)
+    let h_a: f64 = count_a.values()
+        .map(|&c| { let p = c as f64 / n; -p * p.ln() })
+        .sum();
+
+    // H(B)
+    let h_b: f64 = count_b.values()
+        .map(|&c| { let p = c as f64 / n; -p * p.ln() })
+        .sum();
+
+    if (h_a + h_b).abs() < f64::EPSILON {
+        // 两个分布都是单一类别
+        return 1.0;
+    }
+
+    // MI(A, B) = sum_ij p_ij * log(p_ij / (p_i * p_j))
+    let mi: f64 = joint.iter()
+        .map(|(&(a, b), &c)| {
+            let p_ij = c as f64 / n;
+            let p_i = count_a[a] as f64 / n;
+            let p_j = count_b[b] as f64 / n;
+            p_ij * (p_ij / (p_i * p_j)).ln()
+        })
+        .sum();
+
+    2.0 * mi / (h_a + h_b)
+}
+
 
 // ============================================================================
 // 表达矩阵准确性计算
@@ -353,6 +514,10 @@ pub fn calculate_matrix_accuracy(
             nnz_match: true,
             original_nnz: 0,
             converted_nnz: 0,
+            mse: 0.0,
+            exact_match_ratio: 1.0,
+            ari: None,
+            nmi: None,
         });
     }
     
@@ -384,6 +549,10 @@ pub fn calculate_matrix_accuracy(
     let mean_absolute_error = if n > 0 { sum_abs_error / n as f64 } else { 0.0 };
     let mean_relative_error = if count_rel > 0 { sum_rel_error / count_rel as f64 } else { 0.0 };
     
+    // 计算新增指标
+    let mse = calculate_mse(&orig_flat, &conv_flat);
+    let exact_match_ratio = calculate_exact_match_ratio(&orig_flat, &conv_flat);
+    
     Ok(AccuracyMetrics {
         correlation,
         mean_relative_error,
@@ -396,6 +565,10 @@ pub fn calculate_matrix_accuracy(
         nnz_match: orig_nnz == conv_nnz,
         original_nnz: orig_nnz,
         converted_nnz: conv_nnz,
+        mse,
+        exact_match_ratio,
+        ari: None,
+        nmi: None,
     })
 }
 

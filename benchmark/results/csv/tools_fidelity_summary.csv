@@ -1,0 +1,9 @@
+dataset,tool,test,n_cells,n_genes,pearson_r,max_diff,mean_diff,exact_match_pct
+v5_pbmc3k_raw,CrossCell,roundtrip,2700,13714,1.0,0.0,0.0,100.0
+v5_pbmc3k_raw,Zellkonverter,cc_vs_zk,2700,13714,1.0,0.0,0.0,100.0
+v5_pbmc3k_processed,CrossCell,roundtrip,2700,13714,1.0,0.0,0.0,100.0
+v5_pbmc3k_processed,Zellkonverter,cc_vs_zk,2700,13714,1.0,0.0,0.0,100.0
+v5_ifnb_raw,CrossCell,roundtrip,13999,14053,0.9999999999999999,0.0,0.0,100.0
+v5_ifnb_raw,Zellkonverter,cc_vs_zk,13999,14053,0.9999999999999999,0.0,0.0,100.0
+v5_cbmc_raw,CrossCell,roundtrip,8617,20501,0.9999999999999958,0.0,0.0,100.0
+v5_cbmc_raw,Zellkonverter,cc_vs_zk,8617,20501,0.9999999999999958,0.0,0.0,100.0

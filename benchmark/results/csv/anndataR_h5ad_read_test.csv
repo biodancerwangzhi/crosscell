@@ -1,0 +1,24 @@
+dataset,read_h5ad,to_Seurat,error
+scanpy_pbmc3k,,,"[1m[22mFile [34m/benchmark/data/generated/scanpy_pbmc3k.h5ad[39m is not a valid H5AD file.
+[36mi[39m Either the file is not an H5AD file or it was created with [34manndata<0.8.0[39m."
+scanpy_pbmc3k_processed,,,"[1m[22mFile [34m/benchmark/data/generated/scanpy_pbmc3k_processed.h5ad[39m is not a valid H5AD file.
+[36mi[39m Either the file is not an H5AD file or it was created with [34manndata<0.8.0[39m."
+scvelo_dentategyrus,,,"[1m[22mFile [34m/benchmark/data/generated/scvelo_dentategyrus.h5ad[39m is not a valid H5AD file.
+[36mi[39m Either the file is not an H5AD file or it was created with [34manndata<0.8.0[39m."
+scvelo_pancreas,,,"[1m[22mFile [34m/benchmark/data/generated/scvelo_pancreas.h5ad[39m is not a valid H5AD file.
+[36mi[39m Either the file is not an H5AD file or it was created with [34manndata<0.8.0[39m."
+cellxgene_pbmc_15k,,,attempt to apply non-function
+cellxgene_heart_23k,,,attempt to apply non-function
+cellxgene_brain_40k,,,attempt to apply non-function
+squidpy_visium_hne,,,"[1m[22mFile [34m/benchmark/data/generated/squidpy_visium_hne.h5ad[39m is not a valid H5AD file.
+[36mi[39m Either the file is not an H5AD file or it was created with [34manndata<0.8.0[39m."
+squidpy_mibitof,,,"[1m[22mFile [34m/benchmark/data/generated/squidpy_mibitof.h5ad[39m is not a valid H5AD file.
+[36mi[39m Either the file is not an H5AD file or it was created with [34manndata<0.8.0[39m."
+squidpy_slideseqv2,,,"[1m[22mFile [34m/benchmark/data/generated/squidpy_slideseqv2.h5ad[39m is not a valid H5AD file.
+[36mi[39m Either the file is not an H5AD file or it was created with [34manndata<0.8.0[39m."
+squidpy_seqfish,,,"[1m[22mFile [34m/benchmark/data/generated/squidpy_seqfish.h5ad[39m is not a valid H5AD file.
+[36mi[39m Either the file is not an H5AD file or it was created with [34manndata<0.8.0[39m."
+squidpy_merfish,,,"[1m[22mFile [34m/benchmark/data/generated/squidpy_merfish.h5ad[39m is not a valid H5AD file.
+[36mi[39m Either the file is not an H5AD file or it was created with [34manndata<0.8.0[39m."
+squidpy_imc,,,"[1m[22mFile [34m/benchmark/data/generated/squidpy_imc.h5ad[39m is not a valid H5AD file.
+[36mi[39m Either the file is not an H5AD file or it was created with [34manndata<0.8.0[39m."

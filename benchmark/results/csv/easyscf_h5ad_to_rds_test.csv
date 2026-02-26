@@ -1,0 +1,14 @@
+test_id,step1_ok,step2_ok,step2_error
+scanpy_pbmc3k,True,False,object 'sce' not found
+scanpy_pbmc3k_processed,False,False,step1 failed
+scvelo_dentategyrus,True,False,object 'sce' not found
+scvelo_pancreas,True,False,object 'sce' not found
+cellxgene_pbmc_15k,True,False,object 'sce' not found
+cellxgene_heart_23k,True,False,object 'sce' not found
+cellxgene_brain_40k,True,False,object 'sce' not found
+squidpy_visium_hne,False,False,step1 failed
+squidpy_mibitof,False,False,step1 failed
+squidpy_slideseqv2,True,False,object 'sce' not found
+squidpy_seqfish,True,False,object 'sce' not found
+squidpy_merfish,True,False,object 'sce' not found
+squidpy_imc,True,False,object 'sce' not found

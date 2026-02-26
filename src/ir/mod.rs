@@ -60,6 +60,11 @@ pub struct SingleCellData {
     /// 对应 AnnData.obsm['spatial'] 或 Seurat@images
     pub spatial: Option<SpatialData>,
 
+    /// 基因加载矩阵（可选）
+    /// 对应 AnnData.varm 或 Seurat@reductions[[x]]@feature.loadings
+    /// key = reduction 名称（如 "PCs"），value = Embedding (n_genes × n_components)
+    pub gene_loadings: Option<HashMap<String, Embedding>>,
+
     /// 非结构化数据（可选）
     /// 对应 AnnData.uns 或 Seurat@misc
     pub unstructured: Option<HashMap<String, UnstructuredValue>>,
@@ -85,6 +90,7 @@ impl SingleCellData {
             cell_pairwise: None,
             gene_pairwise: None,
             spatial: None,
+            gene_loadings: None,
             unstructured: None,
             metadata,
         };
@@ -173,6 +179,18 @@ impl SingleCellData {
                     return Err(format!(
                         "SingleCellData: gene_pairwise '{}' has shape ({}, {}), expected ({}, {})",
                         name, pw_rows, pw_cols, n_genes, n_genes
+                    ));
+                }
+            }
+        }
+
+        // 验证基因加载矩阵维度 (varm)
+        if let Some(ref gene_loadings) = self.gene_loadings {
+            for (name, loading) in gene_loadings {
+                if loading.n_rows != n_genes {
+                    return Err(format!(
+                        "SingleCellData: gene_loading '{}' has {} rows, expected {} (n_genes)",
+                        name, loading.n_rows, n_genes
                     ));
                 }
             }

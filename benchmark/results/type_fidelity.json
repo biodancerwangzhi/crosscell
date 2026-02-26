@@ -1,0 +1,53 @@
+{
+  "type_results": {
+    "CrossCell": {
+      "int_col": "int",
+      "dbl_col": "float",
+      "bool_col": "bool",
+      "str_col": "str",
+      "cat_col": "category"
+    },
+    "Zellkonverter": {
+      "int_col": "int",
+      "dbl_col": "float",
+      "bool_col": "bool",
+      "str_col": "category",
+      "cat_col": "category"
+    },
+    "anndataR": {
+      "int_col": "int",
+      "dbl_col": "float",
+      "bool_col": "bool",
+      "str_col": "str",
+      "cat_col": "category"
+    },
+    "convert2anndata": {
+      "int_col": "int",
+      "dbl_col": "float",
+      "bool_col": "bool",
+      "str_col": "category",
+      "cat_col": "category"
+    },
+    "easySCF": {
+      "int_col": "int",
+      "dbl_col": "float",
+      "bool_col": "int",
+      "str_col": "category",
+      "cat_col": "category"
+    }
+  },
+  "retention": {
+    "CrossCell": 100.0,
+    "Zellkonverter": 80.0,
+    "anndataR": 100.0,
+    "convert2anndata": 80.0,
+    "easySCF": 60.0
+  },
+  "expected_types": {
+    "int_col": "int",
+    "dbl_col": "float",
+    "bool_col": "bool",
+    "str_col": "str",
+    "cat_col": "category"
+  }
+}

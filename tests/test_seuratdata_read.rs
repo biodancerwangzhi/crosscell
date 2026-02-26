@@ -110,7 +110,7 @@ fn test_seurat_v4_pbmc3k_read() {
         return;
     }
 
-    let result = read_seurat_direct(path).expect("Failed to read Seurat V4 pbmc3k");
+    let result = read_seurat_direct(path, false).expect("Failed to read Seurat V4 pbmc3k");
     
     // Verify version detection (V3 and V4 both use Legacy Assay format)
     assert!(
@@ -160,7 +160,7 @@ fn test_seurat_v4_panc8_read() {
         return;
     }
 
-    let result = read_seurat_direct(path).expect("Failed to read Seurat V4 panc8");
+    let result = read_seurat_direct(path, false).expect("Failed to read Seurat V4 panc8");
     
     // Verify version detection (V3 and V4 both use Legacy Assay format)
     assert!(
@@ -194,7 +194,7 @@ fn test_seurat_v4_bmcite_multi_assay_read() {
 
     // bmcite contains R closures (CLOSXP type 3) in the commands slot
     // CrossCell cannot parse these, so we expect an error
-    let result = read_seurat_direct(path);
+    let result = read_seurat_direct(path, false);
     
     match result {
         Ok(data) => {
@@ -230,7 +230,7 @@ fn test_seurat_v4_sshippo_spatial_read() {
         return;
     }
 
-    let result = read_seurat_direct(path).expect("Failed to read Seurat V4 ssHippo");
+    let result = read_seurat_direct(path, false).expect("Failed to read Seurat V4 ssHippo");
     
     // Verify version detection (V3 and V4 both use Legacy Assay format)
     assert!(
@@ -278,7 +278,7 @@ fn test_seurat_v5_pbmc3k_read() {
         return;
     }
 
-    let result = read_seurat_direct(path);
+    let result = read_seurat_direct(path, false);
     
     match result {
         Ok(data) => {
@@ -329,7 +329,7 @@ fn test_seurat_v5_panc8_read() {
         return;
     }
 
-    let result = read_seurat_direct(path);
+    let result = read_seurat_direct(path, false);
     
     match result {
         Ok(data) => {
@@ -364,7 +364,7 @@ fn test_seurat_v5_sshippo_spatial_read() {
         return;
     }
 
-    let result = read_seurat_direct(path);
+    let result = read_seurat_direct(path, false);
     
     match result {
         Ok(data) => {
@@ -413,7 +413,7 @@ fn test_seurat_v4_thp1_eccite_multi_assay_read() {
         return;
     }
 
-    let result = read_seurat_direct(path);
+    let result = read_seurat_direct(path, false);
     
     match result {
         Ok(data) => {
@@ -461,7 +461,7 @@ fn test_seurat_v4_metadata_columns() {
         return;
     }
 
-    let result = read_seurat_direct(path).expect("Failed to read Seurat V4 pbmc3k");
+    let result = read_seurat_direct(path, false).expect("Failed to read Seurat V4 pbmc3k");
     
     // Verify cell metadata has expected structure
     let cell_meta = &result.data.cell_metadata;
@@ -486,7 +486,7 @@ fn test_seurat_v5_metadata_columns() {
         return;
     }
 
-    let result = read_seurat_direct(path);
+    let result = read_seurat_direct(path, false);
     
     match result {
         Ok(data) => {
@@ -523,7 +523,7 @@ fn test_expression_matrix_sparsity() {
         return;
     }
 
-    let result = read_seurat_direct(path).expect("Failed to read Seurat V4 pbmc3k");
+    let result = read_seurat_direct(path, false).expect("Failed to read Seurat V4 pbmc3k");
     
     // Single-cell data should be highly sparse (typically 90-98%)
     let sparsity = calculate_sparsity(&result.data.expression);
@@ -560,7 +560,7 @@ fn test_all_seurat_v4_datasets() {
             continue;
         }
         
-        let result = read_seurat_direct(path)
+        let result = read_seurat_direct(path, false)
             .unwrap_or_else(|e| panic!("Failed to read {}: {}", dataset.name, e));
         
         assert_eq!(
@@ -596,7 +596,7 @@ fn test_all_seurat_v5_datasets() {
             continue;
         }
         
-        let result = read_seurat_direct(path)
+        let result = read_seurat_direct(path, false)
             .unwrap_or_else(|e| panic!("Failed to read {}: {}", dataset.name, e));
         
         assert_eq!(

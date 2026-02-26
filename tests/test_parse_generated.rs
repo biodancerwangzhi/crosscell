@@ -19,6 +19,7 @@ fn test_parse_file(path: &Path) -> Result<String, String> {
 }
 
 #[test]
+#[ignore] // 耗时 ~12 分钟（debug 模式解析 42 个真实 RDS），用 --ignored 手动触发
 fn test_parse_all_generated_rds() {
     let generated_dir = Path::new("data/generated");
     if !generated_dir.exists() {

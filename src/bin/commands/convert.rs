@@ -68,6 +68,10 @@ pub fn run(
     temp_dir: Option<PathBuf>,
     _direct: bool,
     simplify_first: bool,
+    normalize: bool,
+    top_genes: Option<usize>,
+    gene_id_column: Option<String>,
+    keep_layers: bool,
 ) -> Result<()> {
     let start_time = Instant::now();
     let registry = create_default_registry();
@@ -233,7 +237,7 @@ pub fn run(
         // Try direct reading for Seurat files first
         progress.update_message("parsing Seurat object structure");
         
-        match read_seurat_direct(&input) {
+        match read_seurat_direct(&input, keep_layers) {
             Ok(result) => {
                 // Show version and skipped components
                 let version_str = match result.version {
@@ -392,6 +396,34 @@ pub fn run(
     } else {
         None
     };
+
+    // Apply AI-Ready transforms (normalize → top-genes → gene-id-column)
+    if normalize {
+        info!("Applying library-size normalization + log1p");
+        ir_data.expression = crosscell::transform::normalize_library_size(&ir_data.expression)
+            .map_err(|e| anyhow::anyhow!("Normalization failed: {}", e))?;
+        // Also normalize layers if present
+        if let Some(ref mut layers) = ir_data.layers {
+            for (name, matrix) in layers.iter_mut() {
+                match crosscell::transform::normalize_library_size(matrix) {
+                    Ok(normalized) => *matrix = normalized,
+                    Err(e) => warn!("Skipping normalization for layer '{}': {}", name, e),
+                }
+            }
+        }
+    }
+
+    if let Some(n) = top_genes {
+        info!("Selecting top {} variable genes", n);
+        crosscell::transform::select_top_variable_genes(&mut ir_data, n)
+            .map_err(|e| anyhow::anyhow!("Gene selection failed: {}", e))?;
+    }
+
+    if let Some(ref col) = gene_id_column {
+        info!("Applying gene ID column: {}", col);
+        crosscell::transform::apply_gene_id_column(&mut ir_data, col)
+            .map_err(|e| anyhow::anyhow!("Gene ID replacement failed: {}", e))?;
+    }
 
     // Stage 3: Convert format (prepare for writing)
     progress.next_stage();

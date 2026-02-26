@@ -1,7 +1,0 @@
-# SeuratData 数据包目录
-# 
-# 此目录用于存放：
-# 1. export_download_links.R 生成的链接文件
-# 2. IDM 下载的 SeuratData .tar.gz 数据包
-#
-# 注意：大文件不要提交到 git

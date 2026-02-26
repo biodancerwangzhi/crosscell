@@ -1,0 +1,26 @@
+Feature,CrossCell,Zellkonverter,anndataR,convert2anndata,easySCF,SeuratDisk,sceasy
+Language,Rust,R (basilisk→Python),R (hdf5r),R (reticulate→Python),R+Python,R (hdf5r),R (reticulate→Python)
+License,MIT,GPL-3,MIT,MIT,MIT,GPL-3,GPL-3
+Last Updated,2026,2025,2025,2023,2022,2022 (archived),2021
+RDS→H5AD,✓,✓,✓,✓,✓,✓ (via h5Seurat),✓
+H5AD→RDS,✓,~¹,✗,✗,✗²,✗,~³
+Seurat V4 (Assay),✓,✓,✓,✗⁴,✓,✓,✓
+Seurat V5 (Assay5),✓,✓,✓,✓,✓,✗⁵,✗⁵
+Split Layers (V5),✓,✗,✗,✗,✗,✗,✗
+No R Required,✓,✗,✗,✗,✗,✗,✗
+No Python Required,✓,✗,✓,✗,✗,✓,✗
+Standalone CLI,✓,✗,✗,✗,✗,✗,✗
+Python API (PyO3),✓,✗,✗,✗,✗,✗,✗
+R API (extendr),✓,✗,✗,✗,✗,✗,✗
+Type Fidelity (Int32 preserved),✓,✗⁶,~,✗⁶,~,✗,✗
+CELLxGENE Schema Validation,✓,✗⁶,✗,✗⁶,✗,✗,✗
+Streaming I/O (>100k cells),✓,✗,✗,✗,✗,✗,✗
+Dependencies,0 (static binary),47+,25+,18+,15+,12+,20+
+
+Notes:
+¹ Zellkonverter H5AD→RDS: readH5AD 13/13 OK but as.Seurat() default 0/13 — requires manual workaround (counts="X"); 12/13 with workaround
+² easySCF H5AD→RDS: Python step 10/13 OK but R step 0/10 — schema incompatibility between easySCFpy and easySCFr
+³ sceasy H5AD→RDS: partial support via loomR intermediate; unreliable
+⁴ convert2anndata V4: GetAssayData(slot=) deprecated in SeuratObject 5.0.0; all V4 objects fail
+⁵ SeuratDisk/sceasy: archived/unmaintained; no Seurat V5 support
+⁶ FFI type degradation: R integer→reticulate→NumPy float64; bool→int breaks CELLxGENE schema validation

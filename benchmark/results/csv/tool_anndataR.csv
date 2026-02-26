@@ -1,0 +1,283 @@
+tool,direction,test_id,dataset,file,seurat_version,type,n_cells,n_genes,status,conversion_time_seconds,peak_memory_mb,output_size_mb,error
+anndataR,rds_to_h5ad,v4_pbmc3k_raw,pbmc3k,,V4,raw,2700,13714,success,5.72,646.6,,
+anndataR,rds_to_h5ad,v4_pbmc3k_processed,pbmc3k,,V4,processed,2700,13714,success,7.025,712.3,,
+anndataR,rds_to_h5ad,v5_pbmc3k_raw,pbmc3k,,V5,raw,2700,13714,success,5.27,586.0,,
+anndataR,rds_to_h5ad,v5_pbmc3k_processed,pbmc3k,,V5,processed,2700,13714,success,7.05,706.1,,
+anndataR,rds_to_h5ad,v4_stxKidney_raw,stxKidney,,,,,,failed,,,,"Loading required package: SeuratObject
+Loading required package: sp
+
+Attaching package: ‘SeuratObject’
+
+The following objects are masked from ‘package:base’:
+
+    intersect, t
+
+Validating object structure
+Updating object slots
+Ensuring keys are in the proper structure
+Warning: Assay Spatial changing from Assay to Assay
+Error in slot(object = object, name = ""key"") : 
+  no slot of name ""key"" for this object of class ""SliceImage""
+Calls: UpdateSeuratObject
+Execution halted
+Command exited with non-zero status 1"
+anndataR,rds_to_h5ad,v5_stxKidney_raw,stxKidney,,V5,raw,1438,31053,success,6.846,939.1,,
+anndataR,rds_to_h5ad,v4_celegans_raw,celegans.embryo,,V4,raw,6188,20222,success,7.948,861.8,,
+anndataR,rds_to_h5ad,v4_celegans_processed,celegans.embryo,,V4,processed,6188,20222,success,10.327,1028.3,,
+anndataR,rds_to_h5ad,v5_celegans_raw,celegans.embryo,,V5,raw,6188,20222,success,6.792,792.7,,
+anndataR,rds_to_h5ad,v5_celegans_processed,celegans.embryo,,V5,processed,6188,20222,success,9.606,1027.7,,
+anndataR,rds_to_h5ad,v4_cbmc_raw,cbmc,,V4,raw,8617,20501,success,10.422,1134.0,,
+anndataR,rds_to_h5ad,v4_cbmc_processed,cbmc,,V4,processed,8617,20501,success,13.954,1399.1,,
+anndataR,rds_to_h5ad,v5_cbmc_raw,cbmc,,V5,raw,8617,20501,success,8.133,985.4,,
+anndataR,rds_to_h5ad,v5_cbmc_processed,cbmc,,V5,processed,8617,20501,success,12.464,1278.9,,
+anndataR,rds_to_h5ad,v4_ifnb_raw,ifnb,,V4,raw,13999,14053,success,9.91,1136.9,,
+anndataR,rds_to_h5ad,v4_ifnb_processed,ifnb,,V4,processed,13999,14053,success,13.35,1605.1,,
+anndataR,rds_to_h5ad,v5_ifnb_raw,ifnb,,V5,raw,13999,14053,success,9.039,1054.4,,
+anndataR,rds_to_h5ad,v5_ifnb_processed,ifnb,,V5,processed,13999,14053,success,12.577,1497.5,,
+anndataR,rds_to_h5ad,v4_panc8_raw,panc8,,V4,raw,14890,34363,success,31.189,4832.5,,
+anndataR,rds_to_h5ad,v4_panc8_processed,panc8,,V4,processed,14890,34363,success,36.773,5122.6,,
+anndataR,rds_to_h5ad,v5_panc8_raw,panc8,,V5,raw,14890,34363,success,24.583,3627.8,,
+anndataR,rds_to_h5ad,v5_panc8_processed,panc8,,V5,processed,14890,34363,success,48.336,5136.4,,
+anndataR,rds_to_h5ad,v4_thp1_raw,thp1.eccite,,V4,raw,20729,18649,success,55.113,5474.3,,
+anndataR,rds_to_h5ad,v4_thp1_processed,thp1.eccite,,V4,processed,20729,18649,success,66.458,6180.1,,
+anndataR,rds_to_h5ad,v5_thp1_raw,thp1.eccite,,V5,raw,20729,18649,success,26.687,4739.1,,
+anndataR,rds_to_h5ad,v5_thp1_processed,thp1.eccite,,V5,processed,20729,18649,success,46.173,5951.5,,
+anndataR,rds_to_h5ad,v4_bmcite_raw,bmcite,,V4,raw,30672,17009,success,23.811,3024.1,,
+anndataR,rds_to_h5ad,v4_bmcite_processed,bmcite,,V4,processed,30672,17009,success,29.325,4046.1,,
+anndataR,rds_to_h5ad,v5_bmcite_raw,bmcite,,V5,raw,30672,17009,success,14.05,2128.6,,
+anndataR,rds_to_h5ad,v5_bmcite_processed,bmcite,,V5,processed,30672,17009,success,25.931,3070.3,,
+anndataR,rds_to_h5ad,v4_pbmcsca_raw,pbmcsca,,V4,raw,31021,33694,success,20.507,2833.6,,
+anndataR,rds_to_h5ad,v4_pbmcsca_processed,pbmcsca,,V4,processed,31021,33694,success,26.936,3569.4,,
+anndataR,rds_to_h5ad,v5_pbmcsca_raw,pbmcsca,,V5,raw,31021,33694,success,14.996,2157.2,,
+anndataR,rds_to_h5ad,v5_pbmcsca_processed,pbmcsca,,V5,processed,31021,33694,success,25.532,3113.4,,
+anndataR,rds_to_h5ad,v4_hcabm40k_raw,hcabm40k,,V4,raw,40000,17369,success,26.449,3882.5,,
+anndataR,rds_to_h5ad,v4_hcabm40k_processed,hcabm40k,,V4,processed,40000,17369,success,33.814,4603.8,,
+anndataR,rds_to_h5ad,v5_hcabm40k_raw,hcabm40k,,V5,raw,40000,17369,success,16.799,2909.9,,
+anndataR,rds_to_h5ad,v5_hcabm40k_processed,hcabm40k,,V5,processed,40000,17369,success,33.185,4157.5,,
+anndataR,rds_to_h5ad,v4_ssHippo_raw,ssHippo,,V4,raw,53173,23264,success,18.398,2385.4,,
+anndataR,rds_to_h5ad,v4_ssHippo_processed,ssHippo,,V4,processed,53173,23264,success,26.968,4109.0,,
+anndataR,rds_to_h5ad,v5_ssHippo_raw,ssHippo,,V5,raw,53173,23264,success,12.035,1813.0,,
+anndataR,rds_to_h5ad,v5_ssHippo_processed,ssHippo,,V5,processed,53173,23264,success,28.502,3665.3,,
+anndataR,h5ad_to_rds,scanpy_pbmc3k,scanpy_pbmc3k,,,,,,failed,,,,"Loading required package: SeuratObject
+Loading required package: sp
+
+Attaching package: ‘SeuratObject’
+
+The following objects are masked from ‘package:base’:
+
+    intersect, t
+
+Error in `initialize()`:
+! File '/benchmark/data/generated/scanpy_pbmc3k.h5ad' is not a valid
+  H5AD file.
+ℹ Either the file is not an H5AD file or it was created with anndata<0.8.0.
+Backtrace:
+    ▆
+ 1. └─anndataR::read_h5ad(""/benchmark/data/generated/scanpy_pbmc3k.h5ad"")
+ 2.   └─HDF5AnnData$new(path, mode = mode)
+ 3.     └─anndataR (local) initialize(...)
+ 4.       └─cli::cli_abort(...)
+ 5.         └─rlang::abort(...)
+Execution halted
+Command exited with non-zero status 1"
+anndataR,h5ad_to_rds,scanpy_pbmc3k_processed,scanpy_pbmc3k_processed,,,,,,failed,,,,"Loading required package: SeuratObject
+Loading required package: sp
+
+Attaching package: ‘SeuratObject’
+
+The following objects are masked from ‘package:base’:
+
+    intersect, t
+
+Error in `initialize()`:
+! File '/benchmark/data/generated/scanpy_pbmc3k_processed.h5ad' is not a
+  valid H5AD file.
+ℹ Either the file is not an H5AD file or it was created with anndata<0.8.0.
+Backtrace:
+    ▆
+ 1. └─anndataR::read_h5ad(""/benchmark/data/generated/scanpy_pbmc3k_processed.h5ad"")
+ 2.   └─HDF5AnnData$new(path, mode = mode)
+ 3.     └─anndataR (local) initialize(...)
+ 4.       └─cli::cli_abort(...)
+ 5.         └─rlang::abort(...)
+Execution halted
+Command exited with non-zero status 1"
+anndataR,h5ad_to_rds,scvelo_pancreas,scvelo_pancreas,,,,,,failed,,,,"Loading required package: SeuratObject
+Loading required package: sp
+
+Attaching package: ‘SeuratObject’
+
+The following objects are masked from ‘package:base’:
+
+    intersect, t
+
+Error in `initialize()`:
+! File '/benchmark/data/generated/scvelo_pancreas.h5ad' is not a valid
+  H5AD file.
+ℹ Either the file is not an H5AD file or it was created with anndata<0.8.0.
+Backtrace:
+    ▆
+ 1. └─anndataR::read_h5ad(""/benchmark/data/generated/scvelo_pancreas.h5ad"")
+ 2.   └─HDF5AnnData$new(path, mode = mode)
+ 3.     └─anndataR (local) initialize(...)
+ 4.       └─cli::cli_abort(...)
+ 5.         └─rlang::abort(...)
+Execution halted
+Command exited with non-zero status 1"
+anndataR,h5ad_to_rds,scvelo_dentategyrus,scvelo_dentategyrus,,,,,,failed,,,,"Loading required package: SeuratObject
+Loading required package: sp
+
+Attaching package: ‘SeuratObject’
+
+The following objects are masked from ‘package:base’:
+
+    intersect, t
+
+Error in `initialize()`:
+! File '/benchmark/data/generated/scvelo_dentategyrus.h5ad' is not a
+  valid H5AD file.
+ℹ Either the file is not an H5AD file or it was created with anndata<0.8.0.
+Backtrace:
+    ▆
+ 1. └─anndataR::read_h5ad(""/benchmark/data/generated/scvelo_dentategyrus.h5ad"")
+ 2.   └─HDF5AnnData$new(path, mode = mode)
+ 3.     └─anndataR (local) initialize(...)
+ 4.       └─cli::cli_abort(...)
+ 5.         └─rlang::abort(...)
+Execution halted
+Command exited with non-zero status 1"
+anndataR,h5ad_to_rds,squidpy_imc,squidpy_imc,,,,,,failed,,,,"Loading required package: SeuratObject
+Loading required package: sp
+
+Attaching package: ‘SeuratObject’
+
+The following objects are masked from ‘package:base’:
+
+    intersect, t
+
+Error in `initialize()`:
+! File '/benchmark/data/generated/squidpy_imc.h5ad' is not a valid H5AD
+  file.
+ℹ Either the file is not an H5AD file or it was created with anndata<0.8.0.
+Backtrace:
+    ▆
+ 1. └─anndataR::read_h5ad(""/benchmark/data/generated/squidpy_imc.h5ad"")
+ 2.   └─HDF5AnnData$new(path, mode = mode)
+ 3.     └─anndataR (local) initialize(...)
+ 4.       └─cli::cli_abort(...)
+ 5.         └─rlang::abort(...)
+Execution halted
+Command exited with non-zero status 1"
+anndataR,h5ad_to_rds,squidpy_mibitof,squidpy_mibitof,,,,,,failed,,,,"Loading required package: SeuratObject
+Loading required package: sp
+
+Attaching package: ‘SeuratObject’
+
+The following objects are masked from ‘package:base’:
+
+    intersect, t
+
+Error in `initialize()`:
+! File '/benchmark/data/generated/squidpy_mibitof.h5ad' is not a valid
+  H5AD file.
+ℹ Either the file is not an H5AD file or it was created with anndata<0.8.0.
+Backtrace:
+    ▆
+ 1. └─anndataR::read_h5ad(""/benchmark/data/generated/squidpy_mibitof.h5ad"")
+ 2.   └─HDF5AnnData$new(path, mode = mode)
+ 3.     └─anndataR (local) initialize(...)
+ 4.       └─cli::cli_abort(...)
+ 5.         └─rlang::abort(...)
+Execution halted
+Command exited with non-zero status 1"
+anndataR,h5ad_to_rds,squidpy_visium_hne,squidpy_visium_hne,,,,,,failed,,,,"Loading required package: SeuratObject
+Loading required package: sp
+
+Attaching package: ‘SeuratObject’
+
+The following objects are masked from ‘package:base’:
+
+    intersect, t
+
+Error in `initialize()`:
+! File '/benchmark/data/generated/squidpy_visium_hne.h5ad' is not a
+  valid H5AD file.
+ℹ Either the file is not an H5AD file or it was created with anndata<0.8.0.
+Backtrace:
+    ▆
+ 1. └─anndataR::read_h5ad(""/benchmark/data/generated/squidpy_visium_hne.h5ad"")
+ 2.   └─HDF5AnnData$new(path, mode = mode)
+ 3.     └─anndataR (local) initialize(...)
+ 4.       └─cli::cli_abort(...)
+ 5.         └─rlang::abort(...)
+Execution halted
+Command exited with non-zero status 1"
+anndataR,h5ad_to_rds,cellxgene_pbmc_15k,cellxgene_pbmc_15k,,,,14783,17222,success,23.103,1498.0,,
+anndataR,h5ad_to_rds,squidpy_seqfish,squidpy_seqfish,,,,,,failed,,,,"Loading required package: SeuratObject
+Loading required package: sp
+
+Attaching package: ‘SeuratObject’
+
+The following objects are masked from ‘package:base’:
+
+    intersect, t
+
+Error in `initialize()`:
+! File '/benchmark/data/generated/squidpy_seqfish.h5ad' is not a valid
+  H5AD file.
+ℹ Either the file is not an H5AD file or it was created with anndata<0.8.0.
+Backtrace:
+    ▆
+ 1. └─anndataR::read_h5ad(""/benchmark/data/generated/squidpy_seqfish.h5ad"")
+ 2.   └─HDF5AnnData$new(path, mode = mode)
+ 3.     └─anndataR (local) initialize(...)
+ 4.       └─cli::cli_abort(...)
+ 5.         └─rlang::abort(...)
+Execution halted
+Command exited with non-zero status 1"
+anndataR,h5ad_to_rds,cellxgene_heart_23k,cellxgene_heart_23k,,,,23483,32330,success,46.584,2919.3,,
+anndataR,h5ad_to_rds,cellxgene_brain_40k,cellxgene_brain_40k,,,,40165,58232,success,257.287,14265.4,,
+anndataR,h5ad_to_rds,squidpy_slideseqv2,squidpy_slideseqv2,,,,,,failed,,,,"Loading required package: SeuratObject
+Loading required package: sp
+
+Attaching package: ‘SeuratObject’
+
+The following objects are masked from ‘package:base’:
+
+    intersect, t
+
+Error in `initialize()`:
+! File '/benchmark/data/generated/squidpy_slideseqv2.h5ad' is not a
+  valid H5AD file.
+ℹ Either the file is not an H5AD file or it was created with anndata<0.8.0.
+Backtrace:
+    ▆
+ 1. └─anndataR::read_h5ad(""/benchmark/data/generated/squidpy_slideseqv2.h5ad"")
+ 2.   └─HDF5AnnData$new(path, mode = mode)
+ 3.     └─anndataR (local) initialize(...)
+ 4.       └─cli::cli_abort(...)
+ 5.         └─rlang::abort(...)
+Execution halted
+Command exited with non-zero status 1"
+anndataR,h5ad_to_rds,squidpy_merfish,squidpy_merfish,,,,,,failed,,,,"Loading required package: SeuratObject
+Loading required package: sp
+
+Attaching package: ‘SeuratObject’
+
+The following objects are masked from ‘package:base’:
+
+    intersect, t
+
+Error in `initialize()`:
+! File '/benchmark/data/generated/squidpy_merfish.h5ad' is not a valid
+  H5AD file.
+ℹ Either the file is not an H5AD file or it was created with anndata<0.8.0.
+Backtrace:
+    ▆
+ 1. └─anndataR::read_h5ad(""/benchmark/data/generated/squidpy_merfish.h5ad"")
+ 2.   └─HDF5AnnData$new(path, mode = mode)
+ 3.     └─anndataR (local) initialize(...)
+ 4.       └─cli::cli_abort(...)
+ 5.         └─rlang::abort(...)
+Execution halted
+Command exited with non-zero status 1"

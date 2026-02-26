@@ -1,0 +1,324 @@
+{
+  "rds_roundtrip": [
+    {
+      "pearson_r": 1.0,
+      "spearman_rho": 1.0,
+      "max_diff": 0.0,
+      "mean_diff": 0.0,
+      "rmse": 0.0,
+      "mse": 0.0,
+      "exact_match_pct": 100.0,
+      "dataset": "bmcite",
+      "status": "success",
+      "direction": "rds_roundtrip"
+    },
+    {
+      "pearson_r": 1.0,
+      "spearman_rho": 1.0,
+      "max_diff": 0.0,
+      "mean_diff": 0.0,
+      "rmse": 0.0,
+      "mse": 0.0,
+      "exact_match_pct": 100.0,
+      "dataset": "cbmc",
+      "status": "success",
+      "direction": "rds_roundtrip"
+    },
+    {
+      "pearson_r": 1.0,
+      "spearman_rho": 0.9999999999999998,
+      "max_diff": 0.0,
+      "mean_diff": 0.0,
+      "rmse": 0.0,
+      "mse": 0.0,
+      "exact_match_pct": 100.0,
+      "dataset": "celegans.embryo",
+      "status": "success",
+      "direction": "rds_roundtrip"
+    },
+    {
+      "pearson_r": 1.0,
+      "spearman_rho": 1.0,
+      "max_diff": 0.0,
+      "mean_diff": 0.0,
+      "rmse": 0.0,
+      "mse": 0.0,
+      "exact_match_pct": 100.0,
+      "dataset": "hcabm40k",
+      "status": "success",
+      "direction": "rds_roundtrip"
+    },
+    {
+      "pearson_r": 1.0,
+      "spearman_rho": 1.0,
+      "max_diff": 0.0,
+      "mean_diff": 0.0,
+      "rmse": 0.0,
+      "mse": 0.0,
+      "exact_match_pct": 100.0,
+      "dataset": "ifnb",
+      "status": "success",
+      "direction": "rds_roundtrip"
+    },
+    {
+      "pearson_r": 1.0,
+      "spearman_rho": 0.9999999999999999,
+      "max_diff": 0.0,
+      "mean_diff": 0.0,
+      "rmse": 0.0,
+      "mse": 0.0,
+      "exact_match_pct": 100.0,
+      "dataset": "panc8",
+      "status": "success",
+      "direction": "rds_roundtrip"
+    }
+  ],
+  "h5ad_roundtrip": [
+    {
+      "pearson_r": 0.9999999704362889,
+      "spearman_rho": 1.0,
+      "max_diff": 0.0,
+      "mean_diff": 0.0,
+      "rmse": 0.0,
+      "mse": 0.0,
+      "exact_match_pct": 100.0,
+      "dataset": "cellxgene_brain_40k",
+      "status": "success",
+      "direction": "h5ad_roundtrip"
+    },
+    {
+      "pearson_r": 0.9999999897952494,
+      "spearman_rho": 1.0,
+      "max_diff": 0.0,
+      "mean_diff": 0.0,
+      "rmse": 0.0,
+      "mse": 0.0,
+      "exact_match_pct": 100.0,
+      "dataset": "cellxgene_heart_23k",
+      "status": "success",
+      "direction": "h5ad_roundtrip"
+    },
+    {
+      "pearson_r": 0.9999999814568609,
+      "spearman_rho": 1.0,
+      "max_diff": 0.0,
+      "mean_diff": 0.0,
+      "rmse": 0.0,
+      "mse": 0.0,
+      "exact_match_pct": 100.0,
+      "dataset": "cellxgene_pbmc_15k",
+      "status": "success",
+      "direction": "h5ad_roundtrip"
+    },
+    {
+      "pearson_r": 1.0000000044340487,
+      "spearman_rho": 0.9999999999999999,
+      "max_diff": 0.0,
+      "mean_diff": 0.0,
+      "rmse": 0.0,
+      "mse": 0.0,
+      "exact_match_pct": 100.0,
+      "dataset": "scanpy_pbmc3k",
+      "status": "success",
+      "direction": "h5ad_roundtrip"
+    },
+    {
+      "pearson_r": 1.0000000451762705,
+      "spearman_rho": 1.0,
+      "max_diff": 0.0,
+      "mean_diff": 0.0,
+      "rmse": 0.0,
+      "mse": 0.0,
+      "exact_match_pct": 100.0,
+      "dataset": "scanpy_pbmc3k_processed",
+      "status": "success",
+      "direction": "h5ad_roundtrip"
+    },
+    {
+      "pearson_r": 1.0000000069487467,
+      "spearman_rho": 0.9999999999999999,
+      "max_diff": 0.0,
+      "mean_diff": 0.0,
+      "rmse": 0.0,
+      "mse": 0.0,
+      "exact_match_pct": 100.0,
+      "dataset": "scvelo_dentategyrus",
+      "status": "success",
+      "direction": "h5ad_roundtrip"
+    }
+  ],
+  "tools_fidelity": [
+    {
+      "pearson_r": 1.0,
+      "spearman_rho": 1.0,
+      "max_diff": 0.0,
+      "mean_diff": 0.0,
+      "rmse": 0.0,
+      "mse": 0.0,
+      "exact_match_pct": 100.0,
+      "tool": "CrossCell",
+      "dataset": "bmcite"
+    },
+    {
+      "pearson_r": 1.0,
+      "spearman_rho": 1.0,
+      "max_diff": 0.0,
+      "mean_diff": 0.0,
+      "rmse": 0.0,
+      "mse": 0.0,
+      "exact_match_pct": 100.0,
+      "tool": "Zellkonverter",
+      "dataset": "bmcite"
+    },
+    {
+      "tool": "anndataR",
+      "dataset": "bmcite",
+      "pearson_r": 0
+    },
+    {
+      "pearson_r": 1.0000000130469722,
+      "spearman_rho": 1.0,
+      "max_diff": 0.0,
+      "mean_diff": 0.0,
+      "rmse": 0.0,
+      "mse": 0.0,
+      "exact_match_pct": 100.0,
+      "tool": "convert2anndata",
+      "dataset": "bmcite"
+    },
+    {
+      "tool": "easySCF",
+      "dataset": "bmcite",
+      "pearson_r": 0
+    },
+    {
+      "pearson_r": 1.0,
+      "spearman_rho": 1.0,
+      "max_diff": 0.0,
+      "mean_diff": 0.0,
+      "rmse": 0.0,
+      "mse": 0.0,
+      "exact_match_pct": 100.0,
+      "tool": "CrossCell",
+      "dataset": "cbmc"
+    },
+    {
+      "pearson_r": 1.0,
+      "spearman_rho": 1.0,
+      "max_diff": 0.0,
+      "mean_diff": 0.0,
+      "rmse": 0.0,
+      "mse": 0.0,
+      "exact_match_pct": 100.0,
+      "tool": "Zellkonverter",
+      "dataset": "cbmc"
+    },
+    {
+      "tool": "anndataR",
+      "dataset": "cbmc",
+      "pearson_r": 0
+    },
+    {
+      "pearson_r": 0.9999999909214395,
+      "spearman_rho": 1.0,
+      "max_diff": 0.0,
+      "mean_diff": 0.0,
+      "rmse": 0.0,
+      "mse": 0.0,
+      "exact_match_pct": 100.0,
+      "tool": "convert2anndata",
+      "dataset": "cbmc"
+    },
+    {
+      "tool": "easySCF",
+      "dataset": "cbmc",
+      "pearson_r": 0
+    },
+    {
+      "pearson_r": 1.0,
+      "spearman_rho": 0.9999999999999998,
+      "max_diff": 0.0,
+      "mean_diff": 0.0,
+      "rmse": 0.0,
+      "mse": 0.0,
+      "exact_match_pct": 100.0,
+      "tool": "CrossCell",
+      "dataset": "celegans.embryo"
+    },
+    {
+      "pearson_r": 1.0,
+      "spearman_rho": 0.9999999999999998,
+      "max_diff": 0.0,
+      "mean_diff": 0.0,
+      "rmse": 0.0,
+      "mse": 0.0,
+      "exact_match_pct": 100.0,
+      "tool": "Zellkonverter",
+      "dataset": "celegans.embryo"
+    },
+    {
+      "tool": "anndataR",
+      "dataset": "celegans.embryo",
+      "pearson_r": 0
+    },
+    {
+      "pearson_r": 1.0000000036929242,
+      "spearman_rho": 0.9999999999999998,
+      "max_diff": 0.0,
+      "mean_diff": 0.0,
+      "rmse": 0.0,
+      "mse": 0.0,
+      "exact_match_pct": 100.0,
+      "tool": "convert2anndata",
+      "dataset": "celegans.embryo"
+    },
+    {
+      "tool": "easySCF",
+      "dataset": "celegans.embryo",
+      "pearson_r": 0
+    },
+    {
+      "pearson_r": 1.0,
+      "spearman_rho": 1.0,
+      "max_diff": 0.0,
+      "mean_diff": 0.0,
+      "rmse": 0.0,
+      "mse": 0.0,
+      "exact_match_pct": 100.0,
+      "tool": "CrossCell",
+      "dataset": "hcabm40k"
+    },
+    {
+      "pearson_r": 1.0,
+      "spearman_rho": 1.0,
+      "max_diff": 0.0,
+      "mean_diff": 0.0,
+      "rmse": 0.0,
+      "mse": 0.0,
+      "exact_match_pct": 100.0,
+      "tool": "Zellkonverter",
+      "dataset": "hcabm40k"
+    },
+    {
+      "tool": "anndataR",
+      "dataset": "hcabm40k",
+      "pearson_r": 0
+    },
+    {
+      "pearson_r": 0.9999999802089838,
+      "spearman_rho": 1.0,
+      "max_diff": 0.0,
+      "mean_diff": 0.0,
+      "rmse": 0.0,
+      "mse": 0.0,
+      "exact_match_pct": 100.0,
+      "tool": "convert2anndata",
+      "dataset": "hcabm40k"
+    },
+    {
+      "tool": "easySCF",
+      "dataset": "hcabm40k",
+      "pearson_r": 0
+    }
+  ]
+}

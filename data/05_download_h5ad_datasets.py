@@ -161,6 +161,7 @@ def download_squidpy_datasets(output_dir):
 def download_cellxgene_datasets(output_dir):
     """从 CELLxGENE Discover 下载中/大规模 H5AD 数据集"""
     datasets = [
+        # 原有数据集
         (
             "cellxgene_pbmc_15k.h5ad",
             "https://datasets.cellxgene.cziscience.com/5f93ba67-b129-4bd7-9d46-df4804225843.h5ad",
@@ -180,10 +181,184 @@ def download_cellxgene_datasets(output_dir):
     return [download_and_verify(f, u, d, output_dir) for f, u, d in datasets]
 
 
+def download_cellxgene_benchmark_datasets(output_dir):
+    """从 CELLxGENE Discover 下载分层采样的 benchmark 数据集
+    
+    数据集选择标准：
+    - 组织多样性：blood, lung, heart, kidney, gut, liver, brain, pancreas, skin, retina
+    - 技术多样性：10x 3' v2/v3, 10x 5', 10x multiome, scATAC-seq, Smart-seq2
+    - 规模多样性：10k-800k cells
+    - 疾病状态：normal + disease
+    """
+    datasets = [
+        # 1. Blood/PBMC - COVID-19 cohort (~836k cells, 10x 5' v1)
+        (
+            "cellxgene_combat_pbmc_836k.h5ad",
+            "https://datasets.cellxgene.cziscience.com/687c09ff-731a-4e3d-ac07-4c29c33a6338.h5ad",
+            "COMBAT COVID-19/sepsis/flu PBMC (~836k cells, blood, 10x 5' v1)",
+        ),
+        # 2. Lung - HLCA core (~585k cells, multi-assay)
+        (
+            "cellxgene_hlca_core_585k.h5ad",
+            "https://datasets.cellxgene.cziscience.com/4cb45d80-499a-48ae-a056-c71ac3552c94.h5ad",
+            "Human Lung Cell Atlas core (~585k cells, lung, multi-assay)",
+        ),
+        # 3. Heart - Adult human heart (~486k cells, 10x 3' v2/v3)
+        (
+            "cellxgene_heart_486k.h5ad",
+            "https://datasets.cellxgene.cziscience.com/a7f6822d-0e0e-451e-9858-af81392fcb9b.h5ad",
+            "Cells of the adult human heart (~486k cells, heart, 10x 3' v2/v3)",
+        ),
+        # 4. Kidney - scATAC-seq (~37k cells, 10x scATAC-seq)
+        (
+            "cellxgene_kidney_atacseq_37k.h5ad",
+            "https://datasets.cellxgene.cziscience.com/fa0f9f5e-e7fb-42a4-a801-3410b0923ccc.h5ad",
+            "Human kidney cortex snATAC-seq (~37k cells, kidney, 10x scATAC-seq)",
+        ),
+        # 5. Gut/Intestine - Intestinal tract atlas (~428k cells, 10x 3'/5' v2)
+        (
+            "cellxgene_gut_428k.h5ad",
+            "https://datasets.cellxgene.cziscience.com/f34d2b82-9265-4a73-bda4-852933bf2a8d.h5ad",
+            "Human intestinal tract atlas (~428k cells, gut, 10x 3'/5' v2)",
+        ),
+        # 6. Liver - Tabula Sapiens (~22k cells, Smart-seq2 + 10x 3' v3)
+        (
+            "cellxgene_tabula_liver_22k.h5ad",
+            "https://datasets.cellxgene.cziscience.com/62e4e805-9a9a-42ca-a6e7-85df258b382c.h5ad",
+            "Tabula Sapiens Liver (~22k cells, liver, Smart-seq2 + 10x)",
+        ),
+        # 7. Brain - Postnatal development multiome (~102k cells, 10x multiome)
+        (
+            "cellxgene_brain_multiome_102k.h5ad",
+            "https://datasets.cellxgene.cziscience.com/412352dd-a919-4d8e-9f74-e210627328b5.h5ad",
+            "Postnatal human brain development (~102k cells, brain, 10x multiome)",
+        ),
+        # 8. Brain - dlPFC transcriptome (~172k cells, 10x 3' v3)
+        (
+            "cellxgene_brain_dlpfc_172k.h5ad",
+            "https://datasets.cellxgene.cziscience.com/9198437d-f781-4215-bf4f-32c3177e57df.h5ad",
+            "Human dlPFC single-nucleus (~172k cells, brain, 10x 3' v3)",
+        ),
+        # 9. Pancreas - HCA harmonized (~122k cells, multi-assay)
+        (
+            "cellxgene_pancreas_122k.h5ad",
+            "https://datasets.cellxgene.cziscience.com/72e6a74d-8804-4305-81d7-a12b93f2ac0d.h5ad",
+            "HCA Pancreas harmonized (~122k cells, pancreas, multi-assay)",
+        ),
+        # 10. Skin/Tumor - Basal cell carcinoma (~10k cells, multi-assay)
+        (
+            "cellxgene_skin_bcc_10k.h5ad",
+            "https://datasets.cellxgene.cziscience.com/a6670528-1e94-4920-a78f-49a76b96ca9e.h5ad",
+            "Skin basal cell carcinoma (~10k cells, skin, multi-assay)",
+        ),
+        # 11. Retina - Adult human retina (~244k cells, 10x 3' v3)
+        (
+            "cellxgene_retina_244k.h5ad",
+            "https://datasets.cellxgene.cziscience.com/d4f1a799-9616-4089-90e9-f3fe843f01e5.h5ad",
+            "Adult human retina all cell types (~244k cells, retina, 10x 3' v3)",
+        ),
+    ]
+    
+    results = []
+    for filename, url, desc in datasets:
+        # 根据文件大小选择验证方式
+        if "836k" in filename or "585k" in filename or "486k" in filename or "428k" in filename or "244k" in filename:
+            # 大文件用轻量验证
+            results.append(download_and_verify_large(filename, url, desc, output_dir))
+        else:
+            results.append(download_and_verify(filename, url, desc, output_dir))
+    return results
+
+
+def download_cellxgene_large_datasets(output_dir):
+    """从 CELLxGENE Discover 下载百万级 H5AD 数据集（用于 scalability benchmark）"""
+    datasets = [
+        (
+            "cellxgene_eqtl_autoimmune_1.2M.h5ad",
+            "https://datasets.cellxgene.cziscience.com/a3f5651f-cd1a-4d26-8165-74964b79b4f2.h5ad",
+            "Single-cell eQTL autoimmune disease (~1.25M cells, blood, 10x 3' v2, ~4GB)",
+        ),
+        (
+            "cellxgene_immune_1.8M.h5ad",
+            "https://datasets.cellxgene.cziscience.com/39832a61-3df1-4f1f-971d-3c2a74539047.h5ad",
+            "Human Immune Health Atlas (~1.82M cells, blood, ~9GB)",
+        ),
+    ]
+    return [download_and_verify_large(f, u, d, output_dir) for f, u, d in datasets]
+
+
+def download_and_verify_large(filename, url, desc, output_dir):
+    """下载大型 h5ad 文件（跳过 anndata 验证以节省内存）"""
+    outpath = os.path.join(output_dir, filename)
+    if os.path.exists(outpath):
+        size = file_info(outpath)
+        print(f"  ⏭️  已存在: {filename} ({size:.1f} MB)")
+        return {"file": filename, "status": "skipped", "size_mb": round(size, 2)}
+
+    print(f"  📥 下载 {desc}...")
+    print(f"     ⚠️  大文件下载，可能需要较长时间...")
+    try:
+        if not curl_download_large(url, outpath):
+            raise RuntimeError(f"下载失败: {url}")
+
+        size = file_info(outpath)
+        # 大文件不用 anndata 验证（避免内存不足），只检查 HDF5 头部
+        import h5py
+        with h5py.File(outpath, "r") as f:
+            n_obs = f["obs"].attrs.get("_index", f["obs"].attrs.get("encoding-type", "unknown"))
+            keys = list(f.keys())
+        print(f"  ✅ {filename}: HDF5 keys={keys} ({size:.1f} MB)")
+        return {
+            "file": filename,
+            "status": "success",
+            "size_mb": round(size, 2),
+            "note": "large dataset, verified HDF5 structure only",
+        }
+    except Exception as e:
+        print(f"  ❌ {filename}: {e}")
+        return {"file": filename, "status": "failed", "error": str(e)}
+
+
+def curl_download_large(url, outpath):
+    """用 curl 下载大文件，增加超时和重试次数"""
+    tmp_path = outpath + ".tmp"
+    try:
+        max_attempts = 50
+        for attempt in range(1, max_attempts + 1):
+            cmd = [
+                "curl", "-L", "-C", "-",
+                "--retry", "10",
+                "--retry-delay", "5",
+                "--connect-timeout", "60",
+                "--max-time", "3600",
+                "-o", tmp_path,
+                url,
+            ]
+            result = subprocess.run(cmd, timeout=3900, capture_output=True, text=True)
+            if result.returncode == 0:
+                os.rename(tmp_path, outpath)
+                return True
+            if result.returncode in (56, 28, 18) and attempt < max_attempts:
+                print(f"    ⚠️  连接中断 (尝试 {attempt}/{max_attempts})，断点续传...")
+                continue
+            else:
+                print(f"    ❌ curl 退出码 {result.returncode}: {result.stderr[-200:] if result.stderr else ''}")
+                break
+
+        if os.path.exists(tmp_path):
+            os.remove(tmp_path)
+        return False
+    except Exception as e:
+        print(f"    ❌ curl 下载失败: {e}")
+        if os.path.exists(tmp_path):
+            os.remove(tmp_path)
+        return False
+
+
 def main():
     parser = argparse.ArgumentParser(description="下载 H5AD 基准测试数据集")
     parser.add_argument("--output-dir", default="/benchmark/data/generated")
-    parser.add_argument("--source", choices=["all", "scanpy", "scvelo", "squidpy", "cellxgene"], default="all")
+    parser.add_argument("--source", choices=["all", "scanpy", "scvelo", "squidpy", "cellxgene", "cellxgene-large", "cellxgene-benchmark"], default="all")
     args = parser.parse_args()
 
     ensure_dir(args.output_dir)
@@ -215,6 +390,16 @@ def main():
     if args.source in ("all", "cellxgene"):
         print("--- CELLxGENE 中/大规模数据集 ---")
         all_results["cellxgene"] = download_cellxgene_datasets(args.output_dir)
+        print()
+
+    if args.source == "cellxgene-large":
+        print("--- CELLxGENE 百万级数据集 (scalability benchmark) ---")
+        all_results["cellxgene-large"] = download_cellxgene_large_datasets(args.output_dir)
+        print()
+
+    if args.source in ("all", "cellxgene-benchmark"):
+        print("--- CELLxGENE 分层采样 benchmark 数据集 (11 datasets) ---")
+        all_results["cellxgene-benchmark"] = download_cellxgene_benchmark_datasets(args.output_dir)
         print()
 
     # 保存下载结果摘要

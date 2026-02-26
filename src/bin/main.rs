@@ -106,6 +106,22 @@ enum Commands {
         /// Use legacy simplify-first mode for Seurat files (requires R preprocessing)
         #[arg(long, conflicts_with = "direct")]
         simplify_first: bool,
+
+        /// Apply library-size normalization + log1p before writing output
+        #[arg(long)]
+        normalize: bool,
+
+        /// Select top N variable genes (by variance) before writing output
+        #[arg(long)]
+        top_genes: Option<usize>,
+
+        /// Use specified column from var as gene identifiers
+        #[arg(long)]
+        gene_id_column: Option<String>,
+
+        /// Preserve Seurat V5 split layers as separate AnnData layers instead of merging
+        #[arg(long)]
+        keep_layers: bool,
     },
 
     /// List all supported formats
@@ -147,6 +163,14 @@ enum Commands {
         /// Strict mode (fail on any difference)
         #[arg(long)]
         strict: bool,
+
+        /// Column name in obs for cluster labels (enables ARI/NMI calculation)
+        #[arg(long)]
+        cluster_column: Option<String>,
+
+        /// Validate against a known schema (e.g. cellxgene-v5)
+        #[arg(long)]
+        validate_schema: Option<String>,
     },
 
     /// Simplify Seurat object for conversion
@@ -218,6 +242,10 @@ fn main() {
             temp_dir,
             direct,
             simplify_first,
+            normalize,
+            top_genes,
+            gene_id_column,
+            keep_layers,
         } => convert::run(
             input,
             output,
@@ -235,6 +263,10 @@ fn main() {
             temp_dir,
             direct,
             simplify_first,
+            normalize,
+            top_genes,
+            gene_id_column,
+            keep_layers,
         ),
 
         Commands::Formats => {
@@ -254,7 +286,9 @@ fn main() {
             tolerance,
             output,
             strict,
-        } => validate::run(original, converted, tolerance, output, strict),
+            cluster_column,
+            validate_schema,
+        } => validate::run(original, converted, tolerance, output, strict, cluster_column, validate_schema),
 
         Commands::SimplifySeurat {
             input,

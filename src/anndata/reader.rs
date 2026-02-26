@@ -121,6 +121,8 @@ pub struct H5adInfo {
     pub obsp_names: Vec<String>,
     /// 成对矩阵名称列表（varp）
     pub varp_names: Vec<String>,
+    /// 基因加载矩阵名称列表（varm）
+    pub varm_names: Vec<String>,
     /// 是否包含空间数据
     pub has_spatial: bool,
     /// 文件大小（字节）
@@ -261,6 +263,12 @@ pub fn inspect_h5ad<P: AsRef<Path>>(path: P) -> Result<H5adInfo> {
     } else {
         Vec::new()
     };
+
+    let varm_names = if file.link_exists("varm") {
+        list_group_members(&file, "varm")?
+    } else {
+        Vec::new()
+    };
     
     // 检查空间数据
     let has_spatial = embedding_names.contains(&"spatial".to_string());
@@ -278,6 +286,7 @@ pub fn inspect_h5ad<P: AsRef<Path>>(path: P) -> Result<H5adInfo> {
         layer_names,
         obsp_names,
         varp_names,
+        varm_names,
         has_spatial,
         file_size,
     })
@@ -290,68 +299,101 @@ fn read_expression_metadata(file: &File) -> Result<(usize, usize, bool, Option<S
     }
     
     // 首先尝试作为 Dataset 打开（稠密矩阵或某些旧版本的稀疏矩阵）
-    // 这样可以避免在 Group 不存在时的错误
-    if let Ok(x_dataset) = file.dataset("X") {
-        let shape = x_dataset.shape();
-        if shape.len() != 2 {
-            return Err(AnnDataError::InvalidFormat(format!(
-                "Expected 2D matrix, got {}D",
-                shape.len()
-            )));
+    match file.dataset("X") {
+        Ok(x_dataset) => {
+            let shape = x_dataset.shape();
+            if shape.len() != 2 {
+                return Err(AnnDataError::InvalidFormat(format!(
+                    "Expected 2D matrix, got {}D",
+                    shape.len()
+                )));
+            }
+            let (n_rows, n_cols) = (shape[0] as usize, shape[1] as usize);
+            return Ok((n_rows, n_cols, false, None, None));
         }
-        let (n_rows, n_cols) = (shape[0] as usize, shape[1] as usize);
-        return Ok((n_rows, n_cols, false, None, None));
+        Err(e) => {
+            log::debug!("file.dataset(\"X\") failed: {:?}", e);
+        }
     }
     
     // 尝试作为 Group 打开（稀疏矩阵）
-    if let Ok(x_group) = file.group("X") {
-        // 尝试读取 shape 属性（新版本格式）
-        // 或 h5sparse_shape 属性（旧版本格式）
-        let shape: Vec<usize> = if let Ok(shape_attr) = x_group.attr("shape") {
-            shape_attr.read_1d()?.to_vec()
-        } else if let Ok(shape_attr) = x_group.attr("h5sparse_shape") {
-            // 旧版本格式使用 h5sparse_shape
-            shape_attr.read_1d()?.to_vec()
-        } else {
-            return Err(AnnDataError::MissingField("/X shape attribute".to_string()));
-        };
-        
-        if shape.len() != 2 {
-            return Err(AnnDataError::InvalidFormat(format!(
-                "Expected shape to have 2 dimensions, got {}",
-                shape.len()
-            )));
+    match file.group("X") {
+        Ok(x_group) => {
+            // 尝试读取 shape 属性，支持 int64 和 usize 两种类型
+            let shape: Vec<usize> = if let Ok(shape_attr) = x_group.attr("shape") {
+                // 先尝试 usize (u64)
+                if let Ok(arr) = shape_attr.read_1d::<usize>() {
+                    arr.to_vec()
+                } else if let Ok(arr) = shape_attr.read_1d::<i64>() {
+                    // numpy 默认存储为 int64，需要转换
+                    log::debug!("/X shape attribute is int64, converting to usize");
+                    arr.iter().map(|&v| v as usize).collect()
+                } else {
+                    return Err(AnnDataError::InvalidFormat(
+                        "Cannot read /X shape attribute as usize or i64".to_string()
+                    ));
+                }
+            } else if let Ok(shape_attr) = x_group.attr("h5sparse_shape") {
+                if let Ok(arr) = shape_attr.read_1d::<usize>() {
+                    arr.to_vec()
+                } else if let Ok(arr) = shape_attr.read_1d::<i64>() {
+                    arr.iter().map(|&v| v as usize).collect()
+                } else {
+                    return Err(AnnDataError::InvalidFormat(
+                        "Cannot read /X h5sparse_shape attribute".to_string()
+                    ));
+                }
+            } else {
+                return Err(AnnDataError::MissingField("/X shape attribute".to_string()));
+            };
+            
+            if shape.len() != 2 {
+                return Err(AnnDataError::InvalidFormat(format!(
+                    "Expected shape to have 2 dimensions, got {}",
+                    shape.len()
+                )));
+            }
+            
+            let (n_rows, n_cols) = (shape[0], shape[1]);
+            
+            // 读取 encoding-type 属性来确定稀疏格式（新版本）
+            // 或 h5sparse_format 属性（旧版本）
+            let sparse_format = if let Ok(encoding_attr) = x_group.attr("encoding-type") {
+                if let Ok(encoding) = encoding_attr.read_scalar::<hdf5::types::VarLenUnicode>() {
+                    Some(encoding.to_string())
+                } else {
+                    Some("csr_matrix".to_string())
+                }
+            } else if let Ok(format_attr) = x_group.attr("h5sparse_format") {
+                // 旧版本格式使用 h5sparse_format
+                if let Ok(format_str) = format_attr.read_scalar::<hdf5::types::VarLenUnicode>() {
+                    Some(format!("{}_matrix", format_str))
+                } else {
+                    Some("csr_matrix".to_string())
+                }
+            } else {
+                Some("csr_matrix".to_string())
+            };
+            
+            // 读取 nnz
+            let nnz = if let Ok(data_dataset) = x_group.dataset("data") {
+                Some(data_dataset.shape()[0] as usize)
+            } else {
+                None
+            };
+            
+            return Ok((n_rows, n_cols, true, sparse_format, nnz));
         }
-        
-        let (n_rows, n_cols) = (shape[0], shape[1]);
-        
-        // 读取 encoding-type 属性来确定稀疏格式（新版本）
-        // 或 h5sparse_format 属性（旧版本）
-        let sparse_format = if let Ok(encoding_attr) = x_group.attr("encoding-type") {
-            if let Ok(encoding) = encoding_attr.read_scalar::<hdf5::types::VarLenUnicode>() {
-                Some(encoding.to_string())
-            } else {
-                Some("csr_matrix".to_string())
-            }
-        } else if let Ok(format_attr) = x_group.attr("h5sparse_format") {
-            // 旧版本格式使用 h5sparse_format
-            if let Ok(format_str) = format_attr.read_scalar::<hdf5::types::VarLenUnicode>() {
-                Some(format!("{}_matrix", format_str))
-            } else {
-                Some("csr_matrix".to_string())
-            }
-        } else {
-            Some("csr_matrix".to_string())
-        };
-        
-        // 读取 nnz
-        let nnz = if let Ok(data_dataset) = x_group.dataset("data") {
-            Some(data_dataset.shape()[0] as usize)
-        } else {
-            None
-        };
-        
-        return Ok((n_rows, n_cols, true, sparse_format, nnz));
+        Err(e) => {
+            log::debug!("file.group(\"X\") failed: {:?}", e);
+        }
+    }
+    
+    // 如果两种方式都失败，输出诊断信息
+    log::error!("Both file.dataset(\"X\") and file.group(\"X\") failed");
+    log::error!("link_exists(\"X\") = {}", file.link_exists("X"));
+    if let Ok(members) = file.member_names() {
+        log::error!("Root group members: {:?}", members);
     }
     
     Err(AnnDataError::InvalidFormat(
@@ -510,6 +552,13 @@ pub fn read_h5ad_partial<P: AsRef<Path>>(path: P, options: &PartialLoadOptions) 
     } else {
         None
     };
+
+    // 读取基因加载矩阵 /varm
+    let gene_loadings = if options.load_embeddings && file.link_exists("varm") {
+        Some(read_varm(&file, n_genes)?)
+    } else {
+        None
+    };
     
     // 创建数据集元数据
     let metadata = DatasetMetadata::new(n_cells, n_genes, "anndata".to_string());
@@ -523,6 +572,7 @@ pub fn read_h5ad_partial<P: AsRef<Path>>(path: P, options: &PartialLoadOptions) 
     data.cell_pairwise = cell_pairwise;
     data.gene_pairwise = gene_pairwise;
     data.spatial = spatial;
+    data.gene_loadings = gene_loadings;
     
     Ok(data)
 }
@@ -595,6 +645,13 @@ pub fn read_h5ad<P: AsRef<Path>>(path: P) -> Result<SingleCellData> {
     // 读取空间数据 /obsm['spatial'] 和 /uns['spatial']
     let spatial = read_spatial_data(&file, n_cells)?;
 
+    // 读取基因加载矩阵 /varm（如 PCA loadings）
+    let gene_loadings = if file.link_exists("varm") {
+        Some(read_varm(&file, n_genes)?)
+    } else {
+        None
+    };
+
     // 创建数据集元数据
     let metadata = DatasetMetadata::new(n_cells, n_genes, "anndata".to_string());
 
@@ -608,6 +665,7 @@ pub fn read_h5ad<P: AsRef<Path>>(path: P) -> Result<SingleCellData> {
     data.cell_pairwise = cell_pairwise;
     data.gene_pairwise = gene_pairwise;
     data.spatial = spatial;
+    data.gene_loadings = gene_loadings;
     
     Ok(data)
 }
@@ -649,12 +707,29 @@ fn read_expression_matrix(file: &File) -> Result<ExpressionMatrix> {
 /// - /X/indices: 索引 (int32 或 int64)
 /// - /X/indptr: 指针 (int32 或 int64)
 fn read_sparse_csr_matrix(group: &Group) -> Result<ExpressionMatrix> {
-    // 读取 shape 属性（兼容新旧格式）
+    // 读取 shape 属性（兼容新旧格式，支持 int64 和 usize）
     let shape: Vec<usize> = if let Ok(shape_attr) = group.attr("shape") {
-        shape_attr.read_1d()?.to_vec()
+        if let Ok(arr) = shape_attr.read_1d::<usize>() {
+            arr.to_vec()
+        } else if let Ok(arr) = shape_attr.read_1d::<i64>() {
+            log::debug!("Sparse matrix shape attribute is int64, converting to usize");
+            arr.iter().map(|&v| v as usize).collect()
+        } else {
+            return Err(AnnDataError::InvalidFormat(
+                "Cannot read sparse matrix shape attribute as usize or i64".to_string()
+            ));
+        }
     } else if let Ok(shape_attr) = group.attr("h5sparse_shape") {
         // 旧版本格式 (anndata < 0.8)
-        shape_attr.read_1d()?.to_vec()
+        if let Ok(arr) = shape_attr.read_1d::<usize>() {
+            arr.to_vec()
+        } else if let Ok(arr) = shape_attr.read_1d::<i64>() {
+            arr.iter().map(|&v| v as usize).collect()
+        } else {
+            return Err(AnnDataError::InvalidFormat(
+                "Cannot read sparse matrix h5sparse_shape attribute".to_string()
+            ));
+        }
     } else {
         return Err(AnnDataError::MissingField("/X shape attribute".to_string()));
     };
@@ -808,7 +883,7 @@ fn read_dense_matrix(dataset: &Dataset) -> Result<ExpressionMatrix> {
 /// - Categorical 列：
 ///   - 列本身存储整数编码
 ///   - /obs/__categories/{column_name}: 存储类别标签
-fn read_metadata_dataframe(file: &File, group_name: &str, expected_rows: usize) -> Result<DataFrame> {
+pub(crate) fn read_metadata_dataframe(file: &File, group_name: &str, expected_rows: usize) -> Result<DataFrame> {
     // 先尝试作为 Group 打开（新版本 anndata >= 0.7）
     // 如果失败，尝试作为 Dataset 打开（旧版本 compound Dataset）
     let group = match file.group(group_name) {
@@ -1108,29 +1183,32 @@ fn read_column(dataset: &Dataset, expected_rows: usize) -> Result<ArrayRef> {
         )));
     }
     
+    // 读取 crosscell_original_dtype 属性（如果存在）
+    let original_dtype = read_dtype_attribute(dataset);
+    
     // 尝试不同的数据类型
     // 1. Float64
     if let Ok(values) = dataset.read_1d::<f64>() {
-        let array = Float64Array::from(values.to_vec());
-        return Ok(Arc::new(array) as ArrayRef);
+        let array: ArrayRef = Arc::new(Float64Array::from(values.to_vec()));
+        return Ok(restore_original_dtype(array, original_dtype.as_deref()));
     }
     
     // 2. Int64
     if let Ok(values) = dataset.read_1d::<i64>() {
-        let array = Int64Array::from(values.to_vec());
-        return Ok(Arc::new(array) as ArrayRef);
+        let array: ArrayRef = Arc::new(Int64Array::from(values.to_vec()));
+        return Ok(restore_original_dtype(array, original_dtype.as_deref()));
     }
     
     // 3. Int32
     if let Ok(values) = dataset.read_1d::<i32>() {
-        let array = Int32Array::from(values.to_vec());
-        return Ok(Arc::new(array) as ArrayRef);
+        let array: ArrayRef = Arc::new(Int32Array::from(values.to_vec()));
+        return Ok(restore_original_dtype(array, original_dtype.as_deref()));
     }
     
     // 4. Boolean
     if let Ok(values) = dataset.read_1d::<bool>() {
-        let array = BooleanArray::from(values.to_vec());
-        return Ok(Arc::new(array) as ArrayRef);
+        let array: ArrayRef = Arc::new(BooleanArray::from(values.to_vec()));
+        return Ok(restore_original_dtype(array, original_dtype.as_deref()));
     }
     
     // 5. String (variable length unicode)
@@ -1164,6 +1242,97 @@ fn read_column(dataset: &Dataset, expected_rows: usize) -> Result<ArrayRef> {
     Err(AnnDataError::UnsupportedType(format!(
         "Unsupported column data type for dataset"
     )))
+}
+
+/// 读取 crosscell_original_dtype 属性
+fn read_dtype_attribute(dataset: &Dataset) -> Option<String> {
+    let attr = dataset.attr("crosscell_original_dtype").ok()?;
+    let value: hdf5::types::VarLenUnicode = attr.read_scalar().ok()?;
+    Some(value.to_string())
+}
+
+/// 根据 crosscell_original_dtype 属性恢复原始类型
+///
+/// 如果属性存在，按记录的类型进行转换。
+/// 如果属性不存在，使用启发式：Float64 全整数值 → Int32。
+fn restore_original_dtype(array: ArrayRef, dtype_hint: Option<&str>) -> ArrayRef {
+    match dtype_hint {
+        Some("int32") => {
+            if let Some(float_arr) = array.as_any().downcast_ref::<Float64Array>() {
+                // Float64 → Int32
+                let values: Vec<i32> = float_arr.values().iter()
+                    .map(|&v| v as i32)
+                    .collect();
+                return Arc::new(Int32Array::from(values));
+            }
+            if let Some(int64_arr) = array.as_any().downcast_ref::<Int64Array>() {
+                // Int64 → Int32
+                let values: Vec<i32> = int64_arr.values().iter()
+                    .map(|&v| v as i32)
+                    .collect();
+                return Arc::new(Int32Array::from(values));
+            }
+            // 已经是 Int32
+            array
+        }
+        Some("int64") => {
+            if let Some(float_arr) = array.as_any().downcast_ref::<Float64Array>() {
+                let values: Vec<i64> = float_arr.values().iter()
+                    .map(|&v| v as i64)
+                    .collect();
+                return Arc::new(Int64Array::from(values));
+            }
+            // 已经是 Int64 或 Int32→Int64
+            if let Some(int32_arr) = array.as_any().downcast_ref::<Int32Array>() {
+                let values: Vec<i64> = int32_arr.values().iter()
+                    .map(|&v| v as i64)
+                    .collect();
+                return Arc::new(Int64Array::from(values));
+            }
+            array
+        }
+        Some("float64") | Some("utf8") | Some("dictionary") => {
+            // 这些类型读取时已经是正确的类型，无需转换
+            array
+        }
+        Some("bool") => {
+            // HDF5 bool 可能被读为 Float64（因为 read_1d::<f64> 先尝试）
+            if let Some(float_arr) = array.as_any().downcast_ref::<Float64Array>() {
+                let values: Vec<bool> = float_arr.values().iter()
+                    .map(|&v| v != 0.0)
+                    .collect();
+                return Arc::new(BooleanArray::from(values));
+            }
+            array
+        }
+        Some(_) => {
+            // 未知的 dtype hint，保持原样
+            array
+        }
+        None => {
+            // 无属性：启发式恢复
+            // Float64 全整数值 → Int32
+            heuristic_restore_dtype(array)
+        }
+    }
+}
+
+/// 启发式类型恢复：Float64 全整数值 → Int32
+fn heuristic_restore_dtype(array: ArrayRef) -> ArrayRef {
+    if let Some(float_arr) = array.as_any().downcast_ref::<Float64Array>() {
+        // 检查所有值是否都是整数
+        let all_integer = float_arr.values().iter().all(|&v| {
+            v.is_finite() && v == v.trunc() && v >= i32::MIN as f64 && v <= i32::MAX as f64
+        });
+        
+        if all_integer && !float_arr.is_empty() {
+            let values: Vec<i32> = float_arr.values().iter()
+                .map(|&v| v as i32)
+                .collect();
+            return Arc::new(Int32Array::from(values));
+        }
+    }
+    array
 }
 
 /// 读取 Nullable 列（nullable-integer 或 nullable-boolean）
@@ -1272,8 +1441,28 @@ fn read_nullable_column(subgroup: &Group, col_name: &str, expected_rows: usize) 
         return Ok(Arc::new(array) as ArrayRef);
     }
     
+    // 7. String (variable length unicode) — e.g., nullable _index columns
+    if let Ok(values) = values_dataset.read_1d::<hdf5::types::VarLenUnicode>() {
+        let strings: Vec<Option<String>> = values.iter()
+            .zip(validity.iter())
+            .map(|(s, &valid)| if valid { Some(s.to_string()) } else { None })
+            .collect();
+        let array = StringArray::from(strings);
+        return Ok(Arc::new(array) as ArrayRef);
+    }
+    
+    // 7b. String (variable length ascii)
+    if let Ok(values) = values_dataset.read_1d::<hdf5::types::VarLenAscii>() {
+        let strings: Vec<Option<String>> = values.iter()
+            .zip(validity.iter())
+            .map(|(s, &valid)| if valid { Some(s.to_string()) } else { None })
+            .collect();
+        let array = StringArray::from(strings);
+        return Ok(Arc::new(array) as ArrayRef);
+    }
+    
     Err(AnnDataError::UnsupportedType(format!(
-        "Unsupported nullable integer type for column '{}'", col_name
+        "Unsupported nullable type for column '{}'", col_name
     )))
 }
 
@@ -1371,7 +1560,7 @@ fn read_categorical_column(group: &Group, col_name: &str, expected_rows: usize) 
 /// HDF5 结构：
 /// - /obsm: Group，包含多个嵌入
 /// - 每个嵌入是一个 Dataset (n_cells × n_components)
-fn read_embeddings(file: &File, expected_cells: usize) -> Result<HashMap<String, Embedding>> {
+pub(crate) fn read_embeddings(file: &File, expected_cells: usize) -> Result<HashMap<String, Embedding>> {
     // 先尝试作为 Group 打开（新版本格式）
     // 如果失败，尝试作为 compound Dataset 打开（旧版本格式）
     let obsm_group = match file.group("obsm") {
@@ -1653,6 +1842,61 @@ fn read_pairwise_matrices(file: &File, group_name: &str, expected_size: usize) -
     Ok(pairwise_matrices)
 }
 
+/// 读取基因加载矩阵 (/varm)
+///
+/// HDF5 结构：
+/// - /varm: Group，包含多个基因加载矩阵
+/// - 每个成员是一个 2D Dataset (n_genes × n_components)
+/// - 常见成员：PCs (PCA loadings)
+///
+/// 对应 Seurat@reductions[[x]]@feature.loadings
+fn read_varm(file: &File, expected_genes: usize) -> Result<HashMap<String, Embedding>> {
+    let varm_group = match file.group("varm") {
+        Ok(g) => g,
+        Err(_) => return Ok(HashMap::new()),
+    };
+    let member_names = varm_group.member_names()?;
+    
+    let mut loadings = HashMap::new();
+    
+    for name in member_names {
+        if let Ok(dataset) = varm_group.dataset(&name) {
+            let shape = dataset.shape();
+            if shape.len() != 2 {
+                log::warn!("Skipping varm/{}: expected 2D, got {}D", name, shape.len());
+                continue;
+            }
+            let n_rows = shape[0];
+            let n_cols = shape[1];
+            
+            if n_rows != expected_genes {
+                log::warn!(
+                    "Skipping varm/{}: has {} rows, expected {} (n_genes)",
+                    name, n_rows, expected_genes
+                );
+                continue;
+            }
+            
+            // 读取数据（支持 float64 和 float32）
+            let data: Vec<f64> = if let Ok(arr) = dataset.read_2d::<f64>() {
+                arr.into_raw_vec()
+            } else if let Ok(arr) = dataset.read_2d::<f32>() {
+                arr.into_raw_vec().into_iter().map(|x| x as f64).collect()
+            } else {
+                log::warn!("Skipping varm/{}: unsupported data type", name);
+                continue;
+            };
+            
+            match Embedding::new(name.clone(), data, n_rows, n_cols) {
+                Ok(emb) => { loadings.insert(name, emb); }
+                Err(e) => { log::warn!("Skipping varm/{}: {}", name, e); }
+            }
+        }
+    }
+    
+    Ok(loadings)
+}
+
 /// 读取空间数据 (/obsm['spatial'] 和 /uns['spatial'])
 ///
 /// AnnData 空间数据结构：
@@ -1660,7 +1904,7 @@ fn read_pairwise_matrices(file: &File, group_name: &str, expected_size: usize) -
 /// - /uns/spatial: Group，包含图像和缩放因子
 ///   - /uns/spatial/{library_id}/images: Group，包含多分辨率图像
 ///   - /uns/spatial/{library_id}/scalefactors: 缩放因子
-fn read_spatial_data(file: &File, n_cells: usize) -> Result<Option<crate::ir::SpatialData>> {
+pub(crate) fn read_spatial_data(file: &File, n_cells: usize) -> Result<Option<crate::ir::SpatialData>> {
     use crate::ir::{SpatialData, SpatialImage};
     
     // 1. 读取空间坐标 from /obsm/spatial
@@ -1864,27 +2108,49 @@ fn read_categorical_column_v2(subgroup: &Group, col_name: &str, expected_rows: u
         ));
     };
     
-    // 读取类别标签（支持字符串和数值类型）
-    let categories_dataset = subgroup.dataset("categories")?;
-    
-    let mut categories: Vec<String> = if let Ok(cat_varlen) = categories_dataset.read_1d::<hdf5::types::VarLenUnicode>() {
-        cat_varlen.iter().map(|s| s.to_string()).collect()
-    } else if let Ok(cat_ascii) = categories_dataset.read_1d::<hdf5::types::VarLenAscii>() {
-        cat_ascii.iter().map(|s| s.to_string()).collect()
-    } else if let Ok(cat_fixed) = categories_dataset.read_1d::<hdf5::types::FixedUnicode<64>>() {
-        cat_fixed.iter().map(|s| s.to_string()).collect()
-    } else if let Ok(cat_fixed_ascii) = categories_dataset.read_1d::<hdf5::types::FixedAscii<64>>() {
-        cat_fixed_ascii.iter().map(|s| s.to_string()).collect()
-    } else if let Ok(cat_i64) = categories_dataset.read_1d::<i64>() {
-        // 数值类型的 categorical（如基因长度）— 转为字符串
-        cat_i64.iter().map(|v| v.to_string()).collect()
-    } else if let Ok(cat_f64) = categories_dataset.read_1d::<f64>() {
-        cat_f64.iter().map(|v| v.to_string()).collect()
-    } else if let Ok(cat_i32) = categories_dataset.read_1d::<i32>() {
-        cat_i32.iter().map(|v| v.to_string()).collect()
+    // 读取类别标签
+    // categories 可能是 Dataset（普通字符串数组）或 Group（nullable string array with values+mask）
+    let mut categories: Vec<String> = if let Ok(categories_dataset) = subgroup.dataset("categories") {
+        // 直接作为 Dataset 读取
+        if let Ok(cat_varlen) = categories_dataset.read_1d::<hdf5::types::VarLenUnicode>() {
+            cat_varlen.iter().map(|s| s.to_string()).collect()
+        } else if let Ok(cat_ascii) = categories_dataset.read_1d::<hdf5::types::VarLenAscii>() {
+            cat_ascii.iter().map(|s| s.to_string()).collect()
+        } else if let Ok(cat_fixed) = categories_dataset.read_1d::<hdf5::types::FixedUnicode<64>>() {
+            cat_fixed.iter().map(|s| s.to_string()).collect()
+        } else if let Ok(cat_fixed_ascii) = categories_dataset.read_1d::<hdf5::types::FixedAscii<64>>() {
+            cat_fixed_ascii.iter().map(|s| s.to_string()).collect()
+        } else if let Ok(cat_i64) = categories_dataset.read_1d::<i64>() {
+            cat_i64.iter().map(|v| v.to_string()).collect()
+        } else if let Ok(cat_f64) = categories_dataset.read_1d::<f64>() {
+            cat_f64.iter().map(|v| v.to_string()).collect()
+        } else if let Ok(cat_i32) = categories_dataset.read_1d::<i32>() {
+            cat_i32.iter().map(|v| v.to_string()).collect()
+        } else {
+            return Err(AnnDataError::UnsupportedType(
+                format!("Categorical labels for '{}' must be string type (v2 dataset)", col_name),
+            ));
+        }
+    } else if let Ok(cat_group) = subgroup.group("categories") {
+        // categories 是 Group（nullable string array: values + mask）
+        if let Ok(values_ds) = cat_group.dataset("values") {
+            if let Ok(vals) = values_ds.read_1d::<hdf5::types::VarLenUnicode>() {
+                vals.iter().map(|s| s.to_string()).collect()
+            } else if let Ok(vals) = values_ds.read_1d::<hdf5::types::VarLenAscii>() {
+                vals.iter().map(|s| s.to_string()).collect()
+            } else {
+                return Err(AnnDataError::UnsupportedType(
+                    format!("Categorical labels for '{}': unsupported string type in nullable group", col_name),
+                ));
+            }
+        } else {
+            return Err(AnnDataError::UnsupportedType(
+                format!("Categorical labels for '{}': missing 'values' in nullable group", col_name),
+            ));
+        }
     } else {
         return Err(AnnDataError::UnsupportedType(
-            format!("Categorical labels for '{}' must be string type (v2)", col_name),
+            format!("Categorical labels for '{}': 'categories' is neither Dataset nor Group", col_name),
         ));
     };
     

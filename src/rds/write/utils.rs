@@ -6,7 +6,7 @@
 use std::io::Write;
 use crate::rds::error::Result;
 use crate::rds::sexp_type::SEXPType;
-use crate::rds::r_object::Attributes;
+use crate::rds::r_object::{Attributes, RObject};
 use crate::rds::string_encoding::StringEncoding;
 
 /// 4 字节头部类型
@@ -178,13 +178,19 @@ pub fn make_header(sexp_type: SEXPType) -> Header {
 /// # 参数
 /// * `sexp_type` - SEXP 类型
 /// * `has_attributes` - 是否有属性
+/// * `is_object` - 是否有 class 属性（R 的 is.object() 标志）
+/// * `is_s4` - 是否是 S4 对象（扩展基本类型的 S4 类，如 LogMap）
 ///
 /// # 返回
 /// 4 字节头部数组
 #[inline]
-pub fn make_header_with_flags(sexp_type: SEXPType, has_attributes: bool) -> Header {
-    let flags = if has_attributes { 0x02 } else { 0x00 };
-    [0, 0, flags, sexp_type as u8]
+pub fn make_header_with_flags(sexp_type: SEXPType, has_attributes: bool, is_object: bool, is_s4: bool) -> Header {
+    let mut flags: u8 = 0x00;
+    if is_object { flags |= 0x01; }      // bit 0 = is_object
+    if has_attributes { flags |= 0x02; }  // bit 1 = has_attributes
+    // gp high byte: bit 0 = S4 flag (corresponds to gp bit 4 in R)
+    let gp_high: u8 = if is_s4 { 0x01 } else { 0x00 };
+    [0, gp_high, flags, sexp_type as u8]
 }
 
 /// 注入对象头部到 buffer
@@ -200,7 +206,7 @@ pub fn inject_header(sexp_type: SEXPType, buffer: &mut Vec<u8>) {
 ///
 /// # 参数
 /// * `sexp_type` - SEXP 类型
-/// * `attributes` - 属性（用于判断是否有属性）
+/// * `attributes` - 属性（用于判断是否有属性和 class）
 /// * `buffer` - 目标缓冲区
 pub fn inject_header_with_attributes(
     sexp_type: SEXPType,
@@ -208,7 +214,9 @@ pub fn inject_header_with_attributes(
     buffer: &mut Vec<u8>,
 ) {
     let has_attrs = !attributes.is_empty();
-    buffer.extend_from_slice(&make_header_with_flags(sexp_type, has_attrs));
+    let is_object = attributes.get("class").is_some();
+    let is_s4 = is_s4_class(attributes);
+    buffer.extend_from_slice(&make_header_with_flags(sexp_type, has_attrs, is_object, is_s4));
 }
 
 
@@ -229,7 +237,7 @@ pub fn write_header<W: Write>(sexp_type: SEXPType, writer: &mut W) -> Result<()>
 ///
 /// # 参数
 /// * `sexp_type` - SEXP 类型
-/// * `attributes` - 属性（用于判断是否有属性）
+/// * `attributes` - 属性（用于判断是否有属性和 class）
 /// * `writer` - 实现 Write trait 的目标
 ///
 /// # 错误
@@ -240,8 +248,22 @@ pub fn write_header_with_attributes<W: Write>(
     writer: &mut W,
 ) -> Result<()> {
     let has_attrs = !attributes.is_empty();
-    writer.write_all(&make_header_with_flags(sexp_type, has_attrs))?;
+    let is_object = attributes.get("class").is_some();
+    let is_s4 = is_s4_class(attributes);
+    writer.write_all(&make_header_with_flags(sexp_type, has_attrs, is_object, is_s4))?;
     Ok(())
+}
+
+/// Check if the class attribute indicates an S4 class.
+/// S4 classes have a "package" sub-attribute on the class string vector.
+fn is_s4_class(attributes: &Attributes) -> bool {
+    if let Some(class_obj) = attributes.get("class") {
+        if let RObject::StringVector(sv) = class_obj {
+            // If the class StringVector has a "package" attribute, it's S4
+            return sv.attributes.get("package").is_some();
+        }
+    }
+    false
 }
 
 /// 构建配对列表节点头部

@@ -44,7 +44,6 @@ RUN apt-get update && apt-get install -y \
     libcurl4-openssl-dev \
     libssl-dev \
     libxml2-dev \
-    libhdf5-dev \
     hdf5-tools \
     libfontconfig1-dev \
     libfreetype6-dev \
@@ -57,6 +56,14 @@ RUN apt-get update && apt-get install -y \
     libopenblas-dev \
     && rm -rf /var/lib/apt/lists/*
 
+# ============================================
+# 安装 CMake >= 3.26（hdf5-metno-sys 静态编译 HDF5 2.0.0 需要）
+# HDF5 完全静态链接，不需要系统 libhdf5-dev
+# ============================================
+RUN wget -q https://github.com/Kitware/CMake/releases/download/v3.31.4/cmake-3.31.4-linux-x86_64.tar.gz -O /tmp/cmake.tar.gz && \
+    tar xzf /tmp/cmake.tar.gz -C /opt/ && \
+    rm /tmp/cmake.tar.gz
+ENV PATH=/opt/cmake-3.31.4-linux-x86_64/bin:$PATH
 
 # ============================================
 # 安装 Rust（使用 rustup）
@@ -66,7 +73,7 @@ ENV PATH=/root/.cargo/bin:$PATH
 
 # 安装 Rust 工具
 RUN rustup component add rustfmt clippy && \
-    cargo install cargo-watch maturin
+    cargo install cargo-watch
 
 # ============================================
 # 安装 Miniforge（Python + R）
@@ -133,6 +140,11 @@ RUN pip install leidenalg
 RUN pip install scvelo
 RUN pip install diopy
 RUN pip install easySCFpy
+
+# ----------------------------
+# CrossCell Reader 开发依赖
+# ----------------------------
+RUN pip install pytest hypothesis
 # ============================================
 # 使用 pip 安装单细胞分析库和开发工具
 # ============================================

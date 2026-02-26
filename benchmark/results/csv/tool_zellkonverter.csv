@@ -1,0 +1,146 @@
+tool,direction,test_id,dataset,file,seurat_version,type,n_cells,n_genes,status,conversion_time_seconds,peak_memory_mb,output_size_mb,error
+zellkonverter,rds_to_h5ad,v4_pbmc3k_raw,pbmc3k,,V4,raw,2700,13714,success,12.745,1071.3,,
+zellkonverter,rds_to_h5ad,v4_pbmc3k_processed,pbmc3k,,V4,processed,2700,13714,success,14.88,1207.4,,
+zellkonverter,rds_to_h5ad,v5_pbmc3k_raw,pbmc3k,,V5,raw,2700,13714,success,11.812,964.0,,
+zellkonverter,rds_to_h5ad,v5_pbmc3k_processed,pbmc3k,,V5,processed,2700,13714,success,14.525,1169.1,,
+zellkonverter,rds_to_h5ad,v4_stxKidney_raw,stxKidney,,,,,,failed,,,,"Loading required package: SeuratObject
+Loading required package: sp
+
+Attaching package: ‘SeuratObject’
+
+The following objects are masked from ‘package:base’:
+
+    intersect, t
+
+Registered S3 method overwritten by 'zellkonverter':
+  method                                             from      
+  py_to_r.pandas.core.arrays.categorical.Categorical reticulate
+Loading required package: SummarizedExperiment
+Loading required package: MatrixGenerics
+Loading required package: matrixStats
+
+Attaching package: ‘MatrixGenerics’
+
+The following objects are masked from ‘package:matrixStats’:
+
+    colAlls, colAnyNAs, colAnys, colAvgsPerRowSet, colCollapse,
+    colCounts, colCummaxs, colCummins, colCumprods, colCumsums,
+    colDiffs, colIQRDiffs, colIQRs, colLogSumExps, colMadDiffs,
+    colMads, colMaxs, colMeans2, colMedians, colMins, colOrderStats,
+    colProds, colQuantiles, colRanges, colRanks, colSdDiffs, colSds,
+    colSums2, colTabulates, colVarDiffs, colVars, colWeightedMads,
+    colWeightedMeans, colWeightedMedians, colWeightedSds,
+    colWeightedVars, rowAlls, rowAnyNAs, rowAnys, rowAvgsPerColSet,
+    rowCollapse, rowCounts, rowCummaxs, rowCummins, rowCumprods,
+    rowCumsums, rowDiffs, rowIQRDiffs, rowIQRs, rowLogSumExps,
+    rowMadDiffs, rowMads, rowMaxs, rowMeans2, rowMedians, rowMins,
+    rowOrderStats, rowProds, rowQuantiles, rowRanges, rowRanks,
+    rowSdDiffs, rowSds, rowSums2, rowTabulates, rowVarDiffs, rowVars,
+    rowWeightedMads, rowWeightedMeans, rowWeightedMedians,
+    rowWeightedSds, rowWeightedVars
+
+Loading required package: GenomicRanges
+Loading required package: stats4
+Loading required package: BiocGenerics
+Loading required package: generics
+
+Attaching package: ‘generics’
+
+The following objects are masked from ‘package:base’:
+
+    as.difftime, as.factor, as.ordered, intersect, is.element, setdiff,
+    setequal, union
+
+
+Attaching package: ‘BiocGenerics’
+
+The following objects are masked from ‘package:stats’:
+
+    IQR, mad, sd, var, xtabs
+
+The following objects are masked from ‘package:base’:
+
+    Filter, Find, Map, Position, Reduce, anyDuplicated, aperm, append,
+    as.data.frame, basename, cbind, colnames, dirname, do.call,
+    duplicated, eval, evalq, get, grep, grepl, is.unsorted, lapply,
+    mapply, match, mget, order, paste, pmax, pmax.int, pmin, pmin.int,
+    rank, rbind, rownames, sapply, saveRDS, table, tapply, unique,
+    unsplit, which.max, which.min
+
+Loading required package: S4Vectors
+
+Attaching package: ‘S4Vectors’
+
+The following object is masked from ‘package:utils’:
+
+    findMatches
+
+The following objects are masked from ‘package:base’:
+
+    I, expand.grid, unname
+
+Loading required package: IRanges
+
+Attaching package: ‘IRanges’
+
+The following object is masked from ‘package:sp’:
+
+    %over%
+
+Loading required package: Seqinfo
+Loading required package: Biobase
+Welcome to Bioconductor
+
+    Vignettes contain introductory material; view with
+    'browseVignettes()'. To cite Bioconductor, see
+    'citation(""Biobase"")', and for pac"
+zellkonverter,rds_to_h5ad,v5_stxKidney_raw,stxKidney,,V5,raw,1438,31053,success,13.086,1323.4,,
+zellkonverter,rds_to_h5ad,v4_celegans_raw,celegans.embryo,,V4,raw,6188,20222,success,13.327,1273.5,,
+zellkonverter,rds_to_h5ad,v4_celegans_processed,celegans.embryo,,V4,processed,6188,20222,success,14.613,1387.6,,
+zellkonverter,rds_to_h5ad,v5_celegans_raw,celegans.embryo,,V5,raw,6188,20222,success,11.596,1082.8,,
+zellkonverter,rds_to_h5ad,v5_celegans_processed,celegans.embryo,,V5,processed,6188,20222,success,15.881,1531.9,,
+zellkonverter,rds_to_h5ad,v4_cbmc_raw,cbmc,,V4,raw,8617,20501,success,14.075,1709.5,,
+zellkonverter,rds_to_h5ad,v4_cbmc_processed,cbmc,,V4,processed,8617,20501,success,16.837,1880.0,,
+zellkonverter,rds_to_h5ad,v5_cbmc_raw,cbmc,,V5,raw,8617,20501,success,12.684,1335.7,,
+zellkonverter,rds_to_h5ad,v5_cbmc_processed,cbmc,,V5,processed,8617,20501,success,16.591,1898.2,,
+zellkonverter,rds_to_h5ad,v4_ifnb_raw,ifnb,,V4,raw,13999,14053,success,15.91,1677.2,,
+zellkonverter,rds_to_h5ad,v4_ifnb_processed,ifnb,,V4,processed,13999,14053,success,19.231,2075.9,,
+zellkonverter,rds_to_h5ad,v5_ifnb_raw,ifnb,,V5,raw,13999,14053,success,13.894,1426.8,,
+zellkonverter,rds_to_h5ad,v5_ifnb_processed,ifnb,,V5,processed,13999,14053,success,18.638,2285.8,,
+zellkonverter,rds_to_h5ad,v4_panc8_raw,panc8,,V4,raw,14890,34363,success,32.862,4850.3,,
+zellkonverter,rds_to_h5ad,v4_panc8_processed,panc8,,V4,processed,14890,34363,success,35.528,5191.0,,
+zellkonverter,rds_to_h5ad,v5_panc8_raw,panc8,,V5,raw,14890,34363,success,28.609,3818.6,,
+zellkonverter,rds_to_h5ad,v5_panc8_processed,panc8,,V5,processed,14890,34363,success,40.662,6325.8,,
+zellkonverter,rds_to_h5ad,v4_thp1_raw,thp1.eccite,,V4,raw,20729,18649,success,42.673,6611.4,,
+zellkonverter,rds_to_h5ad,v4_thp1_processed,thp1.eccite,,V4,processed,20729,18649,success,48.722,6985.2,,
+zellkonverter,rds_to_h5ad,v5_thp1_raw,thp1.eccite,,V5,raw,20729,18649,success,29.539,4835.7,,
+zellkonverter,rds_to_h5ad,v5_thp1_processed,thp1.eccite,,V5,processed,20729,18649,success,50.443,8206.2,,
+zellkonverter,rds_to_h5ad,v4_bmcite_raw,bmcite,,V4,raw,30672,17009,success,28.102,3142.7,,
+zellkonverter,rds_to_h5ad,v4_bmcite_processed,bmcite,,V4,processed,30672,17009,success,33.998,4329.2,,
+zellkonverter,rds_to_h5ad,v5_bmcite_raw,bmcite,,V5,raw,30672,17009,success,24.901,2414.1,,
+zellkonverter,rds_to_h5ad,v5_bmcite_processed,bmcite,,V5,processed,30672,17009,success,31.84,4325.0,,
+zellkonverter,rds_to_h5ad,v4_pbmcsca_raw,pbmcsca,,V4,raw,31021,33694,success,27.036,3021.6,,
+zellkonverter,rds_to_h5ad,v4_pbmcsca_processed,pbmcsca,,V4,processed,31021,33694,success,30.946,4088.0,,
+zellkonverter,rds_to_h5ad,v5_pbmcsca_raw,pbmcsca,,V5,raw,31021,33694,success,22.533,2439.0,,
+zellkonverter,rds_to_h5ad,v5_pbmcsca_processed,pbmcsca,,V5,processed,31021,33694,success,30.615,4386.9,,
+zellkonverter,rds_to_h5ad,v4_hcabm40k_raw,hcabm40k,,V4,raw,40000,17369,success,29.652,3986.3,,
+zellkonverter,rds_to_h5ad,v4_hcabm40k_processed,hcabm40k,,V4,processed,40000,17369,success,38.15,4959.0,,
+zellkonverter,rds_to_h5ad,v5_hcabm40k_raw,hcabm40k,,V5,raw,40000,17369,success,23.787,3166.7,,
+zellkonverter,rds_to_h5ad,v5_hcabm40k_processed,hcabm40k,,V5,processed,40000,17369,success,38.197,5863.8,,
+zellkonverter,rds_to_h5ad,v4_ssHippo_raw,ssHippo,,V4,raw,53173,23264,success,25.813,2630.8,,
+zellkonverter,rds_to_h5ad,v4_ssHippo_processed,ssHippo,,V4,processed,53173,23264,success,29.245,4826.3,,
+zellkonverter,rds_to_h5ad,v5_ssHippo_raw,ssHippo,,V5,raw,53173,23264,success,19.283,2140.8,,
+zellkonverter,rds_to_h5ad,v5_ssHippo_processed,ssHippo,,V5,processed,53173,23264,success,29.163,4305.0,,
+zellkonverter,h5ad_to_rds,scanpy_pbmc3k,scanpy_pbmc3k,,,,2700,32738,success,12.479,959.8,,
+zellkonverter,h5ad_to_rds,scanpy_pbmc3k_processed,scanpy_pbmc3k_processed,,,,2638,1838,success,24.996,1191.7,,
+zellkonverter,h5ad_to_rds,scvelo_pancreas,scvelo_pancreas,,,,3696,27998,success,28.699,1410.7,,
+zellkonverter,h5ad_to_rds,scvelo_dentategyrus,scvelo_dentategyrus,,,,2930,13913,success,20.085,1136.0,,
+zellkonverter,h5ad_to_rds,squidpy_imc,squidpy_imc,,,,4668,34,success,10.873,888.5,,
+zellkonverter,h5ad_to_rds,squidpy_mibitof,squidpy_mibitof,,,,3309,36,success,15.379,989.5,,
+zellkonverter,h5ad_to_rds,squidpy_visium_hne,squidpy_visium_hne,,,,2688,18078,success,39.122,1797.7,,
+zellkonverter,h5ad_to_rds,cellxgene_pbmc_15k,cellxgene_pbmc_15k,,,,14783,17222,success,37.205,1576.3,,
+zellkonverter,h5ad_to_rds,squidpy_seqfish,squidpy_seqfish,,,,19416,351,success,14.772,1023.1,,
+zellkonverter,h5ad_to_rds,cellxgene_heart_23k,cellxgene_heart_23k,,,,23483,32330,success,62.575,2738.7,,
+zellkonverter,h5ad_to_rds,cellxgene_brain_40k,cellxgene_brain_40k,,,,40165,58232,success,319.738,10650.4,,
+zellkonverter,h5ad_to_rds,squidpy_slideseqv2,squidpy_slideseqv2,,,,41786,4000,success,24.993,1357.8,,
+zellkonverter,h5ad_to_rds,squidpy_merfish,squidpy_merfish,,,,73655,161,success,22.663,1287.1,,

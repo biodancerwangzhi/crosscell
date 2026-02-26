@@ -17,10 +17,10 @@ services:
       - ../data:/benchmark/data
       - ../tests/data:/benchmark/test_data:ro
       - ./results:/benchmark/results
+      - ./figures:/benchmark/figures
+      - ./icons:/benchmark/icons:ro
       - ./scripts:/benchmark/scripts:ro
-      - ./data:/benchmark/config:ro
-      # 挂载本地编译的 crosscell 二进制文件，覆盖镜像中的旧版本
-      - ./crosscell:/usr/local/bin/crosscell:ro
+      - ./config:/benchmark/config:ro
     working_dir: /benchmark
     stdin_open: true
     tty: true
@@ -33,9 +33,10 @@ services:
       - ../data:/benchmark/data
       - ../tests/data:/benchmark/test_data:ro
       - ./results:/benchmark/results
+      - ./figures:/benchmark/figures
+      - ./icons:/benchmark/icons:ro
       - ./scripts:/benchmark/scripts:ro
-      - ./data:/benchmark/config:ro
-      - ./crosscell:/usr/local/bin/crosscell:ro
+      - ./config:/benchmark/config:ro
       - ./notebooks:/benchmark/notebooks
     working_dir: /benchmark/notebooks
     ports:
@@ -50,10 +51,10 @@ services:
       - ../data:/benchmark/data:ro
       - ../tests/data:/benchmark/test_data:ro
       - ./results:/benchmark/results
+      - ./figures:/benchmark/figures
+      - ./icons:/benchmark/icons:ro
       - ./scripts:/benchmark/scripts:ro
-      - ./data:/benchmark/config:ro
-      # 挂载本地编译的 crosscell 二进制文件，覆盖镜像中的旧版本
-      - ./crosscell:/usr/local/bin/crosscell:ro
+      - ./config:/benchmark/config:ro
     working_dir: /benchmark
     stdin_open: true
     tty: true

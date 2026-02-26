@@ -3,7 +3,7 @@
 //! This module provides functions to convert simplified Seurat objects to CrossCell IR format.
 
 use crate::ir::{
-    DataFrame, DatasetMetadata, Embedding, ExpressionMatrix, SingleCellData,
+    DataFrame, DatasetMetadata, Embedding, ExpressionMatrix, PairwiseMatrix, SingleCellData,
     SpatialData,
 };
 use crate::rds::{RObject, RdsFile, parse_rds};
@@ -39,19 +39,20 @@ fn parse_simplified_seurat(robj: &RObject, file: &RdsFile) -> Result<SingleCellD
     let mut meta_data = None;
     let mut reductions = None;
     let mut images = None;
+    let mut graphs = None;
 
     for (name, value) in &fields {
         match *name {
-            "project_name" => {
+            "project_name" | "project.name" => {
                 _project_name = Some(extract_string_scalar(value)?);
             }
-            "active_assay" => {
+            "active_assay" | "active.assay" => {
                 active_assay = Some(extract_string_scalar(value)?);
             }
             "assays" => {
                 assays = Some(*value);
             }
-            "meta_data" => {
+            "meta_data" | "meta.data" => {
                 meta_data = Some(*value);
             }
             "reductions" => {
@@ -60,7 +61,11 @@ fn parse_simplified_seurat(robj: &RObject, file: &RdsFile) -> Result<SingleCellD
             "images" => {
                 images = Some(*value);
             }
-            "class" | "active_ident" => {
+            "graphs" => {
+                graphs = Some(*value);
+            }
+            "class" | "active_ident" | "active.ident" | "neighbors"
+            | "misc" | "version" | "commands" | "tools" => {
                 // Skip these fields
             }
             _ => {
@@ -84,16 +89,36 @@ fn parse_simplified_seurat(robj: &RObject, file: &RdsFile) -> Result<SingleCellD
     // Parse metadata
     let cell_metadata = parse_metadata(meta_data, n_cells, file)?;
 
-    // Parse reductions (if present)
-    let embeddings = if let Some(red) = reductions {
-        Some(parse_reductions(red, n_cells, file)?)
+    // Parse reductions (if present) — also extracts gene loadings
+    let (embeddings, gene_loadings) = if let Some(red) = reductions {
+        let embs = parse_reductions(red, n_cells, file)?;
+        let loads = parse_reduction_loadings(red, file);
+        (Some(embs), if loads.is_empty() { None } else { Some(loads) })
+    } else {
+        (None, None)
+    };
+
+    // Parse graphs → cell_pairwise (if present)
+    let cell_pairwise = if let Some(g) = graphs {
+        parse_graphs(g, n_cells, file).unwrap_or(None)
     } else {
         None
     };
 
-    // Parse spatial data (if present)
+    // Parse spatial data (if present and non-empty)
     let spatial = if let Some(imgs) = images {
-        Some(parse_spatial_data(imgs, n_cells, file)?)
+        // Check if images is an empty list/S4 before trying to parse
+        let is_empty = match imgs {
+            RObject::GenericVector(gv) => gv.data.is_empty(),
+            RObject::S4Object(s4) => s4.attributes.is_empty(),
+            RObject::Null => true,
+            _ => false,
+        };
+        if is_empty {
+            None
+        } else {
+            Some(parse_spatial_data(imgs, n_cells, file)?)
+        }
     } else {
         None
     };
@@ -111,6 +136,8 @@ fn parse_simplified_seurat(robj: &RObject, file: &RdsFile) -> Result<SingleCellD
     data.layers = layers;
     data.embeddings = embeddings;
     data.spatial = spatial;
+    data.gene_loadings = gene_loadings;
+    data.cell_pairwise = cell_pairwise;
 
     Ok(data)
 }
@@ -136,6 +163,13 @@ fn get_fields_from_object<'a>(robj: &'a RObject, file: &'a RdsFile) -> Result<Ve
         RObject::PairList(pl) => {
             Ok(pl.tag_names.iter()
                 .zip(pl.data.iter())
+                .map(|(n, v)| (n.as_str(), v))
+                .collect())
+        }
+        RObject::S4Object(s4) => {
+            // S4 objects store slots as attributes
+            Ok(s4.attributes.names.iter()
+                .zip(s4.attributes.values.iter())
                 .map(|(n, v)| (n.as_str(), v))
                 .collect())
         }
@@ -560,7 +594,7 @@ fn parse_single_reduction(robj: &RObject, _expected_rows: usize, file: &RdsFile)
 
     for (name, value) in &reduction_fields {
         match *name {
-            "cell_embeddings" => {
+            "cell_embeddings" | "cell.embeddings" => {
                 cell_embeddings = Some(*value);
             }
             "key" => {
@@ -592,6 +626,142 @@ fn parse_single_reduction(robj: &RObject, _expected_rows: usize, file: &RdsFile)
         .map_err(|e| SeuratError::ValidationError(e))?;
 
     Ok(embedding)
+}
+
+/// Extract feature.loadings from all reductions → gene_loadings (varm)
+///
+/// For each DimReduc S4 object, extract the feature.loadings matrix.
+/// Returns a HashMap mapping reduction key (e.g., "PCs") to Embedding.
+fn parse_reduction_loadings(robj: &RObject, file: &RdsFile) -> HashMap<String, Embedding> {
+    let mut loadings = HashMap::new();
+    
+    if matches!(robj, RObject::Null) {
+        return loadings;
+    }
+    
+    let reduction_list = match get_fields_from_object(robj, file) {
+        Ok(list) if !list.is_empty() => list,
+        _ => return loadings,
+    };
+    
+    for (name, reduction) in reduction_list {
+        if let Ok(fields) = get_fields_from_object(reduction, file) {
+            let mut feature_loadings = None;
+            let mut key = name.to_string();
+            
+            for (fname, fvalue) in &fields {
+                match *fname {
+                    "feature.loadings" | "feature_loadings" => {
+                        feature_loadings = Some(*fvalue);
+                    }
+                    "key" => {
+                        if let Ok(k) = extract_string_scalar(fvalue) {
+                            key = k;
+                        }
+                    }
+                    _ => {}
+                }
+            }
+            
+            if let Some(fl) = feature_loadings {
+                if let Ok(matrix) = parse_dense_matrix(fl) {
+                    let n_rows = matrix.len();
+                    let n_cols = if n_rows > 0 { matrix[0].len() } else { 0 };
+                    if n_rows > 0 && n_cols > 0 {
+                        let mut data = Vec::with_capacity(n_rows * n_cols);
+                        for row in matrix {
+                            data.extend(row);
+                        }
+                        // Use "PCs" as key for PCA loadings (AnnData convention)
+                        let varm_key = if name == "pca" || key.starts_with("pca") || key.starts_with("PC") {
+                            "PCs".to_string()
+                        } else {
+                            name.to_string()
+                        };
+                        if let Ok(emb) = Embedding::new(varm_key.clone(), data, n_rows, n_cols) {
+                            loadings.insert(varm_key, emb);
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    loadings
+}
+
+/// Parse graphs slot → cell_pairwise (HashMap<String, PairwiseMatrix>)
+///
+/// Each graph in Seurat is a dgCMatrix (sparse matrix) with class "Graph".
+fn parse_graphs(
+    robj: &RObject,
+    expected_cells: usize,
+    file: &RdsFile,
+) -> Result<Option<HashMap<String, PairwiseMatrix>>, SeuratError> {
+    if matches!(robj, RObject::Null) {
+        return Ok(None);
+    }
+    
+    let graph_list = match get_fields_from_object(robj, file) {
+        Ok(list) if !list.is_empty() => list,
+        _ => return Ok(None),
+    };
+    
+    let mut pairwise = HashMap::new();
+    
+    for (name, graph_obj) in graph_list {
+        // Try to parse as a sparse matrix (dgCMatrix)
+        if let Ok(matrix) = parse_sparse_matrix_from_s4(graph_obj) {
+            let (n_rows, n_cols) = matrix.shape();
+            if n_rows == expected_cells && n_cols == expected_cells {
+                if let Ok(pw) = PairwiseMatrix::new(name.to_string(), matrix) {
+                    pairwise.insert(name.to_string(), pw);
+                }
+            }
+        }
+    }
+    
+    if pairwise.is_empty() {
+        Ok(None)
+    } else {
+        Ok(Some(pairwise))
+    }
+}
+
+/// Parse a sparse matrix from an S4 object (dgCMatrix format)
+fn parse_sparse_matrix_from_s4(robj: &RObject) -> Result<ExpressionMatrix, SeuratError> {
+    use crate::ir::SparseMatrixCSC;
+    
+    let s4 = match robj {
+        RObject::S4Object(s4) => s4,
+        _ => return Err(SeuratError::ParseError("Expected S4 for sparse matrix".to_string())),
+    };
+    
+    // Extract i (row indices), p (column pointers), x (values), Dim
+    let i = s4.attributes.get("i")
+        .ok_or_else(|| SeuratError::ParseError("Missing 'i' in dgCMatrix".to_string()))?;
+    let p = s4.attributes.get("p")
+        .ok_or_else(|| SeuratError::ParseError("Missing 'p' in dgCMatrix".to_string()))?;
+    let x = s4.attributes.get("x")
+        .ok_or_else(|| SeuratError::ParseError("Missing 'x' in dgCMatrix".to_string()))?;
+    let dim = s4.attributes.get("Dim")
+        .ok_or_else(|| SeuratError::ParseError("Missing 'Dim' in dgCMatrix".to_string()))?;
+    
+    let dim_vec = extract_integer_vector(dim)?;
+    if dim_vec.len() < 2 {
+        return Err(SeuratError::ParseError("Dim must have 2 elements".to_string()));
+    }
+    let n_rows = dim_vec[0] as usize;
+    let n_cols = dim_vec[1] as usize;
+    
+    let indices: Vec<usize> = extract_integer_vector(i)?.into_iter().map(|v| v as usize).collect();
+    let indptr: Vec<usize> = extract_integer_vector(p)?.into_iter().map(|v| v as usize).collect();
+    let values: Vec<f64> = extract_real_vector(x)?;
+    
+    let csc = SparseMatrixCSC::new(values, indices, indptr, n_rows, n_cols)
+        .map_err(|e| SeuratError::ParseError(format!("Invalid CSC matrix: {}", e)))?;
+    
+    Ok(ExpressionMatrix::SparseCSC(csc))
 }
 
 /// Parse dense matrix (R matrix)

@@ -1,0 +1,6 @@
+tool,retention_pct
+CrossCell,100.0
+Zellkonverter,80.0
+anndataR,100.0
+convert2anndata,80.0
+easySCF,60.0

@@ -1,0 +1,254 @@
+{
+  "seurat_v4_bmcite_processed.rds": {
+    "file": "seurat_v4_bmcite_processed.rds",
+    "nnz": 27198017,
+    "n_cells": 30672,
+    "n_genes": 17009
+  },
+  "seurat_v4_bmcite_raw.rds": {
+    "file": "seurat_v4_bmcite_raw.rds",
+    "nnz": 27198017,
+    "n_cells": 30672,
+    "n_genes": 17009
+  },
+  "seurat_v4_cbmc_processed.rds": {
+    "file": "seurat_v4_cbmc_processed.rds",
+    "nnz": 8246906,
+    "n_cells": 8617,
+    "n_genes": 20501
+  },
+  "seurat_v4_cbmc_raw.rds": {
+    "file": "seurat_v4_cbmc_raw.rds",
+    "nnz": 8246906,
+    "n_cells": 8617,
+    "n_genes": 20501
+  },
+  "seurat_v4_celegans.embryo_processed.rds": {
+    "file": "seurat_v4_celegans.embryo_processed.rds",
+    "nnz": 4983450,
+    "n_cells": 6188,
+    "n_genes": 20222
+  },
+  "seurat_v4_celegans.embryo_raw.rds": {
+    "file": "seurat_v4_celegans.embryo_raw.rds",
+    "nnz": 4983450,
+    "n_cells": 6188,
+    "n_genes": 20222
+  },
+  "seurat_v4_hcabm40k_processed.rds": {
+    "file": "seurat_v4_hcabm40k_processed.rds",
+    "nnz": 40325108,
+    "n_cells": 40000,
+    "n_genes": 17369
+  },
+  "seurat_v4_hcabm40k_raw.rds": {
+    "file": "seurat_v4_hcabm40k_raw.rds",
+    "nnz": 40325108,
+    "n_cells": 40000,
+    "n_genes": 17369
+  },
+  "seurat_v4_ifnb_processed.rds": {
+    "file": "seurat_v4_ifnb_processed.rds",
+    "nnz": 9787436,
+    "n_cells": 13999,
+    "n_genes": 14053
+  },
+  "seurat_v4_ifnb_raw.rds": {
+    "file": "seurat_v4_ifnb_raw.rds",
+    "nnz": 9787436,
+    "n_cells": 13999,
+    "n_genes": 14053
+  },
+  "seurat_v4_panc8_processed.rds": {
+    "file": "seurat_v4_panc8_processed.rds",
+    "nnz": 51767089,
+    "n_cells": 14890,
+    "n_genes": 34363
+  },
+  "seurat_v4_panc8_raw.rds": {
+    "file": "seurat_v4_panc8_raw.rds",
+    "nnz": 51767089,
+    "n_cells": 14890,
+    "n_genes": 34363
+  },
+  "seurat_v4_pbmc3k_processed.rds": {
+    "file": "seurat_v4_pbmc3k_processed.rds",
+    "nnz": 2282976,
+    "n_cells": 2700,
+    "n_genes": 13714
+  },
+  "seurat_v4_pbmc3k_raw.rds": {
+    "file": "seurat_v4_pbmc3k_raw.rds",
+    "nnz": 2282976,
+    "n_cells": 2700,
+    "n_genes": 13714
+  },
+  "seurat_v4_pbmcsca_processed.rds": {
+    "file": "seurat_v4_pbmcsca_processed.rds",
+    "nnz": 27557749,
+    "n_cells": 31021,
+    "n_genes": 33694
+  },
+  "seurat_v4_pbmcsca_raw.rds": {
+    "file": "seurat_v4_pbmcsca_raw.rds",
+    "nnz": 27557749,
+    "n_cells": 31021,
+    "n_genes": 33694
+  },
+  "seurat_v4_ssHippo_processed.rds": {
+    "file": "seurat_v4_ssHippo_processed.rds",
+    "nnz": 22361774,
+    "n_cells": 53173,
+    "n_genes": 23264
+  },
+  "seurat_v4_ssHippo_raw.rds": {
+    "file": "seurat_v4_ssHippo_raw.rds",
+    "nnz": 22361774,
+    "n_cells": 53173,
+    "n_genes": 23264
+  },
+  "seurat_v4_stxKidney_raw.rds": {
+    "file": "seurat_v4_stxKidney_raw.rds",
+    "nnz": 8027223,
+    "n_cells": 1438,
+    "n_genes": 31053
+  },
+  "seurat_v4_thp1.eccite_processed.rds": {
+    "file": "seurat_v4_thp1.eccite_processed.rds",
+    "nnz": 69529049,
+    "n_cells": 20729,
+    "n_genes": 18649
+  },
+  "seurat_v4_thp1.eccite_raw.rds": {
+    "file": "seurat_v4_thp1.eccite_raw.rds",
+    "nnz": 69529049,
+    "n_cells": 20729,
+    "n_genes": 18649
+  },
+  "seurat_v5_bmcite_processed.rds": {
+    "file": "seurat_v5_bmcite_processed.rds",
+    "nnz": 27198017,
+    "n_cells": 30672,
+    "n_genes": 17009
+  },
+  "seurat_v5_bmcite_raw.rds": {
+    "file": "seurat_v5_bmcite_raw.rds",
+    "nnz": 27198017,
+    "n_cells": 30672,
+    "n_genes": 17009
+  },
+  "seurat_v5_cbmc_processed.rds": {
+    "file": "seurat_v5_cbmc_processed.rds",
+    "nnz": 8246906,
+    "n_cells": 8617,
+    "n_genes": 20501
+  },
+  "seurat_v5_cbmc_raw.rds": {
+    "file": "seurat_v5_cbmc_raw.rds",
+    "nnz": 8246906,
+    "n_cells": 8617,
+    "n_genes": 20501
+  },
+  "seurat_v5_celegans.embryo_processed.rds": {
+    "file": "seurat_v5_celegans.embryo_processed.rds",
+    "nnz": 4983450,
+    "n_cells": 6188,
+    "n_genes": 20222
+  },
+  "seurat_v5_celegans.embryo_raw.rds": {
+    "file": "seurat_v5_celegans.embryo_raw.rds",
+    "nnz": 4983450,
+    "n_cells": 6188,
+    "n_genes": 20222
+  },
+  "seurat_v5_hcabm40k_processed.rds": {
+    "file": "seurat_v5_hcabm40k_processed.rds",
+    "nnz": 40325108,
+    "n_cells": 40000,
+    "n_genes": 17369
+  },
+  "seurat_v5_hcabm40k_raw.rds": {
+    "file": "seurat_v5_hcabm40k_raw.rds",
+    "nnz": 40325108,
+    "n_cells": 40000,
+    "n_genes": 17369
+  },
+  "seurat_v5_ifnb_processed.rds": {
+    "file": "seurat_v5_ifnb_processed.rds",
+    "nnz": 9787436,
+    "n_cells": 13999,
+    "n_genes": 14053
+  },
+  "seurat_v5_ifnb_raw.rds": {
+    "file": "seurat_v5_ifnb_raw.rds",
+    "nnz": 9787436,
+    "n_cells": 13999,
+    "n_genes": 14053
+  },
+  "seurat_v5_panc8_processed.rds": {
+    "file": "seurat_v5_panc8_processed.rds",
+    "nnz": 51767089,
+    "n_cells": 14890,
+    "n_genes": 34363
+  },
+  "seurat_v5_panc8_raw.rds": {
+    "file": "seurat_v5_panc8_raw.rds",
+    "nnz": 51767089,
+    "n_cells": 14890,
+    "n_genes": 34363
+  },
+  "seurat_v5_pbmc3k_processed.rds": {
+    "file": "seurat_v5_pbmc3k_processed.rds",
+    "nnz": 2282976,
+    "n_cells": 2700,
+    "n_genes": 13714
+  },
+  "seurat_v5_pbmc3k_raw.rds": {
+    "file": "seurat_v5_pbmc3k_raw.rds",
+    "nnz": 2282976,
+    "n_cells": 2700,
+    "n_genes": 13714
+  },
+  "seurat_v5_pbmcsca_processed.rds": {
+    "file": "seurat_v5_pbmcsca_processed.rds",
+    "nnz": 27557749,
+    "n_cells": 31021,
+    "n_genes": 33694
+  },
+  "seurat_v5_pbmcsca_raw.rds": {
+    "file": "seurat_v5_pbmcsca_raw.rds",
+    "nnz": 27557749,
+    "n_cells": 31021,
+    "n_genes": 33694
+  },
+  "seurat_v5_ssHippo_processed.rds": {
+    "file": "seurat_v5_ssHippo_processed.rds",
+    "nnz": 22361774,
+    "n_cells": 53173,
+    "n_genes": 23264
+  },
+  "seurat_v5_ssHippo_raw.rds": {
+    "file": "seurat_v5_ssHippo_raw.rds",
+    "nnz": 22361774,
+    "n_cells": 53173,
+    "n_genes": 23264
+  },
+  "seurat_v5_stxKidney_raw.rds": {
+    "file": "seurat_v5_stxKidney_raw.rds",
+    "nnz": 8027223,
+    "n_cells": 1438,
+    "n_genes": 31053
+  },
+  "seurat_v5_thp1.eccite_processed.rds": {
+    "file": "seurat_v5_thp1.eccite_processed.rds",
+    "nnz": 69529049,
+    "n_cells": 20729,
+    "n_genes": 18649
+  },
+  "seurat_v5_thp1.eccite_raw.rds": {
+    "file": "seurat_v5_thp1.eccite_raw.rds",
+    "nnz": 69529049,
+    "n_cells": 20729,
+    "n_genes": 18649
+  }
+}

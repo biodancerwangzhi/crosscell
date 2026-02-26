@@ -1,0 +1,30 @@
+{
+  "workflow_times": {
+    "R: Load Seurat": 4.207,
+    "CrossCell: RDS\u2192H5AD": 0.404,
+    "Python: scanpy analysis": 14.613,
+    "CrossCell: H5AD\u2192RDS": 3.248,
+    "R: Verify roundtrip": 3.933
+  },
+  "total_time": 26.405,
+  "crosscell_overhead": 3.652,
+  "crosscell_overhead_pct": 13.8,
+  "data_consistency": {
+    "pearson_r": 1.0,
+    "max_abs_diff": 0.0,
+    "matrix_identical": true
+  },
+  "original_shape": [
+    2700,
+    13714
+  ],
+  "roundtrip_shape": [
+    2700,
+    13714
+  ],
+  "scanpy_analysis": {
+    "n_hvgs": 2000,
+    "n_pca_components": 50,
+    "n_leiden_clusters": 9
+  }
+}

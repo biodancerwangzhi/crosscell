@@ -1,0 +1,10 @@
+tool,version,language,type,note
+crosscell,0.1.0,Rust,cli,
+zellkonverter,1.20.1,R (Bioconductor),r_package,
+anndataR,1.0.1,R (scverse),r_package,
+convert2anndata,0.2.0,R,r_package,
+easySCFr,0.2.2.7,R,r_package,
+easySCFpy,0.2.5,Python,python_package,
+seurat,5.4.0,R,r_package,"dependency, not a conversion tool"
+anndata,0.12.9,Python,python_package,dependency for validation
+scanpy,1.11.5,Python,python_package,dependency for validation

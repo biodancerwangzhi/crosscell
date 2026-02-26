@@ -48,7 +48,7 @@ for f in *.tar.gz; do tar xzf "$f"; done
 # See data/README.md for instructions
 ```
 
-**Dataset summary**: 42 Seurat RDS files (V4/V5 × raw/processed × 11 datasets from SeuratData) + 13 H5AD files (CELLxGENE, scanpy, scvelo, squidpy). Cell counts range from 1,438 to 73,655. Full details in `benchmark/data/datasets.json`.
+**Dataset summary**: 42 Seurat RDS files (V4/V5 × raw/processed × 11 datasets from SeuratData) + 13 H5AD files (CELLxGENE, scanpy, scvelo, squidpy). Cell counts range from 1,438 to 73,655. Full details in `benchmark/config/datasets.json`.
 
 ### Step 2: Build CrossCell
 
@@ -142,7 +142,7 @@ benchmark/
 │   ├── check_results.py          # Quick results viewer
 │   └── compare_tools.py          # Detailed comparison
 ├── data/
-│   ├── test_matrix.json          # Test matrix definition (tool × dataset × direction)
+│   ├── benchmark_testcases.json   # Benchmark test cases (tool × dataset × direction)
 │   └── datasets.json             # Dataset metadata (cells, genes, format, source)
 └── results/
     ├── crosscell.json            # CrossCell results (3 runs)

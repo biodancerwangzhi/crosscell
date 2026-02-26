@@ -1,3 +1,27 @@
+# Personal / development notes
+自用/
+refs/
+
+# Docs (to be updated after tool release)
+docs/
+readme.md
+
+# IDE
+.kiro/
+
+# Proptest regressions
+proptest-regressions/
+
+# R environments (benchmark)
+benchmark/renv/
+
+# Jupyter trash
+.Trash-0/
+
+# Temp scripts
+_*.py
+
+
 # Rust
 target/
 **/*.rs.bk
@@ -45,28 +69,36 @@ htmlcov/
 .DS_Store
 Thumbs.db
 
+# Jupyter
+.ipynb_checkpoints/
+
 # Logs
 *.log
 
 # ============================================
 # Data files (distributed via Zenodo)
 # ============================================
-data/generated/*.rds
-data/generated/*.h5ad
-data/generated/*.json
-data/generated/*.csv
-data/generated/*.txt
+data/generated/
 data/zenodo/
-data/seurat-packages/*.tar.gz
+data/seurat-packages/
 
 # ============================================
 # Benchmark artifacts
 # ============================================
 benchmark/crosscell
-benchmark/results/*.rds
-benchmark/results/*.h5ad
+benchmark/results/**/*.rds
+benchmark/results/**/*.h5ad
+benchmark/results/**/*.h5
+benchmark/results/cellxgene_11/
+benchmark/results/easyscf_h2r_tmp/
+benchmark/results/probe_output/
 
 # ============================================
-# Test data
+# Test data (recursive)
 # ============================================
-tests/data/*
+tests/data/
+
+# ============================================
+# R package build artifacts
+# ============================================
+crosscell-r/*.tar.gz

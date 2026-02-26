@@ -1,0 +1,146 @@
+tool,test_id,dataset,status,pearson_r,mse,exact_match_pct,error
+Zellkonverter,v4_pbmc3k_raw,pbmc3k,success,1.0,0.0,100.0,
+Zellkonverter,v4_pbmc3k_processed,pbmc3k,success,1.0,0.0,100.0,
+Zellkonverter,v5_pbmc3k_raw,pbmc3k,success,1.0,0.0,100.0,
+Zellkonverter,v5_pbmc3k_processed,pbmc3k,success,1.0,0.0,100.0,
+Zellkonverter,v4_stxKidney_raw,stxKidney,success,0.9999999999999925,0.0,100.0,
+Zellkonverter,v5_stxKidney_raw,stxKidney,success,0.9999999999999925,0.0,100.0,
+Zellkonverter,v4_celegans.embryo_raw,celegans.embryo,success,1.0,0.0,100.0,
+Zellkonverter,v4_celegans.embryo_processed,celegans.embryo,success,1.0,0.0,100.0,
+Zellkonverter,v5_celegans.embryo_raw,celegans.embryo,success,1.0,0.0,100.0,
+Zellkonverter,v5_celegans.embryo_processed,celegans.embryo,success,1.0,0.0,100.0,
+Zellkonverter,v4_cbmc_raw,cbmc,success,0.9999999999999958,0.0,100.0,
+Zellkonverter,v4_cbmc_processed,cbmc,success,0.9999999999999958,0.0,100.0,
+Zellkonverter,v5_cbmc_raw,cbmc,success,0.9999999999999958,0.0,100.0,
+Zellkonverter,v5_cbmc_processed,cbmc,success,0.9999999999999958,0.0,100.0,
+Zellkonverter,v4_ifnb_raw,ifnb,success,0.9999999999999999,0.0,100.0,
+Zellkonverter,v4_ifnb_processed,ifnb,success,0.9999999999999999,0.0,100.0,
+Zellkonverter,v5_ifnb_raw,ifnb,success,0.9999999999999999,0.0,100.0,
+Zellkonverter,v5_ifnb_processed,ifnb,success,0.9999999999999999,0.0,100.0,
+Zellkonverter,v4_panc8_raw,panc8,success,0.9999999999999784,0.0,100.0,
+Zellkonverter,v4_panc8_processed,panc8,success,0.9999999999999784,0.0,100.0,
+Zellkonverter,v5_panc8_raw,panc8,success,0.9999999999999784,0.0,100.0,
+Zellkonverter,v5_panc8_processed,panc8,success,0.9999999999999784,0.0,100.0,
+Zellkonverter,v4_thp1.eccite_raw,thp1.eccite,success,1.0,0.0,100.0,
+Zellkonverter,v4_thp1.eccite_processed,thp1.eccite,success,1.0,0.0,100.0,
+Zellkonverter,v5_thp1.eccite_raw,thp1.eccite,success,1.0,0.0,100.0,
+Zellkonverter,v5_thp1.eccite_processed,thp1.eccite,success,1.0,0.0,100.0,
+Zellkonverter,v4_bmcite_raw,bmcite,success,0.9999999999999788,0.0,100.0,
+Zellkonverter,v4_bmcite_processed,bmcite,success,0.9999999999999788,0.0,100.0,
+Zellkonverter,v5_bmcite_raw,bmcite,success,0.9999999999999788,0.0,100.0,
+Zellkonverter,v5_bmcite_processed,bmcite,success,0.9999999999999788,0.0,100.0,
+Zellkonverter,v4_pbmcsca_raw,pbmcsca,success,0.9999999999999869,0.0,100.0,
+Zellkonverter,v4_pbmcsca_processed,pbmcsca,success,0.9999999999999869,0.0,100.0,
+Zellkonverter,v5_pbmcsca_raw,pbmcsca,success,0.9999999999999869,0.0,100.0,
+Zellkonverter,v5_pbmcsca_processed,pbmcsca,success,0.9999999999999869,0.0,100.0,
+Zellkonverter,v4_hcabm40k_raw,hcabm40k,success,0.9999999999999952,0.0,100.0,
+Zellkonverter,v4_hcabm40k_processed,hcabm40k,success,0.9999999999999952,0.0,100.0,
+Zellkonverter,v5_hcabm40k_raw,hcabm40k,success,0.9999999999999952,0.0,100.0,
+Zellkonverter,v5_hcabm40k_processed,hcabm40k,success,0.9999999999999952,0.0,100.0,
+Zellkonverter,v4_ssHippo_raw,ssHippo,success,1.0,0.0,100.0,
+Zellkonverter,v4_ssHippo_processed,ssHippo,success,1.0,0.0,100.0,
+Zellkonverter,v5_ssHippo_raw,ssHippo,success,1.0,0.0,100.0,
+Zellkonverter,v5_ssHippo_processed,ssHippo,success,1.0,0.0,100.0,
+anndataR,v4_pbmc3k_raw,pbmc3k,cc_h2r_failed,,,,[90m[[0m2026-02-25T03:21:30Z [32mINFO [0m crosscell::commands::convert[90m][0m Converting /tmp/roundtrip_work/mixed_anndataR_v4_pbmc3k_raw.h5ad to /tmp/roundtrip_work/mixed_anndataR_v4_pbmc3k_ra
+anndataR,v4_pbmc3k_processed,pbmc3k,cc_h2r_failed,,,,[90m[[0m2026-02-25T03:21:36Z [32mINFO [0m crosscell::commands::convert[90m][0m Converting /tmp/roundtrip_work/mixed_anndataR_v4_pbmc3k_processed.h5ad to /tmp/roundtrip_work/mixed_anndataR_v4_pbm
+anndataR,v5_pbmc3k_raw,pbmc3k,cc_h2r_failed,,,,[90m[[0m2026-02-25T03:21:42Z [32mINFO [0m crosscell::commands::convert[90m][0m Converting /tmp/roundtrip_work/mixed_anndataR_v5_pbmc3k_raw.h5ad to /tmp/roundtrip_work/mixed_anndataR_v5_pbmc3k_ra
+anndataR,v5_pbmc3k_processed,pbmc3k,cc_h2r_failed,,,,[90m[[0m2026-02-25T03:21:49Z [32mINFO [0m crosscell::commands::convert[90m][0m Converting /tmp/roundtrip_work/mixed_anndataR_v5_pbmc3k_processed.h5ad to /tmp/roundtrip_work/mixed_anndataR_v5_pbm
+anndataR,v4_stxKidney_raw,stxKidney,cc_h2r_failed,,,,[90m[[0m2026-02-25T03:21:57Z [32mINFO [0m crosscell::commands::convert[90m][0m Converting /tmp/roundtrip_work/mixed_anndataR_v4_stxKidney_raw.h5ad to /tmp/roundtrip_work/mixed_anndataR_v4_stxKid
+anndataR,v5_stxKidney_raw,stxKidney,cc_h2r_failed,,,,[90m[[0m2026-02-25T03:22:03Z [32mINFO [0m crosscell::commands::convert[90m][0m Converting /tmp/roundtrip_work/mixed_anndataR_v5_stxKidney_raw.h5ad to /tmp/roundtrip_work/mixed_anndataR_v5_stxKid
+anndataR,v4_celegans.embryo_raw,celegans.embryo,cc_h2r_failed,,,,[90m[[0m2026-02-25T03:22:10Z [32mINFO [0m crosscell::commands::convert[90m][0m Converting /tmp/roundtrip_work/mixed_anndataR_v4_celegans.embryo_raw.h5ad to /tmp/roundtrip_work/mixed_anndataR_v4_
+anndataR,v4_celegans.embryo_processed,celegans.embryo,cc_h2r_failed,,,,[90m[[0m2026-02-25T03:22:22Z [32mINFO [0m crosscell::commands::convert[90m][0m Converting /tmp/roundtrip_work/mixed_anndataR_v4_celegans.embryo_processed.h5ad to /tmp/roundtrip_work/mixed_anndat
+anndataR,v5_celegans.embryo_raw,celegans.embryo,cc_h2r_failed,,,,[90m[[0m2026-02-25T03:22:28Z [32mINFO [0m crosscell::commands::convert[90m][0m Converting /tmp/roundtrip_work/mixed_anndataR_v5_celegans.embryo_raw.h5ad to /tmp/roundtrip_work/mixed_anndataR_v5_
+anndataR,v5_celegans.embryo_processed,celegans.embryo,cc_h2r_failed,,,,[90m[[0m2026-02-25T03:22:37Z [32mINFO [0m crosscell::commands::convert[90m][0m Converting /tmp/roundtrip_work/mixed_anndataR_v5_celegans.embryo_processed.h5ad to /tmp/roundtrip_work/mixed_anndat
+anndataR,v4_cbmc_raw,cbmc,cc_h2r_failed,,,,[90m[[0m2026-02-25T03:22:45Z [32mINFO [0m crosscell::commands::convert[90m][0m Converting /tmp/roundtrip_work/mixed_anndataR_v4_cbmc_raw.h5ad to /tmp/roundtrip_work/mixed_anndataR_v4_cbmc_raw_rt
+anndataR,v4_cbmc_processed,cbmc,cc_h2r_failed,,,,[90m[[0m2026-02-25T03:22:56Z [32mINFO [0m crosscell::commands::convert[90m][0m Converting /tmp/roundtrip_work/mixed_anndataR_v4_cbmc_processed.h5ad to /tmp/roundtrip_work/mixed_anndataR_v4_cbmc_
+anndataR,v5_cbmc_raw,cbmc,cc_h2r_failed,,,,[90m[[0m2026-02-25T03:23:03Z [32mINFO [0m crosscell::commands::convert[90m][0m Converting /tmp/roundtrip_work/mixed_anndataR_v5_cbmc_raw.h5ad to /tmp/roundtrip_work/mixed_anndataR_v5_cbmc_raw_rt
+anndataR,v5_cbmc_processed,cbmc,cc_h2r_failed,,,,[90m[[0m2026-02-25T03:23:15Z [32mINFO [0m crosscell::commands::convert[90m][0m Converting /tmp/roundtrip_work/mixed_anndataR_v5_cbmc_processed.h5ad to /tmp/roundtrip_work/mixed_anndataR_v5_cbmc_
+anndataR,v4_ifnb_raw,ifnb,cc_h2r_failed,,,,[90m[[0m2026-02-25T03:23:25Z [32mINFO [0m crosscell::commands::convert[90m][0m Converting /tmp/roundtrip_work/mixed_anndataR_v4_ifnb_raw.h5ad to /tmp/roundtrip_work/mixed_anndataR_v4_ifnb_raw_rt
+anndataR,v4_ifnb_processed,ifnb,cc_h2r_failed,,,,[90m[[0m2026-02-25T03:23:39Z [32mINFO [0m crosscell::commands::convert[90m][0m Converting /tmp/roundtrip_work/mixed_anndataR_v4_ifnb_processed.h5ad to /tmp/roundtrip_work/mixed_anndataR_v4_ifnb_
+anndataR,v5_ifnb_raw,ifnb,cc_h2r_failed,,,,[90m[[0m2026-02-25T03:23:47Z [32mINFO [0m crosscell::commands::convert[90m][0m Converting /tmp/roundtrip_work/mixed_anndataR_v5_ifnb_raw.h5ad to /tmp/roundtrip_work/mixed_anndataR_v5_ifnb_raw_rt
+anndataR,v5_ifnb_processed,ifnb,cc_h2r_failed,,,,[90m[[0m2026-02-25T03:23:59Z [32mINFO [0m crosscell::commands::convert[90m][0m Converting /tmp/roundtrip_work/mixed_anndataR_v5_ifnb_processed.h5ad to /tmp/roundtrip_work/mixed_anndataR_v5_ifnb_
+anndataR,v4_panc8_raw,panc8,cc_h2r_failed,,,,[90m[[0m2026-02-25T03:24:36Z [32mINFO [0m crosscell::commands::convert[90m][0m Converting /tmp/roundtrip_work/mixed_anndataR_v4_panc8_raw.h5ad to /tmp/roundtrip_work/mixed_anndataR_v4_panc8_raw_
+anndataR,v4_panc8_processed,panc8,cc_h2r_failed,,,,[90m[[0m2026-02-25T03:25:08Z [32mINFO [0m crosscell::commands::convert[90m][0m Converting /tmp/roundtrip_work/mixed_anndataR_v4_panc8_processed.h5ad to /tmp/roundtrip_work/mixed_anndataR_v4_panc
+anndataR,v5_panc8_raw,panc8,cc_h2r_failed,,,,[90m[[0m2026-02-25T03:25:31Z [32mINFO [0m crosscell::commands::convert[90m][0m Converting /tmp/roundtrip_work/mixed_anndataR_v5_panc8_raw.h5ad to /tmp/roundtrip_work/mixed_anndataR_v5_panc8_raw_
+anndataR,v5_panc8_processed,panc8,cc_h2r_failed,,,,[90m[[0m2026-02-25T03:26:05Z [32mINFO [0m crosscell::commands::convert[90m][0m Converting /tmp/roundtrip_work/mixed_anndataR_v5_panc8_processed.h5ad to /tmp/roundtrip_work/mixed_anndataR_v5_panc
+anndataR,v4_thp1.eccite_raw,thp1.eccite,cc_h2r_failed,,,,[90m[[0m2026-02-25T03:26:45Z [32mINFO [0m crosscell::commands::convert[90m][0m Converting /tmp/roundtrip_work/mixed_anndataR_v4_thp1.eccite_raw.h5ad to /tmp/roundtrip_work/mixed_anndataR_v4_thp1
+anndataR,v4_thp1.eccite_processed,thp1.eccite,cc_h2r_failed,,,,[90m[[0m2026-02-25T03:27:32Z [32mINFO [0m crosscell::commands::convert[90m][0m Converting /tmp/roundtrip_work/mixed_anndataR_v4_thp1.eccite_processed.h5ad to /tmp/roundtrip_work/mixed_anndataR_v
+anndataR,v5_thp1.eccite_raw,thp1.eccite,cc_h2r_failed,,,,[90m[[0m2026-02-25T03:27:59Z [32mINFO [0m crosscell::commands::convert[90m][0m Converting /tmp/roundtrip_work/mixed_anndataR_v5_thp1.eccite_raw.h5ad to /tmp/roundtrip_work/mixed_anndataR_v5_thp1
+anndataR,v5_thp1.eccite_processed,thp1.eccite,cc_h2r_failed,,,,[90m[[0m2026-02-25T03:28:52Z [32mINFO [0m crosscell::commands::convert[90m][0m Converting /tmp/roundtrip_work/mixed_anndataR_v5_thp1.eccite_processed.h5ad to /tmp/roundtrip_work/mixed_anndataR_v
+anndataR,v4_bmcite_raw,bmcite,cc_h2r_failed,,,,[90m[[0m2026-02-25T03:29:20Z [32mINFO [0m crosscell::commands::convert[90m][0m Converting /tmp/roundtrip_work/mixed_anndataR_v4_bmcite_raw.h5ad to /tmp/roundtrip_work/mixed_anndataR_v4_bmcite_ra
+anndataR,v4_bmcite_processed,bmcite,cc_h2r_failed,,,,[90m[[0m2026-02-25T03:29:46Z [32mINFO [0m crosscell::commands::convert[90m][0m Converting /tmp/roundtrip_work/mixed_anndataR_v4_bmcite_processed.h5ad to /tmp/roundtrip_work/mixed_anndataR_v4_bmc
+anndataR,v5_bmcite_raw,bmcite,cc_h2r_failed,,,,[90m[[0m2026-02-25T03:29:59Z [32mINFO [0m crosscell::commands::convert[90m][0m Converting /tmp/roundtrip_work/mixed_anndataR_v5_bmcite_raw.h5ad to /tmp/roundtrip_work/mixed_anndataR_v5_bmcite_ra
+anndataR,v5_bmcite_processed,bmcite,cc_h2r_failed,,,,[90m[[0m2026-02-25T03:30:22Z [32mINFO [0m crosscell::commands::convert[90m][0m Converting /tmp/roundtrip_work/mixed_anndataR_v5_bmcite_processed.h5ad to /tmp/roundtrip_work/mixed_anndataR_v5_bmc
+anndataR,v4_pbmcsca_raw,pbmcsca,cc_h2r_failed,,,,[90m[[0m2026-02-25T03:30:44Z [32mINFO [0m crosscell::commands::convert[90m][0m Converting /tmp/roundtrip_work/mixed_anndataR_v4_pbmcsca_raw.h5ad to /tmp/roundtrip_work/mixed_anndataR_v4_pbmcsca_
+anndataR,v4_pbmcsca_processed,pbmcsca,cc_h2r_failed,,,,[90m[[0m2026-02-25T03:31:12Z [32mINFO [0m crosscell::commands::convert[90m][0m Converting /tmp/roundtrip_work/mixed_anndataR_v4_pbmcsca_processed.h5ad to /tmp/roundtrip_work/mixed_anndataR_v4_pb
+anndataR,v5_pbmcsca_raw,pbmcsca,cc_h2r_failed,,,,[90m[[0m2026-02-25T03:31:26Z [32mINFO [0m crosscell::commands::convert[90m][0m Converting /tmp/roundtrip_work/mixed_anndataR_v5_pbmcsca_raw.h5ad to /tmp/roundtrip_work/mixed_anndataR_v5_pbmcsca_
+anndataR,v5_pbmcsca_processed,pbmcsca,cc_h2r_failed,,,,[90m[[0m2026-02-25T03:31:53Z [32mINFO [0m crosscell::commands::convert[90m][0m Converting /tmp/roundtrip_work/mixed_anndataR_v5_pbmcsca_processed.h5ad to /tmp/roundtrip_work/mixed_anndataR_v5_pb
+anndataR,v4_hcabm40k_raw,hcabm40k,cc_h2r_failed,,,,[90m[[0m2026-02-25T03:32:22Z [32mINFO [0m crosscell::commands::convert[90m][0m Converting /tmp/roundtrip_work/mixed_anndataR_v4_hcabm40k_raw.h5ad to /tmp/roundtrip_work/mixed_anndataR_v4_hcabm40
+anndataR,v4_hcabm40k_processed,hcabm40k,cc_h2r_failed,,,,[90m[[0m2026-02-25T03:33:01Z [32mINFO [0m crosscell::commands::convert[90m][0m Converting /tmp/roundtrip_work/mixed_anndataR_v4_hcabm40k_processed.h5ad to /tmp/roundtrip_work/mixed_anndataR_v4_h
+anndataR,v5_hcabm40k_raw,hcabm40k,cc_h2r_failed,,,,[90m[[0m2026-02-25T03:33:19Z [32mINFO [0m crosscell::commands::convert[90m][0m Converting /tmp/roundtrip_work/mixed_anndataR_v5_hcabm40k_raw.h5ad to /tmp/roundtrip_work/mixed_anndataR_v5_hcabm40
+anndataR,v5_hcabm40k_processed,hcabm40k,cc_h2r_failed,,,,[90m[[0m2026-02-25T03:33:49Z [32mINFO [0m crosscell::commands::convert[90m][0m Converting /tmp/roundtrip_work/mixed_anndataR_v5_hcabm40k_processed.h5ad to /tmp/roundtrip_work/mixed_anndataR_v5_h
+anndataR,v4_ssHippo_raw,ssHippo,cc_h2r_failed,,,,[90m[[0m2026-02-25T03:34:09Z [32mINFO [0m crosscell::commands::convert[90m][0m Converting /tmp/roundtrip_work/mixed_anndataR_v4_ssHippo_raw.h5ad to /tmp/roundtrip_work/mixed_anndataR_v4_ssHippo_
+anndataR,v4_ssHippo_processed,ssHippo,cc_h2r_failed,,,,[90m[[0m2026-02-25T03:34:35Z [32mINFO [0m crosscell::commands::convert[90m][0m Converting /tmp/roundtrip_work/mixed_anndataR_v4_ssHippo_processed.h5ad to /tmp/roundtrip_work/mixed_anndataR_v4_ss
+anndataR,v5_ssHippo_raw,ssHippo,cc_h2r_failed,,,,[90m[[0m2026-02-25T03:34:47Z [32mINFO [0m crosscell::commands::convert[90m][0m Converting /tmp/roundtrip_work/mixed_anndataR_v5_ssHippo_raw.h5ad to /tmp/roundtrip_work/mixed_anndataR_v5_ssHippo_
+anndataR,v5_ssHippo_processed,ssHippo,cc_h2r_failed,,,,[90m[[0m2026-02-25T03:35:10Z [32mINFO [0m crosscell::commands::convert[90m][0m Converting /tmp/roundtrip_work/mixed_anndataR_v5_ssHippo_processed.h5ad to /tmp/roundtrip_work/mixed_anndataR_v5_ss
+convert2anndata,v5_pbmc3k_raw,pbmc3k,convert_failed,,,,[31m  ├─▶ [0merror sending request for url
+convert2anndata,v5_pbmc3k_processed,pbmc3k,convert_failed,,,,[31m  ├─▶ [0merror sending request for url
+convert2anndata,v5_stxKidney_raw,stxKidney,success,0.9999999999999925,0.0,100.0,
+convert2anndata,v5_celegans.embryo_raw,celegans.embryo,success,1.0,0.0,100.0,
+convert2anndata,v5_celegans.embryo_processed,celegans.embryo,success,1.0,0.0,100.0,
+convert2anndata,v5_cbmc_raw,cbmc,success,0.9999999999999958,0.0,100.0,
+convert2anndata,v5_cbmc_processed,cbmc,success,0.9999999999999958,0.0,100.0,
+convert2anndata,v5_ifnb_raw,ifnb,success,0.9999999999999999,0.0,100.0,
+convert2anndata,v5_ifnb_processed,ifnb,success,0.9999999999999999,0.0,100.0,
+convert2anndata,v5_panc8_raw,panc8,success,1.0,0.0,100.0,
+convert2anndata,v5_panc8_processed,panc8,success,1.0,0.0,100.0,
+convert2anndata,v5_thp1.eccite_raw,thp1.eccite,success,1.0,0.0,100.0,
+convert2anndata,v5_thp1.eccite_processed,thp1.eccite,success,1.0,0.0,100.0,
+convert2anndata,v5_bmcite_raw,bmcite,success,0.9999999999999788,0.0,100.0,
+convert2anndata,v5_bmcite_processed,bmcite,success,0.9999999999999788,0.0,100.0,
+convert2anndata,v5_pbmcsca_raw,pbmcsca,success,0.9999999999999869,0.0,100.0,
+convert2anndata,v5_pbmcsca_processed,pbmcsca,success,0.9999999999999869,0.0,100.0,
+convert2anndata,v5_hcabm40k_raw,hcabm40k,success,0.9999999999999952,0.0,100.0,
+convert2anndata,v5_hcabm40k_processed,hcabm40k,success,0.9999999999999952,0.0,100.0,
+easySCF,v4_pbmc3k_raw,pbmc3k,cc_h2r_failed,,,,[90m[[0m2026-02-25T04:17:32Z [32mINFO [0m crosscell::commands::convert[90m][0m Converting /tmp/roundtrip_work/mixed_easySCF_v4_pbmc3k_raw.h5ad to /tmp/roundtrip_work/mixed_easySCF_v4_pbmc3k_raw_
+easySCF,v4_pbmc3k_processed,pbmc3k,cc_h2r_failed,,,,[90m[[0m2026-02-25T04:17:44Z [32mINFO [0m crosscell::commands::convert[90m][0m Converting /tmp/roundtrip_work/mixed_easySCF_v4_pbmc3k_processed.h5ad to /tmp/roundtrip_work/mixed_easySCF_v4_pbmc3
+easySCF,v5_pbmc3k_raw,pbmc3k,cc_h2r_failed,,,,[90m[[0m2026-02-25T04:17:49Z [32mINFO [0m crosscell::commands::convert[90m][0m Converting /tmp/roundtrip_work/mixed_easySCF_v5_pbmc3k_raw.h5ad to /tmp/roundtrip_work/mixed_easySCF_v5_pbmc3k_raw_
+easySCF,v5_pbmc3k_processed,pbmc3k,cc_h2r_failed,,,,[90m[[0m2026-02-25T04:17:58Z [32mINFO [0m crosscell::commands::convert[90m][0m Converting /tmp/roundtrip_work/mixed_easySCF_v5_pbmc3k_processed.h5ad to /tmp/roundtrip_work/mixed_easySCF_v5_pbmc3
+easySCF,v4_stxKidney_raw,stxKidney,cc_h2r_failed,,,,[90m[[0m2026-02-25T04:18:04Z [32mINFO [0m crosscell::commands::convert[90m][0m Converting /tmp/roundtrip_work/mixed_easySCF_v4_stxKidney_raw.h5ad to /tmp/roundtrip_work/mixed_easySCF_v4_stxKidne
+easySCF,v5_stxKidney_raw,stxKidney,cc_h2r_failed,,,,[90m[[0m2026-02-25T04:18:09Z [32mINFO [0m crosscell::commands::convert[90m][0m Converting /tmp/roundtrip_work/mixed_easySCF_v5_stxKidney_raw.h5ad to /tmp/roundtrip_work/mixed_easySCF_v5_stxKidne
+easySCF,v4_celegans.embryo_raw,celegans.embryo,cc_h2r_failed,,,,[90m[[0m2026-02-25T04:18:17Z [32mINFO [0m crosscell::commands::convert[90m][0m Converting /tmp/roundtrip_work/mixed_easySCF_v4_celegans.embryo_raw.h5ad to /tmp/roundtrip_work/mixed_easySCF_v4_ce
+easySCF,v4_celegans.embryo_processed,celegans.embryo,cc_h2r_failed,,,,[90m[[0m2026-02-25T04:18:31Z [32mINFO [0m crosscell::commands::convert[90m][0m Converting /tmp/roundtrip_work/mixed_easySCF_v4_celegans.embryo_processed.h5ad to /tmp/roundtrip_work/mixed_easySCF
+easySCF,v5_celegans.embryo_raw,celegans.embryo,cc_h2r_failed,,,,[90m[[0m2026-02-25T04:18:39Z [32mINFO [0m crosscell::commands::convert[90m][0m Converting /tmp/roundtrip_work/mixed_easySCF_v5_celegans.embryo_raw.h5ad to /tmp/roundtrip_work/mixed_easySCF_v5_ce
+easySCF,v5_celegans.embryo_processed,celegans.embryo,cc_h2r_failed,,,,[90m[[0m2026-02-25T04:18:51Z [32mINFO [0m crosscell::commands::convert[90m][0m Converting /tmp/roundtrip_work/mixed_easySCF_v5_celegans.embryo_processed.h5ad to /tmp/roundtrip_work/mixed_easySCF
+easySCF,v4_cbmc_raw,cbmc,cc_h2r_failed,,,,[90m[[0m2026-02-25T04:19:00Z [32mINFO [0m crosscell::commands::convert[90m][0m Converting /tmp/roundtrip_work/mixed_easySCF_v4_cbmc_raw.h5ad to /tmp/roundtrip_work/mixed_easySCF_v4_cbmc_raw_rt.r
+easySCF,v4_cbmc_processed,cbmc,cc_h2r_failed,,,,[90m[[0m2026-02-25T04:19:15Z [32mINFO [0m crosscell::commands::convert[90m][0m Converting /tmp/roundtrip_work/mixed_easySCF_v4_cbmc_processed.h5ad to /tmp/roundtrip_work/mixed_easySCF_v4_cbmc_pr
+easySCF,v5_cbmc_raw,cbmc,cc_h2r_failed,,,,[90m[[0m2026-02-25T04:19:24Z [32mINFO [0m crosscell::commands::convert[90m][0m Converting /tmp/roundtrip_work/mixed_easySCF_v5_cbmc_raw.h5ad to /tmp/roundtrip_work/mixed_easySCF_v5_cbmc_raw_rt.r
+easySCF,v5_cbmc_processed,cbmc,cc_h2r_failed,,,,[90m[[0m2026-02-25T04:19:38Z [32mINFO [0m crosscell::commands::convert[90m][0m Converting /tmp/roundtrip_work/mixed_easySCF_v5_cbmc_processed.h5ad to /tmp/roundtrip_work/mixed_easySCF_v5_cbmc_pr
+easySCF,v4_ifnb_raw,ifnb,cc_h2r_failed,,,,[90m[[0m2026-02-25T04:19:50Z [32mINFO [0m crosscell::commands::convert[90m][0m Converting /tmp/roundtrip_work/mixed_easySCF_v4_ifnb_raw.h5ad to /tmp/roundtrip_work/mixed_easySCF_v4_ifnb_raw_rt.r
+easySCF,v4_ifnb_processed,ifnb,cc_h2r_failed,,,,[90m[[0m2026-02-25T04:20:07Z [32mINFO [0m crosscell::commands::convert[90m][0m Converting /tmp/roundtrip_work/mixed_easySCF_v4_ifnb_processed.h5ad to /tmp/roundtrip_work/mixed_easySCF_v4_ifnb_pr
+easySCF,v5_ifnb_raw,ifnb,cc_h2r_failed,,,,[90m[[0m2026-02-25T04:20:16Z [32mINFO [0m crosscell::commands::convert[90m][0m Converting /tmp/roundtrip_work/mixed_easySCF_v5_ifnb_raw.h5ad to /tmp/roundtrip_work/mixed_easySCF_v5_ifnb_raw_rt.r
+easySCF,v5_ifnb_processed,ifnb,cc_h2r_failed,,,,[90m[[0m2026-02-25T04:20:35Z [32mINFO [0m crosscell::commands::convert[90m][0m Converting /tmp/roundtrip_work/mixed_easySCF_v5_ifnb_processed.h5ad to /tmp/roundtrip_work/mixed_easySCF_v5_ifnb_pr
+easySCF,v4_panc8_raw,panc8,cc_h2r_failed,,,,[90m[[0m2026-02-25T04:21:10Z [32mINFO [0m crosscell::commands::convert[90m][0m Converting /tmp/roundtrip_work/mixed_easySCF_v4_panc8_raw.h5ad to /tmp/roundtrip_work/mixed_easySCF_v4_panc8_raw_rt
+easySCF,v4_panc8_processed,panc8,cc_h2r_failed,,,,[90m[[0m2026-02-25T04:21:54Z [32mINFO [0m crosscell::commands::convert[90m][0m Converting /tmp/roundtrip_work/mixed_easySCF_v4_panc8_processed.h5ad to /tmp/roundtrip_work/mixed_easySCF_v4_panc8_
+easySCF,v5_panc8_raw,panc8,cc_h2r_failed,,,,[90m[[0m2026-02-25T04:22:23Z [32mINFO [0m crosscell::commands::convert[90m][0m Converting /tmp/roundtrip_work/mixed_easySCF_v5_panc8_raw.h5ad to /tmp/roundtrip_work/mixed_easySCF_v5_panc8_raw_rt
+easySCF,v5_panc8_processed,panc8,cc_h2r_failed,,,,[90m[[0m2026-02-25T04:23:05Z [32mINFO [0m crosscell::commands::convert[90m][0m Converting /tmp/roundtrip_work/mixed_easySCF_v5_panc8_processed.h5ad to /tmp/roundtrip_work/mixed_easySCF_v5_panc8_
+easySCF,v4_thp1.eccite_raw,thp1.eccite,cc_h2r_failed,,,,[90m[[0m2026-02-25T04:23:53Z [32mINFO [0m crosscell::commands::convert[90m][0m Converting /tmp/roundtrip_work/mixed_easySCF_v4_thp1.eccite_raw.h5ad to /tmp/roundtrip_work/mixed_easySCF_v4_thp1.e
+easySCF,v4_thp1.eccite_processed,thp1.eccite,cc_h2r_failed,,,,[90m[[0m2026-02-25T04:24:52Z [32mINFO [0m crosscell::commands::convert[90m][0m Converting /tmp/roundtrip_work/mixed_easySCF_v4_thp1.eccite_processed.h5ad to /tmp/roundtrip_work/mixed_easySCF_v4_
+easySCF,v5_thp1.eccite_raw,thp1.eccite,cc_h2r_failed,,,,[90m[[0m2026-02-25T04:25:27Z [32mINFO [0m crosscell::commands::convert[90m][0m Converting /tmp/roundtrip_work/mixed_easySCF_v5_thp1.eccite_raw.h5ad to /tmp/roundtrip_work/mixed_easySCF_v5_thp1.e
+easySCF,v5_thp1.eccite_processed,thp1.eccite,cc_h2r_failed,,,,[90m[[0m2026-02-25T04:26:21Z [32mINFO [0m crosscell::commands::convert[90m][0m Converting /tmp/roundtrip_work/mixed_easySCF_v5_thp1.eccite_processed.h5ad to /tmp/roundtrip_work/mixed_easySCF_v5_
+easySCF,v4_bmcite_raw,bmcite,cc_h2r_failed,,,,[90m[[0m2026-02-25T04:26:45Z [32mINFO [0m crosscell::commands::convert[90m][0m Converting /tmp/roundtrip_work/mixed_easySCF_v4_bmcite_raw.h5ad to /tmp/roundtrip_work/mixed_easySCF_v4_bmcite_raw_
+easySCF,v4_bmcite_processed,bmcite,cc_h2r_failed,,,,[90m[[0m2026-02-25T04:27:22Z [32mINFO [0m crosscell::commands::convert[90m][0m Converting /tmp/roundtrip_work/mixed_easySCF_v4_bmcite_processed.h5ad to /tmp/roundtrip_work/mixed_easySCF_v4_bmcit
+easySCF,v5_bmcite_raw,bmcite,cc_h2r_failed,,,,[90m[[0m2026-02-25T04:27:42Z [32mINFO [0m crosscell::commands::convert[90m][0m Converting /tmp/roundtrip_work/mixed_easySCF_v5_bmcite_raw.h5ad to /tmp/roundtrip_work/mixed_easySCF_v5_bmcite_raw_
+easySCF,v5_bmcite_processed,bmcite,cc_h2r_failed,,,,[90m[[0m2026-02-25T04:28:20Z [32mINFO [0m crosscell::commands::convert[90m][0m Converting /tmp/roundtrip_work/mixed_easySCF_v5_bmcite_processed.h5ad to /tmp/roundtrip_work/mixed_easySCF_v5_bmcit
+easySCF,v4_pbmcsca_raw,pbmcsca,cc_h2r_failed,,,,[90m[[0m2026-02-25T04:28:46Z [32mINFO [0m crosscell::commands::convert[90m][0m Converting /tmp/roundtrip_work/mixed_easySCF_v4_pbmcsca_raw.h5ad to /tmp/roundtrip_work/mixed_easySCF_v4_pbmcsca_ra
+easySCF,v4_pbmcsca_processed,pbmcsca,cc_h2r_failed,,,,[90m[[0m2026-02-25T04:29:20Z [32mINFO [0m crosscell::commands::convert[90m][0m Converting /tmp/roundtrip_work/mixed_easySCF_v4_pbmcsca_processed.h5ad to /tmp/roundtrip_work/mixed_easySCF_v4_pbmc
+easySCF,v5_pbmcsca_raw,pbmcsca,cc_h2r_failed,,,,[90m[[0m2026-02-25T04:29:40Z [32mINFO [0m crosscell::commands::convert[90m][0m Converting /tmp/roundtrip_work/mixed_easySCF_v5_pbmcsca_raw.h5ad to /tmp/roundtrip_work/mixed_easySCF_v5_pbmcsca_ra
+easySCF,v5_pbmcsca_processed,pbmcsca,cc_h2r_failed,,,,[90m[[0m2026-02-25T04:30:08Z [32mINFO [0m crosscell::commands::convert[90m][0m Converting /tmp/roundtrip_work/mixed_easySCF_v5_pbmcsca_processed.h5ad to /tmp/roundtrip_work/mixed_easySCF_v5_pbmc
+easySCF,v4_hcabm40k_raw,hcabm40k,cc_h2r_failed,,,,[90m[[0m2026-02-25T04:30:37Z [32mINFO [0m crosscell::commands::convert[90m][0m Converting /tmp/roundtrip_work/mixed_easySCF_v4_hcabm40k_raw.h5ad to /tmp/roundtrip_work/mixed_easySCF_v4_hcabm40k_
+easySCF,v4_hcabm40k_processed,hcabm40k,cc_h2r_failed,,,,[90m[[0m2026-02-25T04:31:20Z [32mINFO [0m crosscell::commands::convert[90m][0m Converting /tmp/roundtrip_work/mixed_easySCF_v4_hcabm40k_processed.h5ad to /tmp/roundtrip_work/mixed_easySCF_v4_hca
+easySCF,v5_hcabm40k_raw,hcabm40k,cc_h2r_failed,,,,[90m[[0m2026-02-25T04:31:43Z [32mINFO [0m crosscell::commands::convert[90m][0m Converting /tmp/roundtrip_work/mixed_easySCF_v5_hcabm40k_raw.h5ad to /tmp/roundtrip_work/mixed_easySCF_v5_hcabm40k_
+easySCF,v5_hcabm40k_processed,hcabm40k,cc_h2r_failed,,,,[90m[[0m2026-02-25T04:32:26Z [32mINFO [0m crosscell::commands::convert[90m][0m Converting /tmp/roundtrip_work/mixed_easySCF_v5_hcabm40k_processed.h5ad to /tmp/roundtrip_work/mixed_easySCF_v5_hca
+easySCF,v4_ssHippo_raw,ssHippo,cc_h2r_failed,,,,[90m[[0m2026-02-25T04:32:36Z [32mINFO [0m crosscell::commands::convert[90m][0m Converting /tmp/roundtrip_work/mixed_easySCF_v4_ssHippo_raw.h5ad to /tmp/roundtrip_work/mixed_easySCF_v4_ssHippo_ra
+easySCF,v4_ssHippo_processed,ssHippo,cc_h2r_failed,,,,[90m[[0m2026-02-25T04:32:53Z [32mINFO [0m crosscell::commands::convert[90m][0m Converting /tmp/roundtrip_work/mixed_easySCF_v4_ssHippo_processed.h5ad to /tmp/roundtrip_work/mixed_easySCF_v4_ssHi
+easySCF,v5_ssHippo_raw,ssHippo,cc_h2r_failed,,,,[90m[[0m2026-02-25T04:33:00Z [32mINFO [0m crosscell::commands::convert[90m][0m Converting /tmp/roundtrip_work/mixed_easySCF_v5_ssHippo_raw.h5ad to /tmp/roundtrip_work/mixed_easySCF_v5_ssHippo_ra
+easySCF,v5_ssHippo_processed,ssHippo,cc_h2r_failed,,,,[90m[[0m2026-02-25T04:33:13Z [32mINFO [0m crosscell::commands::convert[90m][0m Converting /tmp/roundtrip_work/mixed_easySCF_v5_ssHippo_processed.h5ad to /tmp/roundtrip_work/mixed_easySCF_v5_ssHi

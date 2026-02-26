@@ -1,0 +1,12 @@
+name,format,n_cells,n_genes,scale,source
+pbmc3k,,,,small,
+stxKidney,,,,small,
+celegans.embryo,,,,medium,
+cbmc,,,,medium,
+ifnb,,,,medium,
+panc8,,,,medium,
+thp1.eccite,,,,large,
+bmcite,,,,large,
+pbmcsca,,,,large,
+hcabm40k,,,,large,
+ssHippo,,,,large,

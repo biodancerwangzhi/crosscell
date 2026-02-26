@@ -1,0 +1,69 @@
+{
+  "pipeline_a_convert_time": 1.184,
+  "pipeline_a_shape": [
+    2700,
+    13714
+  ],
+  "pipeline_a_rank_time": 0.419,
+  "pipeline_a_tokens_per_cell": {
+    "min": 212,
+    "median": 816,
+    "max": 2048
+  },
+  "pipeline_b_shape": [
+    2700,
+    32738
+  ],
+  "pipeline_b_norm_time": 0.4275,
+  "pipeline_b_rank_time": 0.4275,
+  "pipeline_b_tokens_per_cell": {
+    "min": 212,
+    "median": 817,
+    "max": 2048
+  },
+  "pipeline_b_cell0_top5_ensembl": [
+    "ENSG00000166710",
+    "ENSG00000251562",
+    "ENSG00000205542",
+    "ENSG00000140988",
+    "ENSG00000142676"
+  ],
+  "pipeline_b_cell0_top5_symbols": [
+    "B2M",
+    "MALAT1",
+    "TMSB4X",
+    "RPS2",
+    "RPL11"
+  ],
+  "pipeline_c_shape": [
+    13999,
+    14053
+  ],
+  "pipeline_c_convert_time": 5.934,
+  "pipeline_c_rank_time": 1.8936,
+  "pipeline_c_total_time": 7.828,
+  "cellxgene_validation_original": {
+    "organism": true,
+    "tissue": true,
+    "cell_type": true,
+    "assay": true,
+    "disease": true,
+    "sex": true,
+    "dev_stage": true
+  },
+  "cellxgene_validation_roundtrip": {
+    "organism": false,
+    "tissue": true,
+    "cell_type": true,
+    "assay": true,
+    "disease": true,
+    "sex": true,
+    "dev_stage": true
+  },
+  "cellxgene_dataset": "cellxgene_pbmc_15k.h5ad",
+  "roundtrip_matrix_identical": true,
+  "roundtrip_pearson_r": 1.0,
+  "roundtrip_jaccard_mean": 1.0,
+  "roundtrip_exact_match_pct": 100.0,
+  "cellxgene_roundtrip_time": 26.406
+}

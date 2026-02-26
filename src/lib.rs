@@ -14,6 +14,7 @@ pub mod seurat;
 pub mod sparse;
 pub mod storage;
 pub mod types;
+pub mod transform;
 pub mod validation;
 
 // 重新导出核心类型

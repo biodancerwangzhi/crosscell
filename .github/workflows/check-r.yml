@@ -1,0 +1,53 @@
+name: R CMD check
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "crosscell-r/**"
+      - "src/**"
+      - "Cargo.toml"
+      - "Cargo.lock"
+  pull_request:
+    paths:
+      - "crosscell-r/**"
+      - "src/**"
+
+jobs:
+  check:
+    strategy:
+      fail-fast: false
+      matrix:
+        # 先只测 Linux，macOS/Windows 后续添加
+        os: [ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 安装 Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: 安装系统依赖 (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            cmake pkg-config libhdf5-dev zlib1g-dev \
+            libcurl4-openssl-dev libssl-dev libxml2-dev \
+            libfontconfig1-dev libfreetype6-dev libpng-dev \
+            libharfbuzz-dev libfribidi-dev
+
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: "release"
+
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        with:
+          working-directory: crosscell-r
+          extra-packages: any::rcmdcheck
+
+      - name: R CMD check
+        uses: r-lib/actions/check-r-package@v2
+        with:
+          working-directory: crosscell-r

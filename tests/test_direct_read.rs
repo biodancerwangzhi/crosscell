@@ -19,7 +19,7 @@ fn test_direct_read_seurat_minimal() {
         return;
     }
 
-    let result = read_seurat_direct(path);
+    let result = read_seurat_direct(path, false);
     match result {
         Ok(direct_result) => {
             println!("Successfully read Seurat object directly!");
@@ -49,7 +49,7 @@ fn test_direct_read_seurat_with_dimred() {
         return;
     }
 
-    let result = read_seurat_direct(path);
+    let result = read_seurat_direct(path, false);
     match result {
         Ok(direct_result) => {
             println!("Successfully read Seurat object with reductions!");
@@ -81,7 +81,7 @@ fn test_direct_read_seurat_multi_assay() {
         return;
     }
 
-    let result = read_seurat_direct(path);
+    let result = read_seurat_direct(path, false);
     match result {
         Ok(direct_result) => {
             println!("Successfully read multi-assay Seurat object!");
@@ -111,7 +111,7 @@ fn test_direct_read_test_minimal_seurat() {
         return;
     }
 
-    let result = read_seurat_direct(path);
+    let result = read_seurat_direct(path, false);
     match result {
         Ok(direct_result) => {
             println!("Successfully read test_minimal_seurat!");
@@ -144,7 +144,7 @@ fn test_seurat_version_detection() {
             continue;
         }
         
-        match read_seurat_direct(path) {
+        match read_seurat_direct(path, false) {
             Ok(result) => {
                 println!("{}: Version {}", path_str, result.version);
                 // Version should be one of the valid versions
@@ -169,7 +169,7 @@ fn test_skipped_components_tracking() {
         return;
     }
 
-    if let Ok(result) = read_seurat_direct(path) {
+    if let Ok(result) = read_seurat_direct(path, false) {
         let skipped = &result.skipped;
         
         println!("Skipped components:");
@@ -201,7 +201,7 @@ fn test_simplified_files_rejected() {
             continue;
         }
         
-        let result = read_seurat_direct(path);
+        let result = read_seurat_direct(path, false);
         // Simplified files are lists, not S4 objects, so they should fail
         assert!(result.is_err(), "Simplified file {} should be rejected by read_seurat_direct", path_str);
         if let Err(e) = result {

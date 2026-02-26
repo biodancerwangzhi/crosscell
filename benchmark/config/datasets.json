@@ -1,0 +1,122 @@
+{
+  "timestamp": "2026-02-07",
+  "source": "data/generated/seurat_v4_summary.csv + seurat_v5_summary.csv",
+  "scale_groups": {
+    "small": ["pbmc3k", "stxKidney"],
+    "medium": ["celegans.embryo", "cbmc", "ifnb", "panc8"],
+    "large": ["thp1.eccite", "bmcite", "pbmcsca", "hcabm40k", "ssHippo"]
+  },
+  "datasets": [
+    {
+      "name": "pbmc3k",
+      "cells": 2700,
+      "genes": 13714,
+      "scale": "small",
+      "assays": "RNA",
+      "spatial": false,
+      "v4_raw_mb": 9.79,
+      "v5_raw_mb": 4.89
+    },
+    {
+      "name": "stxKidney",
+      "cells": 1438,
+      "genes": 31053,
+      "scale": "small",
+      "assays": "Spatial",
+      "spatial": true,
+      "v4_raw_mb": 37.76,
+      "v5_raw_mb": 18.41,
+      "note": "V5 raw available but no processed; spatial data"
+    },
+    {
+      "name": "celegans.embryo",
+      "cells": 6188,
+      "genes": 20222,
+      "scale": "medium",
+      "assays": "RNA",
+      "spatial": false,
+      "v4_raw_mb": 20.76,
+      "v5_raw_mb": 10.54
+    },
+    {
+      "name": "cbmc",
+      "cells": 8617,
+      "genes": 20501,
+      "scale": "medium",
+      "assays": "RNA,ADT",
+      "spatial": false,
+      "v4_raw_mb": 33.96,
+      "v5_raw_mb": 16.79
+    },
+    {
+      "name": "ifnb",
+      "cells": 13999,
+      "genes": 14053,
+      "scale": "medium",
+      "assays": "RNA",
+      "spatial": false,
+      "v4_raw_mb": 40.33,
+      "v5_raw_mb": 20.23
+    },
+    {
+      "name": "panc8",
+      "cells": 14890,
+      "genes": 34363,
+      "scale": "medium",
+      "assays": "RNA",
+      "spatial": false,
+      "v4_raw_mb": 275.3,
+      "v5_raw_mb": 137.69
+    },
+    {
+      "name": "thp1.eccite",
+      "cells": 20729,
+      "genes": 18649,
+      "scale": "large",
+      "assays": "RNA,ADT,HTO,GDO",
+      "spatial": false,
+      "v4_raw_mb": 309.48,
+      "v5_raw_mb": 153.98
+    },
+    {
+      "name": "bmcite",
+      "cells": 30672,
+      "genes": 17009,
+      "scale": "large",
+      "assays": "RNA,ADT",
+      "spatial": false,
+      "v4_raw_mb": 167.1,
+      "v5_raw_mb": 59.86
+    },
+    {
+      "name": "pbmcsca",
+      "cells": 31021,
+      "genes": 33694,
+      "scale": "large",
+      "assays": "RNA",
+      "spatial": false,
+      "v4_raw_mb": 121.38,
+      "v5_raw_mb": 61.05
+    },
+    {
+      "name": "hcabm40k",
+      "cells": 40000,
+      "genes": 17369,
+      "scale": "large",
+      "assays": "RNA",
+      "spatial": false,
+      "v4_raw_mb": 180.19,
+      "v5_raw_mb": 90.4
+    },
+    {
+      "name": "ssHippo",
+      "cells": 53173,
+      "genes": 23264,
+      "scale": "large",
+      "assays": "Spatial",
+      "spatial": true,
+      "v4_raw_mb": 94.12,
+      "v5_raw_mb": 47.78
+    }
+  ]
+}

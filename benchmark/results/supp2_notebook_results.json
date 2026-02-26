@@ -1,0 +1,902 @@
+{
+  "rds_to_h5ad": [
+    {
+      "dataset": "bmcite",
+      "seurat_version": "V4",
+      "type": "processed",
+      "n_cells": 30672,
+      "status": "success",
+      "conversion_time_seconds": 12.864,
+      "peak_memory_mb": 2623.9,
+      "scale": "medium"
+    },
+    {
+      "dataset": "bmcite",
+      "seurat_version": "V4",
+      "type": "raw",
+      "n_cells": 30672,
+      "status": "success",
+      "conversion_time_seconds": 7.13,
+      "peak_memory_mb": 1853.3,
+      "scale": "medium"
+    },
+    {
+      "dataset": "cbmc",
+      "seurat_version": "V4",
+      "type": "processed",
+      "n_cells": 8617,
+      "status": "success",
+      "conversion_time_seconds": 2.998,
+      "peak_memory_mb": 717.2,
+      "scale": "small"
+    },
+    {
+      "dataset": "cbmc",
+      "seurat_version": "V4",
+      "type": "raw",
+      "n_cells": 8617,
+      "status": "success",
+      "conversion_time_seconds": 1.621,
+      "peak_memory_mb": 580.2,
+      "scale": "small"
+    },
+    {
+      "dataset": "celegans.embryo",
+      "seurat_version": "V4",
+      "type": "processed",
+      "n_cells": 6188,
+      "status": "success",
+      "conversion_time_seconds": 1.593,
+      "peak_memory_mb": 479.9,
+      "scale": "small"
+    },
+    {
+      "dataset": "celegans.embryo",
+      "seurat_version": "V4",
+      "type": "raw",
+      "n_cells": 6188,
+      "status": "success",
+      "conversion_time_seconds": 1.102,
+      "peak_memory_mb": 317.6,
+      "scale": "small"
+    },
+    {
+      "dataset": "hcabm40k",
+      "seurat_version": "V4",
+      "type": "processed",
+      "n_cells": 40000,
+      "status": "success",
+      "conversion_time_seconds": 17.565,
+      "peak_memory_mb": 3297.3,
+      "scale": "medium"
+    },
+    {
+      "dataset": "hcabm40k",
+      "seurat_version": "V4",
+      "type": "raw",
+      "n_cells": 40000,
+      "status": "success",
+      "conversion_time_seconds": 16.187,
+      "peak_memory_mb": 2350.5,
+      "scale": "medium"
+    },
+    {
+      "dataset": "ifnb",
+      "seurat_version": "V4",
+      "type": "processed",
+      "n_cells": 13999,
+      "status": "success",
+      "conversion_time_seconds": 3.237,
+      "peak_memory_mb": 965.6,
+      "scale": "medium"
+    },
+    {
+      "dataset": "ifnb",
+      "seurat_version": "V4",
+      "type": "raw",
+      "n_cells": 13999,
+      "status": "success",
+      "conversion_time_seconds": 2.376,
+      "peak_memory_mb": 583.4,
+      "scale": "medium"
+    },
+    {
+      "dataset": "panc8",
+      "seurat_version": "V4",
+      "type": "processed",
+      "n_cells": 14890,
+      "status": "success",
+      "conversion_time_seconds": 16.196,
+      "peak_memory_mb": 3298.7,
+      "scale": "medium"
+    },
+    {
+      "dataset": "panc8",
+      "seurat_version": "V4",
+      "type": "raw",
+      "n_cells": 14890,
+      "status": "success",
+      "conversion_time_seconds": 15.073,
+      "peak_memory_mb": 3004.6,
+      "scale": "medium"
+    },
+    {
+      "dataset": "pbmc3k",
+      "seurat_version": "V4",
+      "type": "processed",
+      "n_cells": 2700,
+      "status": "success",
+      "conversion_time_seconds": 2.894,
+      "peak_memory_mb": 232.7,
+      "scale": "small"
+    },
+    {
+      "dataset": "pbmc3k",
+      "seurat_version": "V4",
+      "type": "raw",
+      "n_cells": 2700,
+      "status": "success",
+      "conversion_time_seconds": 0.494,
+      "peak_memory_mb": 153.1,
+      "scale": "small"
+    },
+    {
+      "dataset": "pbmcsca",
+      "seurat_version": "V4",
+      "type": "processed",
+      "n_cells": 31021,
+      "status": "success",
+      "conversion_time_seconds": 9.905,
+      "peak_memory_mb": 2439.2,
+      "scale": "medium"
+    },
+    {
+      "dataset": "pbmcsca",
+      "seurat_version": "V4",
+      "type": "raw",
+      "n_cells": 31021,
+      "status": "success",
+      "conversion_time_seconds": 6.533,
+      "peak_memory_mb": 1651.4,
+      "scale": "medium"
+    },
+    {
+      "dataset": "ssHippo",
+      "seurat_version": "V4",
+      "type": "processed",
+      "n_cells": 53173,
+      "status": "success",
+      "conversion_time_seconds": 10.537,
+      "peak_memory_mb": 2945.0,
+      "scale": "large"
+    },
+    {
+      "dataset": "ssHippo",
+      "seurat_version": "V4",
+      "type": "raw",
+      "n_cells": 53173,
+      "status": "success",
+      "conversion_time_seconds": 6.758,
+      "peak_memory_mb": 1344.5,
+      "scale": "large"
+    },
+    {
+      "dataset": "stxKidney",
+      "seurat_version": "V4",
+      "type": "raw",
+      "n_cells": null,
+      "status": "success",
+      "conversion_time_seconds": 2.175,
+      "peak_memory_mb": 565.3,
+      "scale": "small"
+    },
+    {
+      "dataset": "thp1.eccite",
+      "seurat_version": "V4",
+      "type": "processed",
+      "n_cells": 20729,
+      "status": "success",
+      "conversion_time_seconds": 19.059,
+      "peak_memory_mb": 4536.6,
+      "scale": "medium"
+    },
+    {
+      "dataset": "thp1.eccite",
+      "seurat_version": "V4",
+      "type": "raw",
+      "n_cells": 20729,
+      "status": "success",
+      "conversion_time_seconds": 19.704,
+      "peak_memory_mb": 4148.3,
+      "scale": "medium"
+    },
+    {
+      "dataset": "bmcite",
+      "seurat_version": "V5",
+      "type": "processed",
+      "n_cells": 30672,
+      "status": "success",
+      "conversion_time_seconds": 13.648,
+      "peak_memory_mb": 3321.8,
+      "scale": "medium"
+    },
+    {
+      "dataset": "bmcite",
+      "seurat_version": "V5",
+      "type": "raw",
+      "n_cells": 30672,
+      "status": "success",
+      "conversion_time_seconds": 5.629,
+      "peak_memory_mb": 1600.1,
+      "scale": "medium"
+    },
+    {
+      "dataset": "cbmc",
+      "seurat_version": "V5",
+      "type": "processed",
+      "n_cells": 8617,
+      "status": "success",
+      "conversion_time_seconds": 2.812,
+      "peak_memory_mb": 1017.5,
+      "scale": "small"
+    },
+    {
+      "dataset": "cbmc",
+      "seurat_version": "V5",
+      "type": "raw",
+      "n_cells": 8617,
+      "status": "success",
+      "conversion_time_seconds": 1.39,
+      "peak_memory_mb": 545.4,
+      "scale": "small"
+    },
+    {
+      "dataset": "celegans.embryo",
+      "seurat_version": "V5",
+      "type": "processed",
+      "n_cells": 6188,
+      "status": "success",
+      "conversion_time_seconds": 1.592,
+      "peak_memory_mb": 634.7,
+      "scale": "small"
+    },
+    {
+      "dataset": "celegans.embryo",
+      "seurat_version": "V5",
+      "type": "raw",
+      "n_cells": 6188,
+      "status": "success",
+      "conversion_time_seconds": 0.97,
+      "peak_memory_mb": 333.4,
+      "scale": "small"
+    },
+    {
+      "dataset": "hcabm40k",
+      "seurat_version": "V5",
+      "type": "processed",
+      "n_cells": 40000,
+      "status": "success",
+      "conversion_time_seconds": 21.053,
+      "peak_memory_mb": 4797.4,
+      "scale": "medium"
+    },
+    {
+      "dataset": "hcabm40k",
+      "seurat_version": "V5",
+      "type": "raw",
+      "n_cells": 40000,
+      "status": "success",
+      "conversion_time_seconds": 8.488,
+      "peak_memory_mb": 2338.5,
+      "scale": "medium"
+    },
+    {
+      "dataset": "ifnb",
+      "seurat_version": "V5",
+      "type": "processed",
+      "n_cells": 13999,
+      "status": "success",
+      "conversion_time_seconds": 5.781,
+      "peak_memory_mb": 1257.6,
+      "scale": "medium"
+    },
+    {
+      "dataset": "ifnb",
+      "seurat_version": "V5",
+      "type": "raw",
+      "n_cells": 13999,
+      "status": "success",
+      "conversion_time_seconds": 2.131,
+      "peak_memory_mb": 577.4,
+      "scale": "medium"
+    },
+    {
+      "dataset": "panc8",
+      "seurat_version": "V5",
+      "type": "processed",
+      "n_cells": 14890,
+      "status": "success",
+      "conversion_time_seconds": 18.959,
+      "peak_memory_mb": 5455.1,
+      "scale": "medium"
+    },
+    {
+      "dataset": "panc8",
+      "seurat_version": "V5",
+      "type": "raw",
+      "n_cells": 14890,
+      "status": "success",
+      "conversion_time_seconds": 12.065,
+      "peak_memory_mb": 2991.4,
+      "scale": "medium"
+    },
+    {
+      "dataset": "pbmc3k",
+      "seurat_version": "V5",
+      "type": "processed",
+      "n_cells": 2700,
+      "status": "success",
+      "conversion_time_seconds": 1.18,
+      "peak_memory_mb": 299.6,
+      "scale": "small"
+    },
+    {
+      "dataset": "pbmc3k",
+      "seurat_version": "V5",
+      "type": "raw",
+      "n_cells": 2700,
+      "status": "success",
+      "conversion_time_seconds": 0.515,
+      "peak_memory_mb": 151.8,
+      "scale": "small"
+    },
+    {
+      "dataset": "pbmcsca",
+      "seurat_version": "V5",
+      "type": "processed",
+      "n_cells": 31021,
+      "status": "success",
+      "conversion_time_seconds": 15.917,
+      "peak_memory_mb": 3390.4,
+      "scale": "medium"
+    },
+    {
+      "dataset": "pbmcsca",
+      "seurat_version": "V5",
+      "type": "raw",
+      "n_cells": 31021,
+      "status": "success",
+      "conversion_time_seconds": 10.425,
+      "peak_memory_mb": 1634.9,
+      "scale": "medium"
+    },
+    {
+      "dataset": "ssHippo",
+      "seurat_version": "V5",
+      "type": "processed",
+      "n_cells": 53173,
+      "status": "success",
+      "conversion_time_seconds": 13.839,
+      "peak_memory_mb": 3274.8,
+      "scale": "large"
+    },
+    {
+      "dataset": "ssHippo",
+      "seurat_version": "V5",
+      "type": "raw",
+      "n_cells": 53173,
+      "status": "success",
+      "conversion_time_seconds": 4.789,
+      "peak_memory_mb": 1328.6,
+      "scale": "large"
+    },
+    {
+      "dataset": "stxKidney",
+      "seurat_version": "V5",
+      "type": "raw",
+      "n_cells": 1438,
+      "status": "success",
+      "conversion_time_seconds": 1.452,
+      "peak_memory_mb": 531.6,
+      "scale": "small"
+    },
+    {
+      "dataset": "thp1.eccite",
+      "seurat_version": "V5",
+      "type": "processed",
+      "n_cells": 20729,
+      "status": "success",
+      "conversion_time_seconds": 62.255,
+      "peak_memory_mb": 7310.1,
+      "scale": "medium"
+    },
+    {
+      "dataset": "thp1.eccite",
+      "seurat_version": "V5",
+      "type": "raw",
+      "n_cells": 20729,
+      "status": "success",
+      "conversion_time_seconds": 21.676,
+      "peak_memory_mb": 3999.8,
+      "scale": "medium"
+    }
+  ],
+  "h5ad_to_rds": [
+    {
+      "dataset": "cellxgene_brain_40k",
+      "status": "failed",
+      "conversion_time_seconds": 600,
+      "peak_memory_mb": 0
+    },
+    {
+      "dataset": "cellxgene_heart_23k",
+      "status": "success",
+      "conversion_time_seconds": 57.007,
+      "peak_memory_mb": 2078.5
+    },
+    {
+      "dataset": "cellxgene_pbmc_15k",
+      "status": "success",
+      "conversion_time_seconds": 20.956,
+      "peak_memory_mb": 859.3
+    },
+    {
+      "dataset": "scanpy_pbmc3k",
+      "status": "success",
+      "conversion_time_seconds": 2.652,
+      "peak_memory_mb": 153.0
+    },
+    {
+      "dataset": "scanpy_pbmc3k_processed",
+      "status": "success",
+      "conversion_time_seconds": 8.093,
+      "peak_memory_mb": 254.6
+    },
+    {
+      "dataset": "scvelo_dentategyrus",
+      "status": "success",
+      "conversion_time_seconds": 14.784,
+      "peak_memory_mb": 411.5
+    },
+    {
+      "dataset": "scvelo_pancreas",
+      "status": "success",
+      "conversion_time_seconds": 24.589,
+      "peak_memory_mb": 901.4
+    },
+    {
+      "dataset": "squidpy_imc",
+      "status": "success",
+      "conversion_time_seconds": 1.362,
+      "peak_memory_mb": 18.3
+    },
+    {
+      "dataset": "squidpy_merfish",
+      "status": "success",
+      "conversion_time_seconds": 8.305,
+      "peak_memory_mb": 305.0
+    },
+    {
+      "dataset": "squidpy_mibitof",
+      "status": "success",
+      "conversion_time_seconds": 0.679,
+      "peak_memory_mb": 27.5
+    },
+    {
+      "dataset": "squidpy_seqfish",
+      "status": "success",
+      "conversion_time_seconds": 2.249,
+      "peak_memory_mb": 99.2
+    },
+    {
+      "dataset": "squidpy_slideseqv2",
+      "status": "success",
+      "conversion_time_seconds": 17.231,
+      "peak_memory_mb": 335.2
+    },
+    {
+      "dataset": "squidpy_visium_hne",
+      "status": "success",
+      "conversion_time_seconds": 21.972,
+      "peak_memory_mb": 926.2
+    }
+  ],
+  "competitors": [
+    {
+      "tool": "Zellkonverter",
+      "dataset": "bmcite",
+      "n_cells": 30672,
+      "status": "success",
+      "conversion_time_seconds": 19.597,
+      "peak_memory_mb": 2503.4,
+      "scale": "medium"
+    },
+    {
+      "tool": "anndataR",
+      "dataset": "bmcite",
+      "n_cells": 30672,
+      "status": "success",
+      "conversion_time_seconds": 10.258,
+      "peak_memory_mb": 2127.6,
+      "scale": "medium"
+    },
+    {
+      "tool": "convert2anndata",
+      "dataset": "bmcite",
+      "n_cells": 30672,
+      "status": "failed",
+      "conversion_time_seconds": 21.152,
+      "peak_memory_mb": 1972.6,
+      "scale": "medium"
+    },
+    {
+      "tool": "easySCF",
+      "dataset": "bmcite",
+      "n_cells": 30672,
+      "status": "success",
+      "conversion_time_seconds": 15.26,
+      "peak_memory_mb": 2363.9,
+      "scale": "medium"
+    },
+    {
+      "tool": "Zellkonverter",
+      "dataset": "cbmc",
+      "n_cells": 8617,
+      "status": "success",
+      "conversion_time_seconds": 11.566,
+      "peak_memory_mb": 1414.5,
+      "scale": "small"
+    },
+    {
+      "tool": "anndataR",
+      "dataset": "cbmc",
+      "n_cells": 8617,
+      "status": "success",
+      "conversion_time_seconds": 6.006,
+      "peak_memory_mb": 984.6,
+      "scale": "small"
+    },
+    {
+      "tool": "convert2anndata",
+      "dataset": "cbmc",
+      "n_cells": 8617,
+      "status": "failed",
+      "conversion_time_seconds": 38.024,
+      "peak_memory_mb": 1095.8,
+      "scale": "small"
+    },
+    {
+      "tool": "easySCF",
+      "dataset": "cbmc",
+      "n_cells": 8617,
+      "status": "success",
+      "conversion_time_seconds": 8.792,
+      "peak_memory_mb": 1043.7,
+      "scale": "small"
+    },
+    {
+      "tool": "Zellkonverter",
+      "dataset": "celegans.embryo",
+      "n_cells": 6188,
+      "status": "success",
+      "conversion_time_seconds": 13.57,
+      "peak_memory_mb": 1202.9,
+      "scale": "small"
+    },
+    {
+      "tool": "anndataR",
+      "dataset": "celegans.embryo",
+      "n_cells": 6188,
+      "status": "success",
+      "conversion_time_seconds": 5.706,
+      "peak_memory_mb": 792.0,
+      "scale": "small"
+    },
+    {
+      "tool": "convert2anndata",
+      "dataset": "celegans.embryo",
+      "n_cells": 6188,
+      "status": "failed",
+      "conversion_time_seconds": 22.466,
+      "peak_memory_mb": 938.6,
+      "scale": "small"
+    },
+    {
+      "tool": "easySCF",
+      "dataset": "celegans.embryo",
+      "n_cells": 6188,
+      "status": "success",
+      "conversion_time_seconds": 7.04,
+      "peak_memory_mb": 818.2,
+      "scale": "small"
+    },
+    {
+      "tool": "Zellkonverter",
+      "dataset": "hcabm40k",
+      "n_cells": 40000,
+      "status": "success",
+      "conversion_time_seconds": 22.737,
+      "peak_memory_mb": 3257.8,
+      "scale": "medium"
+    },
+    {
+      "tool": "anndataR",
+      "dataset": "hcabm40k",
+      "n_cells": 40000,
+      "status": "success",
+      "conversion_time_seconds": 14.799,
+      "peak_memory_mb": 2908.6,
+      "scale": "medium"
+    },
+    {
+      "tool": "convert2anndata",
+      "dataset": "hcabm40k",
+      "n_cells": 40000,
+      "status": "success",
+      "conversion_time_seconds": 24.312,
+      "peak_memory_mb": 3920.6,
+      "scale": "medium"
+    },
+    {
+      "tool": "easySCF",
+      "dataset": "hcabm40k",
+      "n_cells": 40000,
+      "status": "success",
+      "conversion_time_seconds": 22.84,
+      "peak_memory_mb": 3278.1,
+      "scale": "medium"
+    },
+    {
+      "tool": "Zellkonverter",
+      "dataset": "ifnb",
+      "n_cells": 13999,
+      "status": "success",
+      "conversion_time_seconds": 13.961,
+      "peak_memory_mb": 1507.2,
+      "scale": "medium"
+    },
+    {
+      "tool": "anndataR",
+      "dataset": "ifnb",
+      "n_cells": 13999,
+      "status": "success",
+      "conversion_time_seconds": 6.475,
+      "peak_memory_mb": 1054.2,
+      "scale": "medium"
+    },
+    {
+      "tool": "convert2anndata",
+      "dataset": "ifnb",
+      "n_cells": 13999,
+      "status": "success",
+      "conversion_time_seconds": 12.187,
+      "peak_memory_mb": 1564.9,
+      "scale": "medium"
+    },
+    {
+      "tool": "easySCF",
+      "dataset": "ifnb",
+      "n_cells": 13999,
+      "status": "success",
+      "conversion_time_seconds": 8.577,
+      "peak_memory_mb": 1063.5,
+      "scale": "medium"
+    },
+    {
+      "tool": "Zellkonverter",
+      "dataset": "panc8",
+      "n_cells": 14890,
+      "status": "success",
+      "conversion_time_seconds": 23.26,
+      "peak_memory_mb": 3903.5,
+      "scale": "medium"
+    },
+    {
+      "tool": "anndataR",
+      "dataset": "panc8",
+      "n_cells": 14890,
+      "status": "success",
+      "conversion_time_seconds": 15.894,
+      "peak_memory_mb": 3627.0,
+      "scale": "medium"
+    },
+    {
+      "tool": "convert2anndata",
+      "dataset": "panc8",
+      "n_cells": 14890,
+      "status": "success",
+      "conversion_time_seconds": 25.69,
+      "peak_memory_mb": 4790.8,
+      "scale": "medium"
+    },
+    {
+      "tool": "easySCF",
+      "dataset": "panc8",
+      "n_cells": 14890,
+      "status": "success",
+      "conversion_time_seconds": 30.087,
+      "peak_memory_mb": 4062.3,
+      "scale": "medium"
+    },
+    {
+      "tool": "Zellkonverter",
+      "dataset": "pbmc3k",
+      "n_cells": 2700,
+      "status": "success",
+      "conversion_time_seconds": 9.536,
+      "peak_memory_mb": 1070.7,
+      "scale": "small"
+    },
+    {
+      "tool": "anndataR",
+      "dataset": "pbmc3k",
+      "n_cells": 2700,
+      "status": "success",
+      "conversion_time_seconds": 4.542,
+      "peak_memory_mb": 585.1,
+      "scale": "small"
+    },
+    {
+      "tool": "convert2anndata",
+      "dataset": "pbmc3k",
+      "n_cells": 2700,
+      "status": "success",
+      "conversion_time_seconds": 12.301,
+      "peak_memory_mb": 986.9,
+      "scale": "small"
+    },
+    {
+      "tool": "easySCF",
+      "dataset": "pbmc3k",
+      "n_cells": 2700,
+      "status": "success",
+      "conversion_time_seconds": 5.653,
+      "peak_memory_mb": 617.1,
+      "scale": "small"
+    },
+    {
+      "tool": "Zellkonverter",
+      "dataset": "pbmcsca",
+      "n_cells": 31021,
+      "status": "success",
+      "conversion_time_seconds": 19.158,
+      "peak_memory_mb": 2527.6,
+      "scale": "medium"
+    },
+    {
+      "tool": "anndataR",
+      "dataset": "pbmcsca",
+      "n_cells": 31021,
+      "status": "success",
+      "conversion_time_seconds": 10.815,
+      "peak_memory_mb": 2156.3,
+      "scale": "medium"
+    },
+    {
+      "tool": "convert2anndata",
+      "dataset": "pbmcsca",
+      "n_cells": 31021,
+      "status": "success",
+      "conversion_time_seconds": 19.671,
+      "peak_memory_mb": 2959.3,
+      "scale": "medium"
+    },
+    {
+      "tool": "easySCF",
+      "dataset": "pbmcsca",
+      "n_cells": 31021,
+      "status": "success",
+      "conversion_time_seconds": 16.596,
+      "peak_memory_mb": 2393.7,
+      "scale": "medium"
+    },
+    {
+      "tool": "Zellkonverter",
+      "dataset": "ssHippo",
+      "n_cells": 53173,
+      "status": "success",
+      "conversion_time_seconds": 19.143,
+      "peak_memory_mb": 2241.4,
+      "scale": "large"
+    },
+    {
+      "tool": "anndataR",
+      "dataset": "ssHippo",
+      "n_cells": 53173,
+      "status": "success",
+      "conversion_time_seconds": 11.146,
+      "peak_memory_mb": 1812.0,
+      "scale": "large"
+    },
+    {
+      "tool": "convert2anndata",
+      "dataset": "ssHippo",
+      "n_cells": 53173,
+      "status": "failed",
+      "conversion_time_seconds": 19.587,
+      "peak_memory_mb": 2538.6,
+      "scale": "large"
+    },
+    {
+      "tool": "easySCF",
+      "dataset": "ssHippo",
+      "n_cells": 53173,
+      "status": "success",
+      "conversion_time_seconds": 10.704,
+      "peak_memory_mb": 1161.6,
+      "scale": "large"
+    },
+    {
+      "tool": "Zellkonverter",
+      "dataset": "stxKidney",
+      "n_cells": 1438,
+      "status": "success",
+      "conversion_time_seconds": 13.777,
+      "peak_memory_mb": 1402.7,
+      "scale": "small"
+    },
+    {
+      "tool": "anndataR",
+      "dataset": "stxKidney",
+      "n_cells": 1438,
+      "status": "success",
+      "conversion_time_seconds": 6.773,
+      "peak_memory_mb": 938.8,
+      "scale": "small"
+    },
+    {
+      "tool": "convert2anndata",
+      "dataset": "stxKidney",
+      "n_cells": 1438,
+      "status": "success",
+      "conversion_time_seconds": 13.031,
+      "peak_memory_mb": 1426.1,
+      "scale": "small"
+    },
+    {
+      "tool": "easySCF",
+      "dataset": "stxKidney",
+      "n_cells": 1438,
+      "status": "success",
+      "conversion_time_seconds": 7.352,
+      "peak_memory_mb": 697.8,
+      "scale": "small"
+    },
+    {
+      "tool": "Zellkonverter",
+      "dataset": "thp1.eccite",
+      "n_cells": 20729,
+      "status": "success",
+      "conversion_time_seconds": 36.211,
+      "peak_memory_mb": 4919.4,
+      "scale": "medium"
+    },
+    {
+      "tool": "anndataR",
+      "dataset": "thp1.eccite",
+      "n_cells": 20729,
+      "status": "success",
+      "conversion_time_seconds": 22.567,
+      "peak_memory_mb": 4738.7,
+      "scale": "medium"
+    },
+    {
+      "tool": "convert2anndata",
+      "dataset": "thp1.eccite",
+      "n_cells": 20729,
+      "status": "failed",
+      "conversion_time_seconds": 46.449,
+      "peak_memory_mb": 3899.5,
+      "scale": "medium"
+    },
+    {
+      "tool": "easySCF",
+      "dataset": "thp1.eccite",
+      "n_cells": 20729,
+      "status": "success",
+      "conversion_time_seconds": 33.728,
+      "peak_memory_mb": 5278.2,
+      "scale": "medium"
+    }
+  ]
+}

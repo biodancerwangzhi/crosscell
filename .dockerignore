@@ -1,7 +1,6 @@
 # Rust 构建产物
 target/
 **/*.rs.bk
-Cargo.lock
 
 # Python 缓存
 __pycache__/
@@ -31,7 +30,23 @@ build/
 
 # 测试数据（大文件）
 tests/data/large/
+tests/data/real_datasets/
 benchmarks/data/
+data/generated/
+data/seurat-packages/
+benchmark/results/
+benchmark/notebooks/
+
+# 参考实现源码
+refs/
+
+# R 包编译产物
+crosscell-r/src/*.so
+crosscell-r/src/*.o
+crosscell-r/*.tar.gz
+
+# 个人文件
+自用/
 
 # 文档
 docs/

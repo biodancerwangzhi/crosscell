@@ -1,0 +1,76 @@
+{
+  "scanpy_pbmc3k": {
+    "read": "failed",
+    "to_seurat": null,
+    "error": "\u001b[1m\u001b[22mFile \u001b[34m/benchmark/data/generated/scanpy_pbmc3k.h5ad\u001b[39m is not a valid H5AD file.\n\u001b[36mi\u001b[39m Either the file is not an H5AD file or it was created with \u001b[34manndata<0.8.0\u001b[39m."
+  },
+  "scanpy_pbmc3k_processed": {
+    "read": "failed",
+    "to_seurat": null,
+    "error": "\u001b[1m\u001b[22mFile \u001b[34m/benchmark/data/generated/scanpy_pbmc3k_processed.h5ad\u001b[39m is not a valid H5AD file.\n\u001b[36mi\u001b[39m Either the file is not an H5AD file or it was created with \u001b[34manndata<0.8.0\u001b[39m."
+  },
+  "scvelo_dentategyrus": {
+    "read": "failed",
+    "to_seurat": null,
+    "error": "\u001b[1m\u001b[22mFile \u001b[34m/benchmark/data/generated/scvelo_dentategyrus.h5ad\u001b[39m is not a valid H5AD file.\n\u001b[36mi\u001b[39m Either the file is not an H5AD file or it was created with \u001b[34manndata<0.8.0\u001b[39m."
+  },
+  "scvelo_pancreas": {
+    "read": "failed",
+    "to_seurat": null,
+    "error": "\u001b[1m\u001b[22mFile \u001b[34m/benchmark/data/generated/scvelo_pancreas.h5ad\u001b[39m is not a valid H5AD file.\n\u001b[36mi\u001b[39m Either the file is not an H5AD file or it was created with \u001b[34manndata<0.8.0\u001b[39m."
+  },
+  "cellxgene_pbmc_15k": {
+    "read": "success",
+    "to_seurat": "failed",
+    "n_obs": 14783,
+    "n_var": 17222,
+    "read_warning": "\u001b[1m\u001b[22mError reading element \u001b[32muns\u001b[39m of type \u001b[34m<dict>\u001b[39m\n\u001b[36mi\u001b[39m EXPR must be a length 1 vector; ",
+    "error": "attempt to apply non-function"
+  },
+  "cellxgene_heart_23k": {
+    "read": "success",
+    "to_seurat": "failed",
+    "n_obs": 23483,
+    "n_var": 32330,
+    "read_warning": "\u001b[1m\u001b[22mError reading element \u001b[32muns\u001b[39m of type \u001b[34m<dict>\u001b[39m\n\u001b[36mi\u001b[39m EXPR must be a length 1 vector; ",
+    "error": "attempt to apply non-function"
+  },
+  "cellxgene_brain_40k": {
+    "read": "success",
+    "to_seurat": "failed",
+    "n_obs": 40165,
+    "n_var": 58232,
+    "read_warning": "\u001b[1m\u001b[22mError reading element \u001b[32muns\u001b[39m of type \u001b[34m<dict>\u001b[39m\n\u001b[36mi\u001b[39m EXPR must be a length 1 vector; ",
+    "error": "attempt to apply non-function"
+  },
+  "squidpy_visium_hne": {
+    "read": "failed",
+    "to_seurat": null,
+    "error": "\u001b[1m\u001b[22mFile \u001b[34m/benchmark/data/generated/squidpy_visium_hne.h5ad\u001b[39m is not a valid H5AD file.\n\u001b[36mi\u001b[39m Either the file is not an H5AD file or it was created with \u001b[34manndata<0.8.0\u001b[39m."
+  },
+  "squidpy_mibitof": {
+    "read": "failed",
+    "to_seurat": null,
+    "error": "\u001b[1m\u001b[22mFile \u001b[34m/benchmark/data/generated/squidpy_mibitof.h5ad\u001b[39m is not a valid H5AD file.\n\u001b[36mi\u001b[39m Either the file is not an H5AD file or it was created with \u001b[34manndata<0.8.0\u001b[39m."
+  },
+  "squidpy_slideseqv2": {
+    "read": "failed",
+    "to_seurat": null,
+    "error": "\u001b[1m\u001b[22mFile \u001b[34m/benchmark/data/generated/squidpy_slideseqv2.h5ad\u001b[39m is not a valid H5AD file.\n\u001b[36mi\u001b[39m Either the file is not an H5AD file or it was created with \u001b[34manndata<0.8.0\u001b[39m."
+  },
+  "squidpy_seqfish": {
+    "read": "failed",
+    "to_seurat": null,
+    "error": "\u001b[1m\u001b[22mFile \u001b[34m/benchmark/data/generated/squidpy_seqfish.h5ad\u001b[39m is not a valid H5AD file.\n\u001b[36mi\u001b[39m Either the file is not an H5AD file or it was created with \u001b[34manndata<0.8.0\u001b[39m."
+  },
+  "squidpy_merfish": {
+    "read": "failed",
+    "to_seurat": null,
+    "error": "\u001b[1m\u001b[22mFile \u001b[34m/benchmark/data/generated/squidpy_merfish.h5ad\u001b[39m is not a valid H5AD file.\n\u001b[36mi\u001b[39m Either the file is not an H5AD file or it was created with \u001b[34manndata<0.8.0\u001b[39m."
+  },
+  "squidpy_imc": {
+    "read": "failed",
+    "to_seurat": null,
+    "error": "\u001b[1m\u001b[22mFile \u001b[34m/benchmark/data/generated/squidpy_imc.h5ad\u001b[39m is not a valid H5AD file.\n\u001b[36mi\u001b[39m Either the file is not an H5AD file or it was created with \u001b[34manndata<0.8.0\u001b[39m."
+  }
+}

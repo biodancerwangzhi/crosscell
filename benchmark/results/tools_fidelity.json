@@ -1,0 +1,90 @@
+[
+  {
+    "dataset": "v5_pbmc3k_raw",
+    "tool": "CrossCell",
+    "test": "roundtrip",
+    "n_cells": 2700,
+    "n_genes": 13714,
+    "pearson_r": 1.0,
+    "max_diff": 0.0,
+    "mean_diff": 0.0,
+    "exact_match_pct": 100.0
+  },
+  {
+    "dataset": "v5_pbmc3k_raw",
+    "tool": "Zellkonverter",
+    "test": "cc_vs_zk",
+    "n_cells": 2700,
+    "n_genes": 13714,
+    "pearson_r": 1.0,
+    "max_diff": 0.0,
+    "mean_diff": 0.0,
+    "exact_match_pct": 100.0
+  },
+  {
+    "dataset": "v5_pbmc3k_processed",
+    "tool": "CrossCell",
+    "test": "roundtrip",
+    "n_cells": 2700,
+    "n_genes": 13714,
+    "pearson_r": 1.0,
+    "max_diff": 0.0,
+    "mean_diff": 0.0,
+    "exact_match_pct": 100.0
+  },
+  {
+    "dataset": "v5_pbmc3k_processed",
+    "tool": "Zellkonverter",
+    "test": "cc_vs_zk",
+    "n_cells": 2700,
+    "n_genes": 13714,
+    "pearson_r": 1.0,
+    "max_diff": 0.0,
+    "mean_diff": 0.0,
+    "exact_match_pct": 100.0
+  },
+  {
+    "dataset": "v5_ifnb_raw",
+    "tool": "CrossCell",
+    "test": "roundtrip",
+    "n_cells": 13999,
+    "n_genes": 14053,
+    "pearson_r": 0.9999999999999999,
+    "max_diff": 0.0,
+    "mean_diff": 0.0,
+    "exact_match_pct": 100.0
+  },
+  {
+    "dataset": "v5_ifnb_raw",
+    "tool": "Zellkonverter",
+    "test": "cc_vs_zk",
+    "n_cells": 13999,
+    "n_genes": 14053,
+    "pearson_r": 0.9999999999999999,
+    "max_diff": 0.0,
+    "mean_diff": 0.0,
+    "exact_match_pct": 100.0
+  },
+  {
+    "dataset": "v5_cbmc_raw",
+    "tool": "CrossCell",
+    "test": "roundtrip",
+    "n_cells": 8617,
+    "n_genes": 20501,
+    "pearson_r": 0.9999999999999958,
+    "max_diff": 0.0,
+    "mean_diff": 0.0,
+    "exact_match_pct": 100.0
+  },
+  {
+    "dataset": "v5_cbmc_raw",
+    "tool": "Zellkonverter",
+    "test": "cc_vs_zk",
+    "n_cells": 8617,
+    "n_genes": 20501,
+    "pearson_r": 0.9999999999999958,
+    "max_diff": 0.0,
+    "mean_diff": 0.0,
+    "exact_match_pct": 100.0
+  }
+]

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate benchmark/data/datasets.json with metadata for all test datasets.
+"""Generate benchmark/config/datasets.json with metadata for all test datasets.
 
 使用方法 (在 benchmark 容器内):
   python3 /benchmark/data/06_generate_datasets_json.py
@@ -73,8 +73,12 @@ def read_rds_summaries():
 
 
 def read_h5ad_metadata():
-    """Read H5AD file metadata using anndata."""
-    import anndata
+    """Read H5AD file metadata.
+    
+    Uses h5py for large files (>500 MB) to avoid OOM,
+    falls back to anndata for small files to get richer metadata.
+    """
+    import h5py
     
     datasets = []
     h5ad_dir = "/benchmark/data/generated"
@@ -91,6 +95,9 @@ def read_h5ad_metadata():
         "cellxgene_": "CELLxGENE"
     }
     
+    # Large file threshold (500 MB) — use h5py only to avoid OOM
+    LARGE_FILE_MB = 500
+    
     for fname in sorted(os.listdir(h5ad_dir)):
         if not fname.endswith(".h5ad"):
             continue
@@ -105,62 +112,153 @@ def read_h5ad_metadata():
                 source = src
                 break
         
-        # Read with anndata
-        try:
-            adata = anndata.read_h5ad(fpath, backed="r")
-            n_cells, n_genes = adata.shape
-            
-            # Get available components
-            components = []
-            if adata.obs is not None and len(adata.obs.columns) > 0:
-                components.append("obs")
-            if adata.var is not None and len(adata.var.columns) > 0:
-                components.append("var")
-            if adata.obsm is not None and len(adata.obsm) > 0:
-                components.append("obsm")
-            if adata.obsp is not None and len(adata.obsp) > 0:
-                components.append("obsp")
-            if adata.uns is not None and len(adata.uns) > 0:
-                components.append("uns")
-            if adata.layers is not None and len(adata.layers) > 0:
-                components.append("layers")
-            
-            obsm_keys = list(adata.obsm.keys()) if adata.obsm is not None else []
-            layer_keys = list(adata.layers.keys()) if adata.layers is not None else []
-            
-            adata.file.close()
-            
-            dataset_name = fname.replace(".h5ad", "")
-            
-            datasets.append({
-                "name": dataset_name,
-                "file": fname,
-                "path": f"data/generated/{fname}",
-                "format": "h5ad",
-                "n_cells": n_cells,
-                "n_genes": n_genes,
-                "file_size_mb": round(size_mb, 2),
-                "source": source,
-                "components": components,
-                "obsm_keys": obsm_keys,
-                "layer_keys": layer_keys
-            })
-            print(f"  ✓ {fname}: {n_cells} cells × {n_genes} genes ({size_mb:.1f} MB)")
-        except Exception as e:
-            print(f"  ✗ {fname}: {e}")
-            datasets.append({
-                "name": fname.replace(".h5ad", ""),
-                "file": fname,
-                "path": f"data/generated/{fname}",
-                "format": "h5ad",
-                "n_cells": None,
-                "n_genes": None,
-                "file_size_mb": round(size_mb, 2),
-                "source": source,
-                "error": str(e)
-            })
+        dataset_name = fname.replace(".h5ad", "")
+        
+        if size_mb > LARGE_FILE_MB:
+            # Large file: use h5py to read metadata only (no full matrix load)
+            try:
+                entry = _read_h5ad_with_h5py(fpath, fname, dataset_name, source, size_mb)
+                datasets.append(entry)
+                n_cells = entry.get("n_cells", "?")
+                n_genes = entry.get("n_genes", "?")
+                print(f"  ✓ {fname}: {n_cells} cells × {n_genes} genes ({size_mb:.1f} MB) [h5py]")
+            except Exception as e:
+                print(f"  ✗ {fname}: {e}")
+                datasets.append({
+                    "name": dataset_name, "file": fname,
+                    "path": f"data/generated/{fname}", "format": "h5ad",
+                    "n_cells": None, "n_genes": None,
+                    "file_size_mb": round(size_mb, 2), "source": source,
+                    "error": str(e)
+                })
+        else:
+            # Small file: use anndata for richer metadata
+            try:
+                entry = _read_h5ad_with_anndata(fpath, fname, dataset_name, source, size_mb)
+                datasets.append(entry)
+                print(f"  ✓ {fname}: {entry['n_cells']} cells × {entry['n_genes']} genes ({size_mb:.1f} MB)")
+            except Exception as e:
+                print(f"  ✗ {fname}: {e} — retrying with h5py")
+                try:
+                    entry = _read_h5ad_with_h5py(fpath, fname, dataset_name, source, size_mb)
+                    datasets.append(entry)
+                except Exception as e2:
+                    print(f"  ✗ {fname}: h5py also failed: {e2}")
+                    datasets.append({
+                        "name": dataset_name, "file": fname,
+                        "path": f"data/generated/{fname}", "format": "h5ad",
+                        "n_cells": None, "n_genes": None,
+                        "file_size_mb": round(size_mb, 2), "source": source,
+                        "error": str(e2)
+                    })
     
     return datasets
+
+
+def _read_h5ad_with_h5py(fpath, fname, dataset_name, source, size_mb):
+    """Read H5AD metadata using h5py only (memory-safe for large files)."""
+    import h5py
+    
+    with h5py.File(fpath, "r") as f:
+        # Get dimensions from obs/var index length
+        obs_group = f["obs"]
+        var_group = f["var"]
+        
+        # Try to get n_obs/n_vars from shape attribute or index
+        if "_index" in obs_group:
+            n_cells = len(obs_group["_index"])
+        elif "index" in obs_group:
+            n_cells = len(obs_group["index"])
+        else:
+            # Fallback: try first column
+            for key in obs_group.keys():
+                if isinstance(obs_group[key], h5py.Dataset):
+                    n_cells = len(obs_group[key])
+                    break
+        
+        if "_index" in var_group:
+            n_genes = len(var_group["_index"])
+        elif "index" in var_group:
+            n_genes = len(var_group["index"])
+        else:
+            for key in var_group.keys():
+                if isinstance(var_group[key], h5py.Dataset):
+                    n_genes = len(var_group[key])
+                    break
+        
+        # Detect components
+        components = []
+        top_keys = list(f.keys())
+        if "obs" in top_keys:
+            obs_cols = [k for k in obs_group.keys() if k not in ("_index", "index", "__categories")]
+            if obs_cols:
+                components.append("obs")
+        if "var" in top_keys:
+            var_cols = [k for k in var_group.keys() if k not in ("_index", "index", "__categories")]
+            if var_cols:
+                components.append("var")
+        for key in ("obsm", "obsp", "uns", "layers"):
+            if key in top_keys and len(f[key]) > 0:
+                components.append(key)
+        
+        obsm_keys = list(f["obsm"].keys()) if "obsm" in top_keys else []
+        layer_keys = list(f["layers"].keys()) if "layers" in top_keys else []
+    
+    return {
+        "name": dataset_name,
+        "file": fname,
+        "path": f"data/generated/{fname}",
+        "format": "h5ad",
+        "n_cells": n_cells,
+        "n_genes": n_genes,
+        "file_size_mb": round(size_mb, 2),
+        "source": source,
+        "components": components,
+        "obsm_keys": obsm_keys,
+        "layer_keys": layer_keys,
+        "read_method": "h5py"
+    }
+
+
+def _read_h5ad_with_anndata(fpath, fname, dataset_name, source, size_mb):
+    """Read H5AD metadata using anndata (richer metadata, but needs more memory)."""
+    import anndata
+    
+    adata = anndata.read_h5ad(fpath, backed="r")
+    n_cells, n_genes = adata.shape
+    
+    components = []
+    if adata.obs is not None and len(adata.obs.columns) > 0:
+        components.append("obs")
+    if adata.var is not None and len(adata.var.columns) > 0:
+        components.append("var")
+    if adata.obsm is not None and len(adata.obsm) > 0:
+        components.append("obsm")
+    if adata.obsp is not None and len(adata.obsp) > 0:
+        components.append("obsp")
+    if adata.uns is not None and len(adata.uns) > 0:
+        components.append("uns")
+    if adata.layers is not None and len(adata.layers) > 0:
+        components.append("layers")
+    
+    obsm_keys = list(adata.obsm.keys()) if adata.obsm is not None else []
+    layer_keys = list(adata.layers.keys()) if adata.layers is not None else []
+    
+    adata.file.close()
+    
+    return {
+        "name": dataset_name,
+        "file": fname,
+        "path": f"data/generated/{fname}",
+        "format": "h5ad",
+        "n_cells": n_cells,
+        "n_genes": n_genes,
+        "file_size_mb": round(size_mb, 2),
+        "source": source,
+        "components": components,
+        "obsm_keys": obsm_keys,
+        "layer_keys": layer_keys
+    }
 
 
 def classify_scale(n_cells):
@@ -171,8 +269,10 @@ def classify_scale(n_cells):
         return "small"
     elif n_cells < 20000:
         return "medium"
-    else:
+    elif n_cells < 100000:
         return "large"
+    else:
+        return "very_large"
 
 
 def main():
@@ -207,7 +307,7 @@ def main():
             "rds_count": len(rds_datasets),
             "h5ad_count": len(h5ad_datasets),
             "by_source": {},
-            "by_scale": {"small": 0, "medium": 0, "large": 0, "unknown": 0}
+            "by_scale": {"small": 0, "medium": 0, "large": 0, "very_large": 0, "unknown": 0}
         },
         "datasets": all_datasets
     }

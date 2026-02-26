@@ -162,6 +162,18 @@ pub fn dimension_report(data: &SingleCellData) -> String {
         }
     }
 
+    if let Some(ref gene_loadings) = data.gene_loadings {
+        if !gene_loadings.is_empty() {
+            report.push_str(&format!("- Gene loadings (varm): {}\n", gene_loadings.len()));
+            for (name, loading) in gene_loadings {
+                report.push_str(&format!(
+                    "  - {}: {} genes × {} components\n",
+                    name, loading.n_rows, loading.n_cols
+                ));
+            }
+        }
+    }
+
     report
 }
 
@@ -184,6 +196,7 @@ mod tests {
             cell_pairwise: None,
             gene_pairwise: None,
             spatial: None,
+            gene_loadings: None,
             unstructured: None,
             metadata: DatasetMetadata {
                 n_cells,

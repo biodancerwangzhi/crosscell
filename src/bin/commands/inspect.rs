@@ -35,7 +35,7 @@ pub fn run(input: PathBuf, detailed: bool, output: Option<PathBuf>) -> Result<()
         "Seurat (.rds)" => {
             let input_str = input.to_str().context("Invalid input path")?;
             // Use read_seurat_direct for raw Seurat RDS files
-            let result = seurat::read_seurat_direct(std::path::Path::new(input_str))
+            let result = seurat::read_seurat_direct(std::path::Path::new(input_str), false)
                 .map_err(|e| anyhow::anyhow!("Failed to read Seurat RDS file: {}", e))?;
             result.data
         }

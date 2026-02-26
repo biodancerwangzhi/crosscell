@@ -6,12 +6,14 @@ pub mod cross_format;
 pub mod dimensions;
 pub mod required_fields;
 pub mod roundtrip;
+pub mod schema;
 pub mod type_compatibility;
 
 pub use accuracy::{
     AccuracyMetrics, AccuracyReport, MetadataAccuracy, EmbeddingAccuracy,
     calculate_matrix_accuracy, calculate_metadata_accuracy, calculate_embedding_accuracy,
     calculate_full_accuracy, pearson_correlation, calculate_sparsity,
+    calculate_mse, calculate_exact_match_ratio, calculate_ari, calculate_nmi,
 };
 pub use cross_format::{
     CrossFormatReport, compare_h5ad_rds, compare_ir_cross_format,
@@ -22,6 +24,7 @@ pub use cross_format::{
     DEFAULT_TOLERANCE,
 };
 pub use dimensions::{dimension_report, validate_dimensions, validate_expression_matrix_dimensions};
+pub use schema::{SchemaValidationResult, validate_cellxgene_schema, CELLXGENE_V5_OBS_REQUIRED, CELLXGENE_V5_VAR_REQUIRED};
 
 use std::collections::HashMap;
 

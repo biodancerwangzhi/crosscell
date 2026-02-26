@@ -1,0 +1,434 @@
+[
+  {
+    "tool": "CrossCell",
+    "dataset": "pbmc3k",
+    "n_cells": 2700,
+    "n_genes": 13714,
+    "memory_mb": 151.7,
+    "time_s": 0.304
+  },
+  {
+    "tool": "Zellkonverter",
+    "dataset": "pbmc3k",
+    "n_cells": 2700,
+    "n_genes": 13714,
+    "memory_mb": 1070.1,
+    "time_s": 13.066
+  },
+  {
+    "tool": "anndataR",
+    "dataset": "pbmc3k",
+    "n_cells": 2700,
+    "n_genes": 13714,
+    "memory_mb": 585.2,
+    "time_s": 5.997
+  },
+  {
+    "tool": "convert2anndata",
+    "dataset": "pbmc3k",
+    "n_cells": 2700,
+    "n_genes": 13714,
+    "memory_mb": 983.9,
+    "time_s": 11.186
+  },
+  {
+    "tool": "easySCF",
+    "dataset": "pbmc3k",
+    "n_cells": 2700,
+    "n_genes": 13714,
+    "memory_mb": 617.2,
+    "time_s": 5.561
+  },
+  {
+    "tool": "CrossCell",
+    "dataset": "celegans.embryo",
+    "n_cells": 6188,
+    "n_genes": 20222,
+    "memory_mb": 333.3,
+    "time_s": 0.688
+  },
+  {
+    "tool": "Zellkonverter",
+    "dataset": "celegans.embryo",
+    "n_cells": 6188,
+    "n_genes": 20222,
+    "memory_mb": 1201.3,
+    "time_s": 11.645
+  },
+  {
+    "tool": "anndataR",
+    "dataset": "celegans.embryo",
+    "n_cells": 6188,
+    "n_genes": 20222,
+    "memory_mb": 792.0,
+    "time_s": 6.105
+  },
+  {
+    "tool": "convert2anndata",
+    "dataset": "celegans.embryo",
+    "n_cells": 6188,
+    "n_genes": 20222,
+    "memory_mb": 1196.7,
+    "time_s": 14.353
+  },
+  {
+    "tool": "easySCF",
+    "dataset": "celegans.embryo",
+    "n_cells": 6188,
+    "n_genes": 20222,
+    "memory_mb": 818.9,
+    "time_s": 7.058
+  },
+  {
+    "tool": "CrossCell",
+    "dataset": "cbmc",
+    "n_cells": 8617,
+    "n_genes": 20501,
+    "memory_mb": 545.4,
+    "time_s": 1.055
+  },
+  {
+    "tool": "Zellkonverter",
+    "dataset": "cbmc",
+    "n_cells": 8617,
+    "n_genes": 20501,
+    "memory_mb": 1414.3,
+    "time_s": 11.387
+  },
+  {
+    "tool": "anndataR",
+    "dataset": "cbmc",
+    "n_cells": 8617,
+    "n_genes": 20501,
+    "memory_mb": 984.8,
+    "time_s": 10.64
+  },
+  {
+    "tool": "convert2anndata",
+    "dataset": "cbmc",
+    "n_cells": 8617,
+    "n_genes": 20501,
+    "memory_mb": 1442.2,
+    "time_s": 16.755
+  },
+  {
+    "tool": "easySCF",
+    "dataset": "cbmc",
+    "n_cells": 8617,
+    "n_genes": 20501,
+    "memory_mb": 1043.7,
+    "time_s": 10.742
+  },
+  {
+    "tool": "CrossCell",
+    "dataset": "stxKidney",
+    "n_cells": 1438,
+    "n_genes": 31053,
+    "memory_mb": 531.6,
+    "time_s": 1.352
+  },
+  {
+    "tool": "Zellkonverter",
+    "dataset": "stxKidney",
+    "n_cells": 1438,
+    "n_genes": 31053,
+    "memory_mb": 1403.1,
+    "time_s": 14.252
+  },
+  {
+    "tool": "anndataR",
+    "dataset": "stxKidney",
+    "n_cells": 1438,
+    "n_genes": 31053,
+    "memory_mb": 938.4,
+    "time_s": 8.156
+  },
+  {
+    "tool": "convert2anndata",
+    "dataset": "stxKidney",
+    "n_cells": 1438,
+    "n_genes": 31053,
+    "memory_mb": 1424.3,
+    "time_s": 17.94
+  },
+  {
+    "tool": "easySCF",
+    "dataset": "stxKidney",
+    "n_cells": 1438,
+    "n_genes": 31053,
+    "memory_mb": 697.6,
+    "time_s": 6.35
+  },
+  {
+    "tool": "CrossCell",
+    "dataset": "ifnb",
+    "n_cells": 13999,
+    "n_genes": 14053,
+    "memory_mb": 577.6,
+    "time_s": 1.5
+  },
+  {
+    "tool": "Zellkonverter",
+    "dataset": "ifnb",
+    "n_cells": 13999,
+    "n_genes": 14053,
+    "memory_mb": 1505.7,
+    "time_s": 15.257
+  },
+  {
+    "tool": "anndataR",
+    "dataset": "ifnb",
+    "n_cells": 13999,
+    "n_genes": 14053,
+    "memory_mb": 1053.7,
+    "time_s": 7.469
+  },
+  {
+    "tool": "convert2anndata",
+    "dataset": "ifnb",
+    "n_cells": 13999,
+    "n_genes": 14053,
+    "memory_mb": 1562.9,
+    "time_s": 12.391
+  },
+  {
+    "tool": "easySCF",
+    "dataset": "ifnb",
+    "n_cells": 13999,
+    "n_genes": 14053,
+    "memory_mb": 1063.6,
+    "time_s": 12.296
+  },
+  {
+    "tool": "CrossCell",
+    "dataset": "ssHippo",
+    "n_cells": 53173,
+    "n_genes": 23264,
+    "memory_mb": 1328.4,
+    "time_s": 5.282
+  },
+  {
+    "tool": "Zellkonverter",
+    "dataset": "ssHippo",
+    "n_cells": 53173,
+    "n_genes": 23264,
+    "memory_mb": 2241.6,
+    "time_s": 23.366
+  },
+  {
+    "tool": "anndataR",
+    "dataset": "ssHippo",
+    "n_cells": 53173,
+    "n_genes": 23264,
+    "memory_mb": 1812.2,
+    "time_s": 10.018
+  },
+  {
+    "tool": "easySCF",
+    "dataset": "ssHippo",
+    "n_cells": 53173,
+    "n_genes": 23264,
+    "memory_mb": 1161.8,
+    "time_s": 7.207
+  },
+  {
+    "tool": "CrossCell",
+    "dataset": "bmcite",
+    "n_cells": 30672,
+    "n_genes": 17009,
+    "memory_mb": 1600.0,
+    "time_s": 4.538
+  },
+  {
+    "tool": "Zellkonverter",
+    "dataset": "bmcite",
+    "n_cells": 30672,
+    "n_genes": 17009,
+    "memory_mb": 2503.2,
+    "time_s": 20.701
+  },
+  {
+    "tool": "anndataR",
+    "dataset": "bmcite",
+    "n_cells": 30672,
+    "n_genes": 17009,
+    "memory_mb": 2127.5,
+    "time_s": 11.318
+  },
+  {
+    "tool": "convert2anndata",
+    "dataset": "bmcite",
+    "n_cells": 30672,
+    "n_genes": 17009,
+    "memory_mb": 2916.3,
+    "time_s": 21.252
+  },
+  {
+    "tool": "easySCF",
+    "dataset": "bmcite",
+    "n_cells": 30672,
+    "n_genes": 17009,
+    "memory_mb": 2364.0,
+    "time_s": 16.685
+  },
+  {
+    "tool": "CrossCell",
+    "dataset": "pbmcsca",
+    "n_cells": 31021,
+    "n_genes": 33694,
+    "memory_mb": 1634.9,
+    "time_s": 8.347
+  },
+  {
+    "tool": "Zellkonverter",
+    "dataset": "pbmcsca",
+    "n_cells": 31021,
+    "n_genes": 33694,
+    "memory_mb": 2527.2,
+    "time_s": 20.702
+  },
+  {
+    "tool": "anndataR",
+    "dataset": "pbmcsca",
+    "n_cells": 31021,
+    "n_genes": 33694,
+    "memory_mb": 2156.6,
+    "time_s": 11.289
+  },
+  {
+    "tool": "convert2anndata",
+    "dataset": "pbmcsca",
+    "n_cells": 31021,
+    "n_genes": 33694,
+    "memory_mb": 2956.7,
+    "time_s": 22.597
+  },
+  {
+    "tool": "easySCF",
+    "dataset": "pbmcsca",
+    "n_cells": 31021,
+    "n_genes": 33694,
+    "memory_mb": 2393.0,
+    "time_s": 17.149
+  },
+  {
+    "tool": "CrossCell",
+    "dataset": "hcabm40k",
+    "n_cells": 40000,
+    "n_genes": 17369,
+    "memory_mb": 2338.6,
+    "time_s": 6.67
+  },
+  {
+    "tool": "Zellkonverter",
+    "dataset": "hcabm40k",
+    "n_cells": 40000,
+    "n_genes": 17369,
+    "memory_mb": 3257.5,
+    "time_s": 19.946
+  },
+  {
+    "tool": "anndataR",
+    "dataset": "hcabm40k",
+    "n_cells": 40000,
+    "n_genes": 17369,
+    "memory_mb": 2908.6,
+    "time_s": 17.754
+  },
+  {
+    "tool": "convert2anndata",
+    "dataset": "hcabm40k",
+    "n_cells": 40000,
+    "n_genes": 17369,
+    "memory_mb": 3914.2,
+    "time_s": 24.802
+  },
+  {
+    "tool": "easySCF",
+    "dataset": "hcabm40k",
+    "n_cells": 40000,
+    "n_genes": 17369,
+    "memory_mb": 3276.6,
+    "time_s": 20.912
+  },
+  {
+    "tool": "CrossCell",
+    "dataset": "panc8",
+    "n_cells": 14890,
+    "n_genes": 34363,
+    "memory_mb": 2991.6,
+    "time_s": 8.787
+  },
+  {
+    "tool": "Zellkonverter",
+    "dataset": "panc8",
+    "n_cells": 14890,
+    "n_genes": 34363,
+    "memory_mb": 3903.0,
+    "time_s": 25.985
+  },
+  {
+    "tool": "anndataR",
+    "dataset": "panc8",
+    "n_cells": 14890,
+    "n_genes": 34363,
+    "memory_mb": 3627.3,
+    "time_s": 17.233
+  },
+  {
+    "tool": "convert2anndata",
+    "dataset": "panc8",
+    "n_cells": 14890,
+    "n_genes": 34363,
+    "memory_mb": 4788.5,
+    "time_s": 27.155
+  },
+  {
+    "tool": "easySCF",
+    "dataset": "panc8",
+    "n_cells": 14890,
+    "n_genes": 34363,
+    "memory_mb": 4062.5,
+    "time_s": 30.898
+  },
+  {
+    "tool": "CrossCell",
+    "dataset": "thp1.eccite",
+    "n_cells": 20729,
+    "n_genes": 18649,
+    "memory_mb": 3999.4,
+    "time_s": 12.906
+  },
+  {
+    "tool": "Zellkonverter",
+    "dataset": "thp1.eccite",
+    "n_cells": 20729,
+    "n_genes": 18649,
+    "memory_mb": 4919.4,
+    "time_s": 32.231
+  },
+  {
+    "tool": "anndataR",
+    "dataset": "thp1.eccite",
+    "n_cells": 20729,
+    "n_genes": 18649,
+    "memory_mb": 4738.3,
+    "time_s": 21.057
+  },
+  {
+    "tool": "convert2anndata",
+    "dataset": "thp1.eccite",
+    "n_cells": 20729,
+    "n_genes": 18649,
+    "memory_mb": 6153.4,
+    "time_s": 29.826
+  },
+  {
+    "tool": "easySCF",
+    "dataset": "thp1.eccite",
+    "n_cells": 20729,
+    "n_genes": 18649,
+    "memory_mb": 5278.4,
+    "time_s": 36.193
+  }
+]

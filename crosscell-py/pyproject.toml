@@ -1,0 +1,24 @@
+[build-system]
+requires = ["maturin>=1.0,<2.0"]
+build-backend = "maturin"
+
+[project]
+name = "crosscell"
+version = "0.1.0"
+description = "High-performance single-cell data format converter (Python bindings)"
+license = { text = "MIT OR Apache-2.0" }
+requires-python = ">=3.9"
+dependencies = [
+    "anndata>=0.10",
+    "scipy>=1.10",
+    "numpy>=1.24",
+    "pandas>=2.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest", "hypothesis"]
+
+[tool.maturin]
+features = ["pyo3/extension-module"]
+python-source = "python"
+module-name = "crosscell._crosscell_py"

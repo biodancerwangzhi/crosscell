@@ -193,6 +193,7 @@ mod tests {
             cell_pairwise: None,
             gene_pairwise: None,
             spatial: None,
+            gene_loadings: None,
             unstructured: None,
             metadata: DatasetMetadata {
                 n_cells: 100,

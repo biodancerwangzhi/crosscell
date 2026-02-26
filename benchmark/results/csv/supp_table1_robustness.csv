@@ -1,0 +1,263 @@
+tool,direction,test_id,dataset,file,seurat_version,type,scale,n_cells,n_genes,spatial,status,conversion_time_seconds,peak_memory_mb,error
+crosscell,rds_to_h5ad,v4_pbmc3k_raw,pbmc3k,seurat_v4_pbmc3k_raw.rds,V4,raw,small,2700,13714,False,success,0.495,154.6,
+crosscell,rds_to_h5ad,v4_pbmc3k_processed,pbmc3k,seurat_v4_pbmc3k_processed.rds,V4,processed,small,2700,13714,False,success,0.61,233.3,
+crosscell,rds_to_h5ad,v5_pbmc3k_raw,pbmc3k,seurat_v5_pbmc3k_raw.rds,V5,raw,small,2700,13714,False,success,0.281,153.6,
+crosscell,rds_to_h5ad,v5_pbmc3k_processed,pbmc3k,seurat_v5_pbmc3k_processed.rds,V5,processed,small,2700,13714,False,success,0.851,300.0,
+crosscell,rds_to_h5ad,v4_stxKidney_raw,stxKidney,seurat_v4_stxKidney_raw.rds,V4,raw,small,1438,31053,True,success,1.738,566.2,
+crosscell,rds_to_h5ad,v5_stxKidney_raw,stxKidney,seurat_v5_stxKidney_raw.rds,V5,raw,small,1438,31053,True,success,1.153,531.9,
+crosscell,rds_to_h5ad,v4_celegans.embryo_raw,celegans.embryo,seurat_v4_celegans.embryo_raw.rds,V4,raw,small,6188,20222,False,success,0.952,317.8,
+crosscell,rds_to_h5ad,v4_celegans.embryo_processed,celegans.embryo,seurat_v4_celegans.embryo_processed.rds,V4,processed,small,6188,20222,False,success,1.399,480.0,
+crosscell,rds_to_h5ad,v5_celegans.embryo_raw,celegans.embryo,seurat_v5_celegans.embryo_raw.rds,V5,raw,small,6188,20222,False,success,0.721,334.2,
+crosscell,rds_to_h5ad,v5_celegans.embryo_processed,celegans.embryo,seurat_v5_celegans.embryo_processed.rds,V5,processed,small,6188,20222,False,success,1.552,635.1,
+crosscell,rds_to_h5ad,v4_cbmc_raw,cbmc,seurat_v4_cbmc_raw.rds,V4,raw,small,8617,20501,False,success,1.537,580.8,
+crosscell,rds_to_h5ad,v4_cbmc_processed,cbmc,seurat_v4_cbmc_processed.rds,V4,processed,small,8617,20501,False,success,2.848,718.0,
+crosscell,rds_to_h5ad,v5_cbmc_raw,cbmc,seurat_v5_cbmc_raw.rds,V5,raw,small,8617,20501,False,success,1.583,546.0,
+crosscell,rds_to_h5ad,v5_cbmc_processed,cbmc,seurat_v5_cbmc_processed.rds,V5,processed,small,8617,20501,False,success,3.125,1017.8,
+crosscell,rds_to_h5ad,v4_ifnb_raw,ifnb,seurat_v4_ifnb_raw.rds,V4,raw,medium,13999,14053,False,success,2.218,584.5,
+crosscell,rds_to_h5ad,v4_ifnb_processed,ifnb,seurat_v4_ifnb_processed.rds,V4,processed,medium,13999,14053,False,success,3.63,966.5,
+crosscell,rds_to_h5ad,v5_ifnb_raw,ifnb,seurat_v5_ifnb_raw.rds,V5,raw,medium,13999,14053,False,success,1.794,577.9,
+crosscell,rds_to_h5ad,v5_ifnb_processed,ifnb,seurat_v5_ifnb_processed.rds,V5,processed,medium,13999,14053,False,success,5.11,1258.2,
+crosscell,rds_to_h5ad,v4_panc8_raw,panc8,seurat_v4_panc8_raw.rds,V4,raw,medium,14890,34363,False,success,14.13,3005.3,
+crosscell,rds_to_h5ad,v4_panc8_processed,panc8,seurat_v4_panc8_processed.rds,V4,processed,medium,14890,34363,False,success,18.007,3299.5,
+crosscell,rds_to_h5ad,v5_panc8_raw,panc8,seurat_v5_panc8_raw.rds,V5,raw,medium,14890,34363,False,success,13.024,2991.9,
+crosscell,rds_to_h5ad,v5_panc8_processed,panc8,seurat_v5_panc8_processed.rds,V5,processed,medium,14890,34363,False,success,25.448,5455.3,
+crosscell,rds_to_h5ad,v4_thp1.eccite_raw,thp1.eccite,seurat_v4_thp1.eccite_raw.rds,V4,raw,medium,20729,18649,False,success,20.136,4148.9,
+crosscell,rds_to_h5ad,v4_thp1.eccite_processed,thp1.eccite,seurat_v4_thp1.eccite_processed.rds,V4,processed,medium,20729,18649,False,success,27.016,4537.4,
+crosscell,rds_to_h5ad,v5_thp1.eccite_raw,thp1.eccite,seurat_v5_thp1.eccite_raw.rds,V5,raw,medium,20729,18649,False,success,15.529,4000.2,
+crosscell,rds_to_h5ad,v5_thp1.eccite_processed,thp1.eccite,seurat_v5_thp1.eccite_processed.rds,V5,processed,medium,20729,18649,False,success,27.975,7311.2,
+crosscell,rds_to_h5ad,v4_bmcite_raw,bmcite,seurat_v4_bmcite_raw.rds,V4,raw,medium,30672,17009,False,success,9.232,1853.6,
+crosscell,rds_to_h5ad,v4_bmcite_processed,bmcite,seurat_v4_bmcite_processed.rds,V4,processed,medium,30672,17009,False,success,13.385,2623.9,
+crosscell,rds_to_h5ad,v5_bmcite_raw,bmcite,seurat_v5_bmcite_raw.rds,V5,raw,medium,30672,17009,False,success,5.321,1600.7,
+crosscell,rds_to_h5ad,v5_bmcite_processed,bmcite,seurat_v5_bmcite_processed.rds,V5,processed,medium,30672,17009,False,success,12.252,3322.1,
+crosscell,rds_to_h5ad,v4_pbmcsca_raw,pbmcsca,seurat_v4_pbmcsca_raw.rds,V4,raw,medium,31021,33694,False,success,6.604,1652.0,
+crosscell,rds_to_h5ad,v4_pbmcsca_processed,pbmcsca,seurat_v4_pbmcsca_processed.rds,V4,processed,medium,31021,33694,False,success,9.106,2440.0,
+crosscell,rds_to_h5ad,v5_pbmcsca_raw,pbmcsca,seurat_v5_pbmcsca_raw.rds,V5,raw,medium,31021,33694,False,success,5.454,1635.9,
+crosscell,rds_to_h5ad,v5_pbmcsca_processed,pbmcsca,seurat_v5_pbmcsca_processed.rds,V5,processed,medium,31021,33694,False,success,11.136,3391.1,
+crosscell,rds_to_h5ad,v4_hcabm40k_raw,hcabm40k,seurat_v4_hcabm40k_raw.rds,V4,raw,medium,40000,17369,False,success,10.358,2353.2,
+crosscell,rds_to_h5ad,v4_hcabm40k_processed,hcabm40k,seurat_v4_hcabm40k_processed.rds,V4,processed,medium,40000,17369,False,success,15.717,3297.9,
+crosscell,rds_to_h5ad,v5_hcabm40k_raw,hcabm40k,seurat_v5_hcabm40k_raw.rds,V5,raw,medium,40000,17369,False,success,8.002,2338.9,
+crosscell,rds_to_h5ad,v5_hcabm40k_processed,hcabm40k,seurat_v5_hcabm40k_processed.rds,V5,processed,medium,40000,17369,False,success,17.703,4798.2,
+crosscell,rds_to_h5ad,v4_ssHippo_raw,ssHippo,seurat_v4_ssHippo_raw.rds,V4,raw,medium,53173,23264,True,success,5.858,1344.4,
+crosscell,rds_to_h5ad,v4_ssHippo_processed,ssHippo,seurat_v4_ssHippo_processed.rds,V4,processed,medium,53173,23264,True,success,11.395,2945.6,
+crosscell,rds_to_h5ad,v5_ssHippo_raw,ssHippo,seurat_v5_ssHippo_raw.rds,V5,raw,medium,53173,23264,True,success,4.316,1329.1,
+crosscell,rds_to_h5ad,v5_ssHippo_processed,ssHippo,seurat_v5_ssHippo_processed.rds,V5,processed,medium,53173,23264,True,success,10.135,3275.9,
+crosscell,h5ad_to_rds,scanpy_pbmc3k,scanpy_pbmc3k,scanpy_pbmc3k.h5ad,,,small,2700,32738,False,success,2.676,153.7,
+crosscell,h5ad_to_rds,scanpy_pbmc3k_processed,scanpy_pbmc3k_processed,scanpy_pbmc3k_processed.h5ad,,,small,2700,1838,False,success,8.833,255.4,
+crosscell,h5ad_to_rds,scvelo_dentategyrus,scvelo_dentategyrus,scvelo_dentategyrus.h5ad,,,small,2930,13913,False,success,13.09,460.5,
+crosscell,h5ad_to_rds,scvelo_pancreas,scvelo_pancreas,scvelo_pancreas.h5ad,,,small,3696,27998,False,success,25.636,877.9,
+crosscell,h5ad_to_rds,cellxgene_pbmc_15k,cellxgene_pbmc_15k,cellxgene_pbmc_15k.h5ad,,,medium,15000,33694,False,success,20.732,861.9,
+crosscell,h5ad_to_rds,cellxgene_heart_23k,cellxgene_heart_23k,cellxgene_heart_23k.h5ad,,,medium,23185,33694,False,success,46.314,2078.4,
+crosscell,h5ad_to_rds,cellxgene_brain_40k,cellxgene_brain_40k,cellxgene_brain_40k.h5ad,,,medium,39245,33694,False,success,300.94,11906.7,
+crosscell,h5ad_to_rds,squidpy_visium_hne,squidpy_visium_hne,squidpy_visium_hne.h5ad,,,small,2688,18078,True,success,21.736,927.7,
+crosscell,h5ad_to_rds,squidpy_mibitof,squidpy_mibitof,squidpy_mibitof.h5ad,,,small,3309,36,True,success,0.678,27.7,
+crosscell,h5ad_to_rds,squidpy_slideseqv2,squidpy_slideseqv2,squidpy_slideseqv2.h5ad,,,medium,41786,4000,True,success,19.018,335.8,
+crosscell,h5ad_to_rds,squidpy_seqfish,squidpy_seqfish,squidpy_seqfish.h5ad,,,medium,19416,351,True,success,2.433,99.7,
+crosscell,h5ad_to_rds,squidpy_merfish,squidpy_merfish,squidpy_merfish.h5ad,,,medium,73655,161,True,success,7.373,306.4,
+crosscell,h5ad_to_rds,squidpy_imc,squidpy_imc,squidpy_imc.h5ad,,,small,4668,34,True,success,0.327,19.7,
+zellkonverter,rds_to_h5ad,v4_pbmc3k_raw,pbmc3k,seurat_v4_pbmc3k_raw.rds,V4,raw,small,2700,13714,False,success,12.541,1121.3,
+zellkonverter,rds_to_h5ad,v4_pbmc3k_processed,pbmc3k,seurat_v4_pbmc3k_processed.rds,V4,processed,small,2700,13714,False,success,12.46,1206.0,
+zellkonverter,rds_to_h5ad,v5_pbmc3k_raw,pbmc3k,seurat_v5_pbmc3k_raw.rds,V5,raw,small,2700,13714,False,success,10.259,1069.9,
+zellkonverter,rds_to_h5ad,v5_pbmc3k_processed,pbmc3k,seurat_v5_pbmc3k_processed.rds,V5,processed,small,2700,13714,False,success,14.127,1223.9,
+zellkonverter,rds_to_h5ad,v4_stxKidney_raw,stxKidney,seurat_v4_stxKidney_raw.rds,V4,raw,small,1438,31053,True,success,14.041,1558.2,
+zellkonverter,rds_to_h5ad,v5_stxKidney_raw,stxKidney,seurat_v5_stxKidney_raw.rds,V5,raw,small,1438,31053,True,success,13.792,1402.6,
+zellkonverter,rds_to_h5ad,v4_celegans.embryo_raw,celegans.embryo,seurat_v4_celegans.embryo_raw.rds,V4,raw,small,6188,20222,False,success,12.768,1320.7,
+zellkonverter,rds_to_h5ad,v4_celegans.embryo_processed,celegans.embryo,seurat_v4_celegans.embryo_processed.rds,V4,processed,small,6188,20222,False,success,15.14,1450.4,
+zellkonverter,rds_to_h5ad,v5_celegans.embryo_raw,celegans.embryo,seurat_v5_celegans.embryo_raw.rds,V5,raw,small,6188,20222,False,success,13.198,1201.8,
+zellkonverter,rds_to_h5ad,v5_celegans.embryo_processed,celegans.embryo,seurat_v5_celegans.embryo_processed.rds,V5,processed,small,6188,20222,False,success,14.835,1577.7,
+zellkonverter,rds_to_h5ad,v4_cbmc_raw,cbmc,seurat_v4_cbmc_raw.rds,V4,raw,small,8617,20501,False,success,15.471,1594.6,
+zellkonverter,rds_to_h5ad,v4_cbmc_processed,cbmc,seurat_v4_cbmc_processed.rds,V4,processed,small,8617,20501,False,success,16.81,1788.3,
+zellkonverter,rds_to_h5ad,v5_cbmc_raw,cbmc,seurat_v5_cbmc_raw.rds,V5,raw,small,8617,20501,False,success,13.932,1413.8,
+zellkonverter,rds_to_h5ad,v5_cbmc_processed,cbmc,seurat_v5_cbmc_processed.rds,V5,processed,small,8617,20501,False,success,16.871,1966.7,
+zellkonverter,rds_to_h5ad,v4_ifnb_raw,ifnb,seurat_v4_ifnb_raw.rds,V4,raw,medium,13999,14053,False,success,16.225,1728.1,
+zellkonverter,rds_to_h5ad,v4_ifnb_processed,ifnb,seurat_v4_ifnb_processed.rds,V4,processed,medium,13999,14053,False,success,17.849,2078.6,
+zellkonverter,rds_to_h5ad,v5_ifnb_raw,ifnb,seurat_v5_ifnb_raw.rds,V5,raw,medium,13999,14053,False,success,15.826,1506.3,
+zellkonverter,rds_to_h5ad,v5_ifnb_processed,ifnb,seurat_v5_ifnb_processed.rds,V5,processed,medium,13999,14053,False,success,19.533,2337.9,
+zellkonverter,rds_to_h5ad,v4_panc8_raw,panc8,seurat_v4_panc8_raw.rds,V4,raw,medium,14890,34363,False,success,33.349,4898.7,
+zellkonverter,rds_to_h5ad,v4_panc8_processed,panc8,seurat_v4_panc8_processed.rds,V4,processed,medium,14890,34363,False,success,38.409,5194.5,
+zellkonverter,rds_to_h5ad,v5_panc8_raw,panc8,seurat_v5_panc8_raw.rds,V5,raw,medium,14890,34363,False,success,28.358,3903.1,
+zellkonverter,rds_to_h5ad,v5_panc8_processed,panc8,seurat_v5_panc8_processed.rds,V5,processed,medium,14890,34363,False,success,38.484,6376.2,
+zellkonverter,rds_to_h5ad,v4_thp1.eccite_raw,thp1.eccite,seurat_v4_thp1.eccite_raw.rds,V4,raw,medium,20729,18649,False,success,46.554,6520.7,
+zellkonverter,rds_to_h5ad,v4_thp1.eccite_processed,thp1.eccite,seurat_v4_thp1.eccite_processed.rds,V4,processed,medium,20729,18649,False,success,50.189,6893.5,
+zellkonverter,rds_to_h5ad,v5_thp1.eccite_raw,thp1.eccite,seurat_v5_thp1.eccite_raw.rds,V5,raw,medium,20729,18649,False,success,31.389,4918.7,
+zellkonverter,rds_to_h5ad,v5_thp1.eccite_processed,thp1.eccite,seurat_v5_thp1.eccite_processed.rds,V5,processed,medium,20729,18649,False,success,57.417,8249.9,
+zellkonverter,rds_to_h5ad,v4_bmcite_raw,bmcite,seurat_v4_bmcite_raw.rds,V4,raw,medium,30672,17009,False,success,30.63,3043.0,
+zellkonverter,rds_to_h5ad,v4_bmcite_processed,bmcite,seurat_v4_bmcite_processed.rds,V4,processed,medium,30672,17009,False,success,30.289,4238.4,
+zellkonverter,rds_to_h5ad,v5_bmcite_raw,bmcite,seurat_v5_bmcite_raw.rds,V5,raw,medium,30672,17009,False,success,18.802,2503.0,
+zellkonverter,rds_to_h5ad,v5_bmcite_processed,bmcite,seurat_v5_bmcite_processed.rds,V5,processed,medium,30672,17009,False,success,29.264,4370.8,
+zellkonverter,rds_to_h5ad,v4_pbmcsca_raw,pbmcsca,seurat_v4_pbmcsca_raw.rds,V4,raw,medium,31021,33694,False,success,23.207,3068.4,
+zellkonverter,rds_to_h5ad,v4_pbmcsca_processed,pbmcsca,seurat_v4_pbmcsca_processed.rds,V4,processed,medium,31021,33694,False,success,26.69,4088.1,
+zellkonverter,rds_to_h5ad,v5_pbmcsca_raw,pbmcsca,seurat_v5_pbmcsca_raw.rds,V5,raw,medium,31021,33694,False,success,19.078,2527.2,
+zellkonverter,rds_to_h5ad,v5_pbmcsca_processed,pbmcsca,seurat_v5_pbmcsca_processed.rds,V5,processed,medium,31021,33694,False,success,26.659,4428.8,
+zellkonverter,rds_to_h5ad,v4_hcabm40k_raw,hcabm40k,seurat_v4_hcabm40k_raw.rds,V4,raw,medium,40000,17369,False,success,28.014,4035.5,
+zellkonverter,rds_to_h5ad,v4_hcabm40k_processed,hcabm40k,seurat_v4_hcabm40k_processed.rds,V4,processed,medium,40000,17369,False,success,35.073,4959.2,
+zellkonverter,rds_to_h5ad,v5_hcabm40k_raw,hcabm40k,seurat_v5_hcabm40k_raw.rds,V5,raw,medium,40000,17369,False,success,23.524,3257.2,
+zellkonverter,rds_to_h5ad,v5_hcabm40k_processed,hcabm40k,seurat_v5_hcabm40k_processed.rds,V5,processed,medium,40000,17369,False,success,35.698,5901.0,
+zellkonverter,rds_to_h5ad,v4_ssHippo_raw,ssHippo,seurat_v4_ssHippo_raw.rds,V4,raw,medium,53173,23264,True,success,22.466,2676.8,
+zellkonverter,rds_to_h5ad,v4_ssHippo_processed,ssHippo,seurat_v4_ssHippo_processed.rds,V4,processed,medium,53173,23264,True,success,28.171,4825.1,
+zellkonverter,rds_to_h5ad,v5_ssHippo_raw,ssHippo,seurat_v5_ssHippo_raw.rds,V5,raw,medium,53173,23264,True,success,17.364,2241.2,
+zellkonverter,rds_to_h5ad,v5_ssHippo_processed,ssHippo,seurat_v5_ssHippo_processed.rds,V5,processed,medium,53173,23264,True,success,27.048,4432.5,
+zellkonverter,h5ad_to_rds,scanpy_pbmc3k,scanpy_pbmc3k,scanpy_pbmc3k.h5ad,,,small,2700,32738,False,success,14.507,1099.6,
+zellkonverter,h5ad_to_rds,scanpy_pbmc3k_processed,scanpy_pbmc3k_processed,scanpy_pbmc3k_processed.h5ad,,,small,2700,1838,False,success,24.493,1299.4,
+zellkonverter,h5ad_to_rds,scvelo_dentategyrus,scvelo_dentategyrus,scvelo_dentategyrus.h5ad,,,small,2930,13913,False,success,17.738,1334.2,
+zellkonverter,h5ad_to_rds,scvelo_pancreas,scvelo_pancreas,scvelo_pancreas.h5ad,,,small,3696,27998,False,success,27.273,1684.8,
+zellkonverter,h5ad_to_rds,cellxgene_pbmc_15k,cellxgene_pbmc_15k,cellxgene_pbmc_15k.h5ad,,,medium,15000,33694,False,success,34.56,1991.9,
+zellkonverter,h5ad_to_rds,cellxgene_heart_23k,cellxgene_heart_23k,cellxgene_heart_23k.h5ad,,,medium,23185,33694,False,success,62.05,3350.3,
+zellkonverter,h5ad_to_rds,cellxgene_brain_40k,cellxgene_brain_40k,cellxgene_brain_40k.h5ad,,,medium,39245,33694,False,success,327.659,9650.7,
+zellkonverter,h5ad_to_rds,squidpy_visium_hne,squidpy_visium_hne,squidpy_visium_hne.h5ad,,,small,2688,18078,True,success,36.089,2116.0,
+zellkonverter,h5ad_to_rds,squidpy_mibitof,squidpy_mibitof,squidpy_mibitof.h5ad,,,small,3309,36,True,success,10.231,1048.3,
+zellkonverter,h5ad_to_rds,squidpy_slideseqv2,squidpy_slideseqv2,squidpy_slideseqv2.h5ad,,,medium,41786,4000,True,failed,16.861,1524.5,Error in validObject(.Object) :
+zellkonverter,h5ad_to_rds,squidpy_seqfish,squidpy_seqfish,squidpy_seqfish.h5ad,,,medium,19416,351,True,success,11.864,1062.7,
+zellkonverter,h5ad_to_rds,squidpy_merfish,squidpy_merfish,squidpy_merfish.h5ad,,,medium,73655,161,True,success,20.012,1192.5,
+zellkonverter,h5ad_to_rds,squidpy_imc,squidpy_imc,squidpy_imc.h5ad,,,small,4668,34,True,success,8.76,951.5,
+anndataR,rds_to_h5ad,v4_pbmc3k_raw,pbmc3k,seurat_v4_pbmc3k_raw.rds,V4,raw,small,2700,13714,False,success,5.755,645.8,
+anndataR,rds_to_h5ad,v4_pbmc3k_processed,pbmc3k,seurat_v4_pbmc3k_processed.rds,V4,processed,small,2700,13714,False,success,6.677,711.9,
+anndataR,rds_to_h5ad,v5_pbmc3k_raw,pbmc3k,seurat_v5_pbmc3k_raw.rds,V5,raw,small,2700,13714,False,success,4.812,585.3,
+anndataR,rds_to_h5ad,v5_pbmc3k_processed,pbmc3k,seurat_v5_pbmc3k_processed.rds,V5,processed,small,2700,13714,False,success,7.263,705.8,
+anndataR,rds_to_h5ad,v4_stxKidney_raw,stxKidney,seurat_v4_stxKidney_raw.rds,V4,raw,small,1438,31053,True,success,8.153,1127.1,
+anndataR,rds_to_h5ad,v5_stxKidney_raw,stxKidney,seurat_v5_stxKidney_raw.rds,V5,raw,small,1438,31053,True,success,6.45,938.5,
+anndataR,rds_to_h5ad,v4_celegans.embryo_raw,celegans.embryo,seurat_v4_celegans.embryo_raw.rds,V4,raw,small,6188,20222,False,success,7.286,860.9,
+anndataR,rds_to_h5ad,v4_celegans.embryo_processed,celegans.embryo,seurat_v4_celegans.embryo_processed.rds,V4,processed,small,6188,20222,False,success,9.205,1027.4,
+anndataR,rds_to_h5ad,v5_celegans.embryo_raw,celegans.embryo,seurat_v5_celegans.embryo_raw.rds,V5,raw,small,6188,20222,False,success,6.041,791.8,
+anndataR,rds_to_h5ad,v5_celegans.embryo_processed,celegans.embryo,seurat_v5_celegans.embryo_processed.rds,V5,processed,small,6188,20222,False,success,8.565,1027.4,
+anndataR,rds_to_h5ad,v4_cbmc_raw,cbmc,seurat_v4_cbmc_raw.rds,V4,raw,small,8617,20501,False,success,8.266,1133.3,
+anndataR,rds_to_h5ad,v4_cbmc_processed,cbmc,seurat_v4_cbmc_processed.rds,V4,processed,small,8617,20501,False,success,11.92,1398.7,
+anndataR,rds_to_h5ad,v5_cbmc_raw,cbmc,seurat_v5_cbmc_raw.rds,V5,raw,small,8617,20501,False,success,6.886,984.6,
+anndataR,rds_to_h5ad,v5_cbmc_processed,cbmc,seurat_v5_cbmc_processed.rds,V5,processed,small,8617,20501,False,success,9.815,1277.7,
+anndataR,rds_to_h5ad,v4_ifnb_raw,ifnb,seurat_v4_ifnb_raw.rds,V4,raw,medium,13999,14053,False,success,8.719,1136.4,
+anndataR,rds_to_h5ad,v4_ifnb_processed,ifnb,seurat_v4_ifnb_processed.rds,V4,processed,medium,13999,14053,False,success,11.348,1604.6,
+anndataR,rds_to_h5ad,v5_ifnb_raw,ifnb,seurat_v5_ifnb_raw.rds,V5,raw,medium,13999,14053,False,success,7.375,1054.0,
+anndataR,rds_to_h5ad,v5_ifnb_processed,ifnb,seurat_v5_ifnb_processed.rds,V5,processed,medium,13999,14053,False,success,11.369,1496.7,
+anndataR,rds_to_h5ad,v4_panc8_raw,panc8,seurat_v4_panc8_raw.rds,V4,raw,medium,14890,34363,False,success,27.401,4831.6,
+anndataR,rds_to_h5ad,v4_panc8_processed,panc8,seurat_v4_panc8_processed.rds,V4,processed,medium,14890,34363,False,success,33.603,5122.3,
+anndataR,rds_to_h5ad,v5_panc8_raw,panc8,seurat_v5_panc8_raw.rds,V5,raw,medium,14890,34363,False,success,20.08,3627.4,
+anndataR,rds_to_h5ad,v5_panc8_processed,panc8,seurat_v5_panc8_processed.rds,V5,processed,medium,14890,34363,False,success,31.527,5136.0,
+anndataR,rds_to_h5ad,v4_thp1.eccite_raw,thp1.eccite,seurat_v4_thp1.eccite_raw.rds,V4,raw,medium,20729,18649,False,success,37.21,5473.8,
+anndataR,rds_to_h5ad,v4_thp1.eccite_processed,thp1.eccite,seurat_v4_thp1.eccite_processed.rds,V4,processed,medium,20729,18649,False,success,39.801,6179.7,
+anndataR,rds_to_h5ad,v5_thp1.eccite_raw,thp1.eccite,seurat_v5_thp1.eccite_raw.rds,V5,raw,medium,20729,18649,False,success,22.61,4738.5,
+anndataR,rds_to_h5ad,v5_thp1.eccite_processed,thp1.eccite,seurat_v5_thp1.eccite_processed.rds,V5,processed,medium,20729,18649,False,success,38.574,5951.1,
+anndataR,rds_to_h5ad,v4_bmcite_raw,bmcite,seurat_v4_bmcite_raw.rds,V4,raw,medium,30672,17009,False,success,21.542,3023.4,
+anndataR,rds_to_h5ad,v4_bmcite_processed,bmcite,seurat_v4_bmcite_processed.rds,V4,processed,medium,30672,17009,False,success,25.189,4045.2,
+anndataR,rds_to_h5ad,v5_bmcite_raw,bmcite,seurat_v5_bmcite_raw.rds,V5,raw,medium,30672,17009,False,success,11.439,2127.9,
+anndataR,rds_to_h5ad,v5_bmcite_processed,bmcite,seurat_v5_bmcite_processed.rds,V5,processed,medium,30672,17009,False,success,21.837,3069.7,
+anndataR,rds_to_h5ad,v4_pbmcsca_raw,pbmcsca,seurat_v4_pbmcsca_raw.rds,V4,raw,medium,31021,33694,False,success,17.844,2832.8,
+anndataR,rds_to_h5ad,v4_pbmcsca_processed,pbmcsca,seurat_v4_pbmcsca_processed.rds,V4,processed,medium,31021,33694,False,success,23.022,3568.6,
+anndataR,rds_to_h5ad,v5_pbmcsca_raw,pbmcsca,seurat_v5_pbmcsca_raw.rds,V5,raw,medium,31021,33694,False,success,13.114,2156.7,
+anndataR,rds_to_h5ad,v5_pbmcsca_processed,pbmcsca,seurat_v5_pbmcsca_processed.rds,V5,processed,medium,31021,33694,False,success,20.703,3113.4,
+anndataR,rds_to_h5ad,v4_hcabm40k_raw,hcabm40k,seurat_v4_hcabm40k_raw.rds,V4,raw,medium,40000,17369,False,success,21.822,3881.9,
+anndataR,rds_to_h5ad,v4_hcabm40k_processed,hcabm40k,seurat_v4_hcabm40k_processed.rds,V4,processed,medium,40000,17369,False,success,29.694,4603.2,
+anndataR,rds_to_h5ad,v5_hcabm40k_raw,hcabm40k,seurat_v5_hcabm40k_raw.rds,V5,raw,medium,40000,17369,False,success,15.005,2909.4,
+anndataR,rds_to_h5ad,v5_hcabm40k_processed,hcabm40k,seurat_v5_hcabm40k_processed.rds,V5,processed,medium,40000,17369,False,success,27.294,4157.2,
+anndataR,rds_to_h5ad,v4_ssHippo_raw,ssHippo,seurat_v4_ssHippo_raw.rds,V4,raw,medium,53173,23264,True,success,16.635,2384.4,
+anndataR,rds_to_h5ad,v4_ssHippo_processed,ssHippo,seurat_v4_ssHippo_processed.rds,V4,processed,medium,53173,23264,True,success,24.004,4108.3,
+anndataR,rds_to_h5ad,v5_ssHippo_raw,ssHippo,seurat_v5_ssHippo_raw.rds,V5,raw,medium,53173,23264,True,success,10.998,1812.3,
+anndataR,rds_to_h5ad,v5_ssHippo_processed,ssHippo,seurat_v5_ssHippo_processed.rds,V5,processed,medium,53173,23264,True,success,20.466,3664.2,
+anndataR,h5ad_to_rds,scanpy_pbmc3k,scanpy_pbmc3k,scanpy_pbmc3k.h5ad,,,small,2700,32738,False,failed,5.334,407.3,Error in `initialize()`:
+anndataR,h5ad_to_rds,scanpy_pbmc3k_processed,scanpy_pbmc3k_processed,scanpy_pbmc3k_processed.h5ad,,,small,2700,1838,False,failed,4.847,407.4,Error in `initialize()`:
+anndataR,h5ad_to_rds,scvelo_dentategyrus,scvelo_dentategyrus,scvelo_dentategyrus.h5ad,,,small,2930,13913,False,failed,5.382,407.3,Error in `initialize()`:
+anndataR,h5ad_to_rds,scvelo_pancreas,scvelo_pancreas,scvelo_pancreas.h5ad,,,small,3696,27998,False,failed,4.04,406.9,Error in `initialize()`:
+anndataR,h5ad_to_rds,cellxgene_pbmc_15k,cellxgene_pbmc_15k,cellxgene_pbmc_15k.h5ad,,,medium,15000,33694,False,failed,12.339,973.6,Error reading element uns of type <dict>
+anndataR,h5ad_to_rds,cellxgene_heart_23k,cellxgene_heart_23k,cellxgene_heart_23k.h5ad,,,medium,23185,33694,False,failed,18.425,1777.4,Error reading element uns of type <dict>
+anndataR,h5ad_to_rds,cellxgene_brain_40k,cellxgene_brain_40k,cellxgene_brain_40k.h5ad,,,medium,39245,33694,False,failed,58.758,8353.0,Error reading element uns of type <dict>
+anndataR,h5ad_to_rds,squidpy_visium_hne,squidpy_visium_hne,squidpy_visium_hne.h5ad,,,small,2688,18078,True,failed,3.776,407.5,Error in `initialize()`:
+anndataR,h5ad_to_rds,squidpy_mibitof,squidpy_mibitof,squidpy_mibitof.h5ad,,,small,3309,36,True,failed,3.752,407.2,Error in `initialize()`:
+anndataR,h5ad_to_rds,squidpy_slideseqv2,squidpy_slideseqv2,squidpy_slideseqv2.h5ad,,,medium,41786,4000,True,failed,3.742,407.5,Error in `initialize()`:
+anndataR,h5ad_to_rds,squidpy_seqfish,squidpy_seqfish,squidpy_seqfish.h5ad,,,medium,19416,351,True,failed,3.58,407.7,Error in `initialize()`:
+anndataR,h5ad_to_rds,squidpy_merfish,squidpy_merfish,squidpy_merfish.h5ad,,,medium,73655,161,True,failed,3.522,407.7,Error in `initialize()`:
+anndataR,h5ad_to_rds,squidpy_imc,squidpy_imc,squidpy_imc.h5ad,,,small,4668,34,True,failed,3.223,407.5,Error in `initialize()`:
+convert2anndata,rds_to_h5ad,v4_pbmc3k_raw,pbmc3k,seurat_v4_pbmc3k_raw.rds,V4,raw,small,2700,13714,False,failed,9.782,759.9,Error in value[[3L]](cond) :
+convert2anndata,rds_to_h5ad,v4_pbmc3k_processed,pbmc3k,seurat_v4_pbmc3k_processed.rds,V4,processed,small,2700,13714,False,failed,9.851,886.0,Error in value[[3L]](cond) :
+convert2anndata,rds_to_h5ad,v5_pbmc3k_raw,pbmc3k,seurat_v5_pbmc3k_raw.rds,V5,raw,small,2700,13714,False,success,13.745,985.4,
+convert2anndata,rds_to_h5ad,v5_pbmc3k_processed,pbmc3k,seurat_v5_pbmc3k_processed.rds,V5,processed,small,2700,13714,False,success,14.197,1531.8,
+convert2anndata,rds_to_h5ad,v4_stxKidney_raw,stxKidney,seurat_v4_stxKidney_raw.rds,V4,raw,small,1438,31053,True,failed,10.221,898.0,Error in value[[3L]](cond) :
+convert2anndata,rds_to_h5ad,v5_stxKidney_raw,stxKidney,seurat_v5_stxKidney_raw.rds,V5,raw,small,1438,31053,True,success,14.837,1425.6,
+convert2anndata,rds_to_h5ad,v4_celegans.embryo_raw,celegans.embryo,seurat_v4_celegans.embryo_raw.rds,V4,raw,small,6188,20222,False,failed,9.345,820.6,Error in value[[3L]](cond) :
+convert2anndata,rds_to_h5ad,v4_celegans.embryo_processed,celegans.embryo,seurat_v4_celegans.embryo_processed.rds,V4,processed,small,6188,20222,False,failed,11.024,1114.0,Error in value[[3L]](cond) :
+convert2anndata,rds_to_h5ad,v5_celegans.embryo_raw,celegans.embryo,seurat_v5_celegans.embryo_raw.rds,V5,raw,small,6188,20222,False,success,15.149,1197.3,
+convert2anndata,rds_to_h5ad,v5_celegans.embryo_processed,celegans.embryo,seurat_v5_celegans.embryo_processed.rds,V5,processed,small,6188,20222,False,success,19.026,2175.8,
+convert2anndata,rds_to_h5ad,v4_cbmc_raw,cbmc,seurat_v4_cbmc_raw.rds,V4,raw,small,8617,20501,False,failed,12.329,910.4,Error in value[[3L]](cond) :
+convert2anndata,rds_to_h5ad,v4_cbmc_processed,cbmc,seurat_v4_cbmc_processed.rds,V4,processed,small,8617,20501,False,failed,14.146,1333.6,Error in value[[3L]](cond) :
+convert2anndata,rds_to_h5ad,v5_cbmc_raw,cbmc,seurat_v5_cbmc_raw.rds,V5,raw,small,8617,20501,False,success,14.5,1443.2,
+convert2anndata,rds_to_h5ad,v5_cbmc_processed,cbmc,seurat_v5_cbmc_processed.rds,V5,processed,small,8617,20501,False,success,24.647,2843.8,
+convert2anndata,rds_to_h5ad,v4_ifnb_raw,ifnb,seurat_v4_ifnb_raw.rds,V4,raw,medium,13999,14053,False,failed,12.526,930.3,Error in value[[3L]](cond) :
+convert2anndata,rds_to_h5ad,v4_ifnb_processed,ifnb,seurat_v4_ifnb_processed.rds,V4,processed,medium,13999,14053,False,failed,14.89,1607.1,Error in value[[3L]](cond) :
+convert2anndata,rds_to_h5ad,v5_ifnb_raw,ifnb,seurat_v5_ifnb_raw.rds,V5,raw,medium,13999,14053,False,success,14.903,1564.0,
+convert2anndata,rds_to_h5ad,v5_ifnb_processed,ifnb,seurat_v5_ifnb_processed.rds,V5,processed,medium,13999,14053,False,success,25.199,4087.1,
+convert2anndata,rds_to_h5ad,v4_panc8_raw,panc8,seurat_v4_panc8_raw.rds,V4,raw,medium,14890,34363,False,failed,22.366,1894.3,Error in value[[3L]](cond) :
+convert2anndata,rds_to_h5ad,v4_panc8_processed,panc8,seurat_v4_panc8_processed.rds,V4,processed,medium,14890,34363,False,failed,23.095,2619.4,Error in value[[3L]](cond) :
+convert2anndata,rds_to_h5ad,v5_panc8_raw,panc8,seurat_v5_panc8_raw.rds,V5,raw,medium,14890,34363,False,success,27.332,4789.0,
+convert2anndata,rds_to_h5ad,v5_panc8_processed,panc8,seurat_v5_panc8_processed.rds,V5,processed,medium,14890,34363,False,success,58.96,8465.7,
+convert2anndata,rds_to_h5ad,v4_thp1.eccite_raw,thp1.eccite,seurat_v4_thp1.eccite_raw.rds,V4,raw,medium,20729,18649,False,failed,25.676,2502.0,Error in value[[3L]](cond) :
+convert2anndata,rds_to_h5ad,v4_thp1.eccite_processed,thp1.eccite,seurat_v4_thp1.eccite_processed.rds,V4,processed,medium,20729,18649,False,failed,29.432,3522.7,Error in value[[3L]](cond) :
+convert2anndata,rds_to_h5ad,v5_thp1.eccite_raw,thp1.eccite,seurat_v5_thp1.eccite_raw.rds,V5,raw,medium,20729,18649,False,success,31.377,6154.2,
+convert2anndata,rds_to_h5ad,v5_thp1.eccite_processed,thp1.eccite,seurat_v5_thp1.eccite_processed.rds,V5,processed,medium,20729,18649,False,success,68.866,11097.0,
+convert2anndata,rds_to_h5ad,v4_bmcite_raw,bmcite,seurat_v4_bmcite_raw.rds,V4,raw,medium,30672,17009,False,failed,20.914,1550.9,Error in value[[3L]](cond) :
+convert2anndata,rds_to_h5ad,v4_bmcite_processed,bmcite,seurat_v4_bmcite_processed.rds,V4,processed,medium,30672,17009,False,failed,25.122,3096.3,Error in value[[3L]](cond) :
+convert2anndata,rds_to_h5ad,v5_bmcite_raw,bmcite,seurat_v5_bmcite_raw.rds,V5,raw,medium,30672,17009,False,success,19.968,2917.0,
+convert2anndata,rds_to_h5ad,v5_bmcite_processed,bmcite,seurat_v5_bmcite_processed.rds,V5,processed,medium,30672,17009,False,success,55.787,8473.0,
+convert2anndata,rds_to_h5ad,v4_pbmcsca_raw,pbmcsca,seurat_v4_pbmcsca_raw.rds,V4,raw,medium,31021,33694,False,failed,17.656,1352.2,Error in value[[3L]](cond) :
+convert2anndata,rds_to_h5ad,v4_pbmcsca_processed,pbmcsca,seurat_v4_pbmcsca_processed.rds,V4,processed,medium,31021,33694,False,failed,20.554,2848.8,Error in value[[3L]](cond) :
+convert2anndata,rds_to_h5ad,v5_pbmcsca_raw,pbmcsca,seurat_v5_pbmcsca_raw.rds,V5,raw,medium,31021,33694,False,success,20.811,2957.9,
+convert2anndata,rds_to_h5ad,v5_pbmcsca_processed,pbmcsca,seurat_v5_pbmcsca_processed.rds,V5,processed,medium,31021,33694,False,success,52.246,8591.7,
+convert2anndata,rds_to_h5ad,v4_hcabm40k_raw,hcabm40k,seurat_v4_hcabm40k_raw.rds,V4,raw,medium,40000,17369,False,failed,22.511,1645.2,Error in value[[3L]](cond) :
+convert2anndata,rds_to_h5ad,v4_hcabm40k_processed,hcabm40k,seurat_v4_hcabm40k_processed.rds,V4,processed,medium,40000,17369,False,failed,31.337,3576.3,Error in value[[3L]](cond) :
+convert2anndata,rds_to_h5ad,v5_hcabm40k_raw,hcabm40k,seurat_v5_hcabm40k_raw.rds,V5,raw,medium,40000,17369,False,success,28.461,3915.8,
+convert2anndata,rds_to_h5ad,v5_hcabm40k_processed,hcabm40k,seurat_v5_hcabm40k_processed.rds,V5,processed,medium,40000,17369,False,success,93.645,10153.6,
+convert2anndata,rds_to_h5ad,v4_ssHippo_raw,ssHippo,seurat_v4_ssHippo_raw.rds,V4,raw,medium,53173,23264,True,failed,15.81,1243.9,Error in value[[3L]](cond) :
+convert2anndata,rds_to_h5ad,v4_ssHippo_processed,ssHippo,seurat_v4_ssHippo_processed.rds,V4,processed,medium,53173,23264,True,failed,23.248,3808.8,Error in value[[3L]](cond) :
+convert2anndata,rds_to_h5ad,v5_ssHippo_raw,ssHippo,seurat_v5_ssHippo_raw.rds,V5,raw,medium,53173,23264,True,failed,19.443,2537.6,"Error in py_call_impl(callable, call_args$unnamed, call_args$named) :"
+convert2anndata,rds_to_h5ad,v5_ssHippo_processed,ssHippo,seurat_v5_ssHippo_processed.rds,V5,processed,medium,53173,23264,True,failed,57.144,11612.0,"Error in py_call_impl(callable, call_args$unnamed, call_args$named) :"
+easySCF,rds_to_h5ad,v4_pbmc3k_raw,pbmc3k,seurat_v4_pbmc3k_raw.rds,V4,raw,small,2700,13714,False,success,8.233,665.0,
+easySCF,rds_to_h5ad,v4_pbmc3k_processed,pbmc3k,seurat_v4_pbmc3k_processed.rds,V4,processed,small,2700,13714,False,success,12.777,889.0,
+easySCF,rds_to_h5ad,v5_pbmc3k_raw,pbmc3k,seurat_v5_pbmc3k_raw.rds,V5,raw,small,2700,13714,False,success,7.374,613.5,
+easySCF,rds_to_h5ad,v5_pbmc3k_processed,pbmc3k,seurat_v5_pbmc3k_processed.rds,V5,processed,small,2700,13714,False,success,9.467,812.9,
+easySCF,rds_to_h5ad,v4_stxKidney_raw,stxKidney,seurat_v4_stxKidney_raw.rds,V4,raw,small,1438,31053,True,success,6.745,649.6,
+easySCF,rds_to_h5ad,v5_stxKidney_raw,stxKidney,seurat_v5_stxKidney_raw.rds,V5,raw,small,1438,31053,True,success,5.653,697.7,
+easySCF,rds_to_h5ad,v4_celegans.embryo_raw,celegans.embryo,seurat_v4_celegans.embryo_raw.rds,V4,raw,small,6188,20222,False,success,9.484,931.0,
+easySCF,rds_to_h5ad,v4_celegans.embryo_processed,celegans.embryo,seurat_v4_celegans.embryo_processed.rds,V4,processed,small,6188,20222,False,success,13.385,1365.7,
+easySCF,rds_to_h5ad,v5_celegans.embryo_raw,celegans.embryo,seurat_v5_celegans.embryo_raw.rds,V5,raw,small,6188,20222,False,success,8.649,811.3,
+easySCF,rds_to_h5ad,v5_celegans.embryo_processed,celegans.embryo,seurat_v5_celegans.embryo_processed.rds,V5,processed,small,6188,20222,False,success,13.298,1226.2,
+easySCF,rds_to_h5ad,v4_cbmc_raw,cbmc,seurat_v4_cbmc_raw.rds,V4,raw,small,8617,20501,False,success,10.914,1231.2,
+easySCF,rds_to_h5ad,v4_cbmc_processed,cbmc,seurat_v4_cbmc_processed.rds,V4,processed,small,8617,20501,False,success,16.636,1852.5,
+easySCF,rds_to_h5ad,v5_cbmc_raw,cbmc,seurat_v5_cbmc_raw.rds,V5,raw,small,8617,20501,False,success,9.394,1039.8,
+easySCF,rds_to_h5ad,v5_cbmc_processed,cbmc,seurat_v5_cbmc_processed.rds,V5,processed,small,8617,20501,False,success,14.898,1650.6,
+easySCF,rds_to_h5ad,v4_ifnb_raw,ifnb,seurat_v4_ifnb_raw.rds,V4,raw,medium,13999,14053,False,success,11.85,1357.9,
+easySCF,rds_to_h5ad,v4_ifnb_processed,ifnb,seurat_v4_ifnb_processed.rds,V4,processed,medium,13999,14053,False,success,18.344,2066.4,
+easySCF,rds_to_h5ad,v5_ifnb_raw,ifnb,seurat_v5_ifnb_raw.rds,V5,raw,medium,13999,14053,False,success,11.107,1059.4,
+easySCF,rds_to_h5ad,v5_ifnb_processed,ifnb,seurat_v5_ifnb_processed.rds,V5,processed,medium,13999,14053,False,success,21.036,2043.8,
+easySCF,rds_to_h5ad,v4_panc8_raw,panc8,seurat_v4_panc8_raw.rds,V4,raw,medium,14890,34363,False,success,46.49,4657.4,
+easySCF,rds_to_h5ad,v4_panc8_processed,panc8,seurat_v4_panc8_processed.rds,V4,processed,medium,14890,34363,False,success,49.807,6458.8,
+easySCF,rds_to_h5ad,v5_panc8_raw,panc8,seurat_v5_panc8_raw.rds,V5,raw,medium,14890,34363,False,success,32.006,4059.9,
+easySCF,rds_to_h5ad,v5_panc8_processed,panc8,seurat_v5_panc8_processed.rds,V5,processed,medium,14890,34363,False,success,44.575,6222.3,
+easySCF,rds_to_h5ad,v4_thp1.eccite_raw,thp1.eccite,seurat_v4_thp1.eccite_raw.rds,V4,raw,medium,20729,18649,False,success,50.284,6357.8,
+easySCF,rds_to_h5ad,v4_thp1.eccite_processed,thp1.eccite,seurat_v4_thp1.eccite_processed.rds,V4,processed,medium,20729,18649,False,success,67.432,7738.6,
+easySCF,rds_to_h5ad,v5_thp1.eccite_raw,thp1.eccite,seurat_v5_thp1.eccite_raw.rds,V5,raw,medium,20729,18649,False,success,37.505,5274.2,
+easySCF,rds_to_h5ad,v5_thp1.eccite_processed,thp1.eccite,seurat_v5_thp1.eccite_processed.rds,V5,processed,medium,20729,18649,False,success,58.044,8268.0,
+easySCF,rds_to_h5ad,v4_bmcite_raw,bmcite,seurat_v4_bmcite_raw.rds,V4,raw,medium,30672,17009,False,success,31.952,2912.0,
+easySCF,rds_to_h5ad,v4_bmcite_processed,bmcite,seurat_v4_bmcite_processed.rds,V4,processed,medium,30672,17009,False,success,46.357,5283.1,
+easySCF,rds_to_h5ad,v5_bmcite_raw,bmcite,seurat_v5_bmcite_raw.rds,V5,raw,medium,30672,17009,False,success,22.961,2358.6,
+easySCF,rds_to_h5ad,v5_bmcite_processed,bmcite,seurat_v5_bmcite_processed.rds,V5,processed,medium,30672,17009,False,success,32.85,4561.3,
+easySCF,rds_to_h5ad,v4_pbmcsca_raw,pbmcsca,seurat_v4_pbmcsca_raw.rds,V4,raw,medium,31021,33694,False,success,23.334,2760.3,
+easySCF,rds_to_h5ad,v4_pbmcsca_processed,pbmcsca,seurat_v4_pbmcsca_processed.rds,V4,processed,medium,31021,33694,False,success,33.925,5249.2,
+easySCF,rds_to_h5ad,v5_pbmcsca_raw,pbmcsca,seurat_v5_pbmcsca_raw.rds,V5,raw,medium,31021,33694,False,success,20.011,2388.6,
+easySCF,rds_to_h5ad,v5_pbmcsca_processed,pbmcsca,seurat_v5_pbmcsca_processed.rds,V5,processed,medium,31021,33694,False,success,32.032,4625.3,
+easySCF,rds_to_h5ad,v4_hcabm40k_raw,hcabm40k,seurat_v4_hcabm40k_raw.rds,V4,raw,medium,40000,17369,False,success,30.159,3830.3,
+easySCF,rds_to_h5ad,v4_hcabm40k_processed,hcabm40k,seurat_v4_hcabm40k_processed.rds,V4,processed,medium,40000,17369,False,success,49.187,6931.5,
+easySCF,rds_to_h5ad,v5_hcabm40k_raw,hcabm40k,seurat_v5_hcabm40k_raw.rds,V5,raw,medium,40000,17369,False,success,24.793,3272.3,
+easySCF,rds_to_h5ad,v5_hcabm40k_processed,hcabm40k,seurat_v5_hcabm40k_processed.rds,V5,processed,medium,40000,17369,False,success,45.156,5855.9,
+easySCF,rds_to_h5ad,v4_ssHippo_raw,ssHippo,seurat_v4_ssHippo_raw.rds,V4,raw,medium,53173,23264,True,success,10.24,995.3,
+easySCF,rds_to_h5ad,v4_ssHippo_processed,ssHippo,seurat_v4_ssHippo_processed.rds,V4,processed,medium,53173,23264,True,success,16.668,3556.6,
+easySCF,rds_to_h5ad,v5_ssHippo_raw,ssHippo,seurat_v5_ssHippo_raw.rds,V5,raw,medium,53173,23264,True,success,9.291,1157.4,
+easySCF,rds_to_h5ad,v5_ssHippo_processed,ssHippo,seurat_v5_ssHippo_processed.rds,V5,processed,medium,53173,23264,True,success,16.643,2047.3,
+easySCF,h5ad_to_rds,scanpy_pbmc3k,scanpy_pbmc3k,scanpy_pbmc3k.h5ad,,,small,2700,32738,False,failed,8.542,470.3,"easySCF step2 (loadH5) failed: Error in loadH5(""/tmp/fig3_work/easySCF_scanpy_pbmc3k_easyscf.h5"") :"
+easySCF,h5ad_to_rds,scanpy_pbmc3k_processed,scanpy_pbmc3k_processed,scanpy_pbmc3k_processed.h5ad,,,small,2700,1838,False,failed,4.057,313.5,easySCF step1 (saveH5) failed: TypeError: No conversion path for dtype: dtype('<U2')
+easySCF,h5ad_to_rds,scvelo_dentategyrus,scvelo_dentategyrus,scvelo_dentategyrus.h5ad,,,small,2930,13913,False,failed,8.752,469.8,"easySCF step2 (loadH5) failed: Error in loadH5(""/tmp/fig3_work/easySCF_scvelo_dentategyrus_easyscf.h5"") :"
+easySCF,h5ad_to_rds,scvelo_pancreas,scvelo_pancreas,scvelo_pancreas.h5ad,,,small,3696,27998,False,failed,9.607,503.8,"easySCF step2 (loadH5) failed: Error in loadH5(""/tmp/fig3_work/easySCF_scvelo_pancreas_easyscf.h5"") :"
+easySCF,h5ad_to_rds,cellxgene_pbmc_15k,cellxgene_pbmc_15k,cellxgene_pbmc_15k.h5ad,,,medium,15000,33694,False,failed,13.859,746.9,"easySCF step2 (loadH5) failed: Error in loadH5(""/tmp/fig3_work/easySCF_cellxgene_pbmc_15k_easyscf.h5"") :"
+easySCF,h5ad_to_rds,cellxgene_heart_23k,cellxgene_heart_23k,cellxgene_heart_23k.h5ad,,,medium,23185,33694,False,failed,24.119,1341.6,"easySCF step2 (loadH5) failed: Error in loadH5(""/tmp/fig3_work/easySCF_cellxgene_heart_23k_easyscf.h5"") :"
+easySCF,h5ad_to_rds,cellxgene_brain_40k,cellxgene_brain_40k,cellxgene_brain_40k.h5ad,,,medium,39245,33694,False,failed,65.928,3705.2,"easySCF step2 (loadH5) failed: Error in loadH5(""/tmp/fig3_work/easySCF_cellxgene_brain_40k_easyscf.h5"") :"
+easySCF,h5ad_to_rds,squidpy_visium_hne,squidpy_visium_hne,squidpy_visium_hne.h5ad,,,small,2688,18078,True,failed,10.434,708.3,easySCF step1 (saveH5) failed: KeyError: 'slice'
+easySCF,h5ad_to_rds,squidpy_mibitof,squidpy_mibitof,squidpy_mibitof.h5ad,,,small,3309,36,True,failed,2.752,274.7,easySCF step1 (saveH5) failed: KeyError: 'slice'
+easySCF,h5ad_to_rds,squidpy_slideseqv2,squidpy_slideseqv2,squidpy_slideseqv2.h5ad,,,medium,41786,4000,True,failed,13.093,637.5,"easySCF step2 (loadH5) failed: Error in loadH5(""/tmp/fig3_work/easySCF_squidpy_slideseqv2_easyscf.h5"") :"
+easySCF,h5ad_to_rds,squidpy_seqfish,squidpy_seqfish,squidpy_seqfish.h5ad,,,medium,19416,351,True,failed,6.825,469.6,"easySCF step2 (loadH5) failed: Error in loadH5(""/tmp/fig3_work/easySCF_squidpy_seqfish_easyscf.h5"") :"
+easySCF,h5ad_to_rds,squidpy_merfish,squidpy_merfish,squidpy_merfish.h5ad,,,medium,73655,161,True,failed,7.065,469.6,"easySCF step2 (loadH5) failed: Error in loadH5(""/tmp/fig3_work/easySCF_squidpy_merfish_easyscf.h5"") :"
+easySCF,h5ad_to_rds,squidpy_imc,squidpy_imc,squidpy_imc.h5ad,,,small,4668,34,True,failed,6.12,469.8,"easySCF step2 (loadH5) failed: Error in loadH5(""/tmp/fig3_work/easySCF_squidpy_imc_easyscf.h5"") :"

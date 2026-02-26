@@ -1,0 +1,672 @@
+{
+  "version": "2.0",
+  "description": "CrossCell benchmark test matrix — 65 datasets × 5 tools × 7 dimensions",
+  "tools": [
+    {
+      "name": "CrossCell",
+      "directions": [
+        "rds_to_h5ad",
+        "h5ad_to_rds"
+      ],
+      "version": "0.1.0"
+    },
+    {
+      "name": "Zellkonverter",
+      "directions": [
+        "rds_to_h5ad",
+        "h5ad_to_rds"
+      ],
+      "version": "1.14.0"
+    },
+    {
+      "name": "anndataR",
+      "directions": [
+        "rds_to_h5ad",
+        "h5ad_to_rds"
+      ],
+      "version": "0.99.0"
+    },
+    {
+      "name": "convert2anndata",
+      "directions": [
+        "rds_to_h5ad"
+      ],
+      "version": "0.0.1"
+    },
+    {
+      "name": "easySCF",
+      "directions": [
+        "rds_to_h5ad"
+      ],
+      "version": "0.0.3"
+    }
+  ],
+  "test_cases": {
+    "rds_to_h5ad": [
+      {
+        "test_id": "v4_pbmc3k_raw",
+        "dataset": "pbmc3k",
+        "file": "seurat_v4_pbmc3k_raw.rds",
+        "seurat_version": "V4",
+        "type": "raw",
+        "scale": "small",
+        "n_cells": 2700,
+        "n_genes": 13714,
+        "nnz": 2282976
+      },
+      {
+        "test_id": "v4_pbmc3k_processed",
+        "dataset": "pbmc3k",
+        "file": "seurat_v4_pbmc3k_processed.rds",
+        "seurat_version": "V4",
+        "type": "processed",
+        "scale": "small",
+        "n_cells": 2700,
+        "n_genes": 13714,
+        "nnz": 2282976
+      },
+      {
+        "test_id": "v5_pbmc3k_raw",
+        "dataset": "pbmc3k",
+        "file": "seurat_v5_pbmc3k_raw.rds",
+        "seurat_version": "V5",
+        "type": "raw",
+        "scale": "small",
+        "n_cells": 2700,
+        "n_genes": 13714,
+        "nnz": 2282976
+      },
+      {
+        "test_id": "v5_pbmc3k_processed",
+        "dataset": "pbmc3k",
+        "file": "seurat_v5_pbmc3k_processed.rds",
+        "seurat_version": "V5",
+        "type": "processed",
+        "scale": "small",
+        "n_cells": 2700,
+        "n_genes": 13714,
+        "nnz": 2282976
+      },
+      {
+        "test_id": "v4_stxKidney_raw",
+        "dataset": "stxKidney",
+        "file": "seurat_v4_stxKidney_raw.rds",
+        "seurat_version": "V4",
+        "type": "raw",
+        "scale": "small",
+        "n_cells": 1438,
+        "n_genes": 31053,
+        "spatial": true,
+        "nnz": 8027223
+      },
+      {
+        "test_id": "v5_stxKidney_raw",
+        "dataset": "stxKidney",
+        "file": "seurat_v5_stxKidney_raw.rds",
+        "seurat_version": "V5",
+        "type": "raw",
+        "scale": "small",
+        "n_cells": 1438,
+        "n_genes": 31053,
+        "spatial": true,
+        "nnz": 8027223
+      },
+      {
+        "test_id": "v4_celegans.embryo_raw",
+        "dataset": "celegans.embryo",
+        "file": "seurat_v4_celegans.embryo_raw.rds",
+        "seurat_version": "V4",
+        "type": "raw",
+        "scale": "small",
+        "n_cells": 6188,
+        "n_genes": 20222,
+        "nnz": 4983450
+      },
+      {
+        "test_id": "v4_celegans.embryo_processed",
+        "dataset": "celegans.embryo",
+        "file": "seurat_v4_celegans.embryo_processed.rds",
+        "seurat_version": "V4",
+        "type": "processed",
+        "scale": "small",
+        "n_cells": 6188,
+        "n_genes": 20222,
+        "nnz": 4983450
+      },
+      {
+        "test_id": "v5_celegans.embryo_raw",
+        "dataset": "celegans.embryo",
+        "file": "seurat_v5_celegans.embryo_raw.rds",
+        "seurat_version": "V5",
+        "type": "raw",
+        "scale": "small",
+        "n_cells": 6188,
+        "n_genes": 20222,
+        "nnz": 4983450
+      },
+      {
+        "test_id": "v5_celegans.embryo_processed",
+        "dataset": "celegans.embryo",
+        "file": "seurat_v5_celegans.embryo_processed.rds",
+        "seurat_version": "V5",
+        "type": "processed",
+        "scale": "small",
+        "n_cells": 6188,
+        "n_genes": 20222,
+        "nnz": 4983450
+      },
+      {
+        "test_id": "v4_cbmc_raw",
+        "dataset": "cbmc",
+        "file": "seurat_v4_cbmc_raw.rds",
+        "seurat_version": "V4",
+        "type": "raw",
+        "scale": "small",
+        "n_cells": 8617,
+        "n_genes": 20501,
+        "nnz": 8246906
+      },
+      {
+        "test_id": "v4_cbmc_processed",
+        "dataset": "cbmc",
+        "file": "seurat_v4_cbmc_processed.rds",
+        "seurat_version": "V4",
+        "type": "processed",
+        "scale": "small",
+        "n_cells": 8617,
+        "n_genes": 20501,
+        "nnz": 8246906
+      },
+      {
+        "test_id": "v5_cbmc_raw",
+        "dataset": "cbmc",
+        "file": "seurat_v5_cbmc_raw.rds",
+        "seurat_version": "V5",
+        "type": "raw",
+        "scale": "small",
+        "n_cells": 8617,
+        "n_genes": 20501,
+        "nnz": 8246906
+      },
+      {
+        "test_id": "v5_cbmc_processed",
+        "dataset": "cbmc",
+        "file": "seurat_v5_cbmc_processed.rds",
+        "seurat_version": "V5",
+        "type": "processed",
+        "scale": "small",
+        "n_cells": 8617,
+        "n_genes": 20501,
+        "nnz": 8246906
+      },
+      {
+        "test_id": "v4_ifnb_raw",
+        "dataset": "ifnb",
+        "file": "seurat_v4_ifnb_raw.rds",
+        "seurat_version": "V4",
+        "type": "raw",
+        "scale": "medium",
+        "n_cells": 13999,
+        "n_genes": 14053,
+        "nnz": 9787436
+      },
+      {
+        "test_id": "v4_ifnb_processed",
+        "dataset": "ifnb",
+        "file": "seurat_v4_ifnb_processed.rds",
+        "seurat_version": "V4",
+        "type": "processed",
+        "scale": "medium",
+        "n_cells": 13999,
+        "n_genes": 14053,
+        "nnz": 9787436
+      },
+      {
+        "test_id": "v5_ifnb_raw",
+        "dataset": "ifnb",
+        "file": "seurat_v5_ifnb_raw.rds",
+        "seurat_version": "V5",
+        "type": "raw",
+        "scale": "medium",
+        "n_cells": 13999,
+        "n_genes": 14053,
+        "nnz": 9787436
+      },
+      {
+        "test_id": "v5_ifnb_processed",
+        "dataset": "ifnb",
+        "file": "seurat_v5_ifnb_processed.rds",
+        "seurat_version": "V5",
+        "type": "processed",
+        "scale": "medium",
+        "n_cells": 13999,
+        "n_genes": 14053,
+        "nnz": 9787436
+      },
+      {
+        "test_id": "v4_panc8_raw",
+        "dataset": "panc8",
+        "file": "seurat_v4_panc8_raw.rds",
+        "seurat_version": "V4",
+        "type": "raw",
+        "scale": "medium",
+        "n_cells": 14890,
+        "n_genes": 34363,
+        "nnz": 51767089
+      },
+      {
+        "test_id": "v4_panc8_processed",
+        "dataset": "panc8",
+        "file": "seurat_v4_panc8_processed.rds",
+        "seurat_version": "V4",
+        "type": "processed",
+        "scale": "medium",
+        "n_cells": 14890,
+        "n_genes": 34363,
+        "nnz": 51767089
+      },
+      {
+        "test_id": "v5_panc8_raw",
+        "dataset": "panc8",
+        "file": "seurat_v5_panc8_raw.rds",
+        "seurat_version": "V5",
+        "type": "raw",
+        "scale": "medium",
+        "n_cells": 14890,
+        "n_genes": 34363,
+        "nnz": 51767089
+      },
+      {
+        "test_id": "v5_panc8_processed",
+        "dataset": "panc8",
+        "file": "seurat_v5_panc8_processed.rds",
+        "seurat_version": "V5",
+        "type": "processed",
+        "scale": "medium",
+        "n_cells": 14890,
+        "n_genes": 34363,
+        "nnz": 51767089
+      },
+      {
+        "test_id": "v4_thp1.eccite_raw",
+        "dataset": "thp1.eccite",
+        "file": "seurat_v4_thp1.eccite_raw.rds",
+        "seurat_version": "V4",
+        "type": "raw",
+        "scale": "medium",
+        "n_cells": 20729,
+        "n_genes": 18649,
+        "nnz": 69529049
+      },
+      {
+        "test_id": "v4_thp1.eccite_processed",
+        "dataset": "thp1.eccite",
+        "file": "seurat_v4_thp1.eccite_processed.rds",
+        "seurat_version": "V4",
+        "type": "processed",
+        "scale": "medium",
+        "n_cells": 20729,
+        "n_genes": 18649,
+        "nnz": 69529049
+      },
+      {
+        "test_id": "v5_thp1.eccite_raw",
+        "dataset": "thp1.eccite",
+        "file": "seurat_v5_thp1.eccite_raw.rds",
+        "seurat_version": "V5",
+        "type": "raw",
+        "scale": "medium",
+        "n_cells": 20729,
+        "n_genes": 18649,
+        "nnz": 69529049
+      },
+      {
+        "test_id": "v5_thp1.eccite_processed",
+        "dataset": "thp1.eccite",
+        "file": "seurat_v5_thp1.eccite_processed.rds",
+        "seurat_version": "V5",
+        "type": "processed",
+        "scale": "medium",
+        "n_cells": 20729,
+        "n_genes": 18649,
+        "nnz": 69529049
+      },
+      {
+        "test_id": "v4_bmcite_raw",
+        "dataset": "bmcite",
+        "file": "seurat_v4_bmcite_raw.rds",
+        "seurat_version": "V4",
+        "type": "raw",
+        "scale": "medium",
+        "n_cells": 30672,
+        "n_genes": 17009,
+        "nnz": 27198017
+      },
+      {
+        "test_id": "v4_bmcite_processed",
+        "dataset": "bmcite",
+        "file": "seurat_v4_bmcite_processed.rds",
+        "seurat_version": "V4",
+        "type": "processed",
+        "scale": "medium",
+        "n_cells": 30672,
+        "n_genes": 17009,
+        "nnz": 27198017
+      },
+      {
+        "test_id": "v5_bmcite_raw",
+        "dataset": "bmcite",
+        "file": "seurat_v5_bmcite_raw.rds",
+        "seurat_version": "V5",
+        "type": "raw",
+        "scale": "medium",
+        "n_cells": 30672,
+        "n_genes": 17009,
+        "nnz": 27198017
+      },
+      {
+        "test_id": "v5_bmcite_processed",
+        "dataset": "bmcite",
+        "file": "seurat_v5_bmcite_processed.rds",
+        "seurat_version": "V5",
+        "type": "processed",
+        "scale": "medium",
+        "n_cells": 30672,
+        "n_genes": 17009,
+        "nnz": 27198017
+      },
+      {
+        "test_id": "v4_pbmcsca_raw",
+        "dataset": "pbmcsca",
+        "file": "seurat_v4_pbmcsca_raw.rds",
+        "seurat_version": "V4",
+        "type": "raw",
+        "scale": "medium",
+        "n_cells": 31021,
+        "n_genes": 33694,
+        "nnz": 27557749
+      },
+      {
+        "test_id": "v4_pbmcsca_processed",
+        "dataset": "pbmcsca",
+        "file": "seurat_v4_pbmcsca_processed.rds",
+        "seurat_version": "V4",
+        "type": "processed",
+        "scale": "medium",
+        "n_cells": 31021,
+        "n_genes": 33694,
+        "nnz": 27557749
+      },
+      {
+        "test_id": "v5_pbmcsca_raw",
+        "dataset": "pbmcsca",
+        "file": "seurat_v5_pbmcsca_raw.rds",
+        "seurat_version": "V5",
+        "type": "raw",
+        "scale": "medium",
+        "n_cells": 31021,
+        "n_genes": 33694,
+        "nnz": 27557749
+      },
+      {
+        "test_id": "v5_pbmcsca_processed",
+        "dataset": "pbmcsca",
+        "file": "seurat_v5_pbmcsca_processed.rds",
+        "seurat_version": "V5",
+        "type": "processed",
+        "scale": "medium",
+        "n_cells": 31021,
+        "n_genes": 33694,
+        "nnz": 27557749
+      },
+      {
+        "test_id": "v4_hcabm40k_raw",
+        "dataset": "hcabm40k",
+        "file": "seurat_v4_hcabm40k_raw.rds",
+        "seurat_version": "V4",
+        "type": "raw",
+        "scale": "medium",
+        "n_cells": 40000,
+        "n_genes": 17369,
+        "nnz": 40325108
+      },
+      {
+        "test_id": "v4_hcabm40k_processed",
+        "dataset": "hcabm40k",
+        "file": "seurat_v4_hcabm40k_processed.rds",
+        "seurat_version": "V4",
+        "type": "processed",
+        "scale": "medium",
+        "n_cells": 40000,
+        "n_genes": 17369,
+        "nnz": 40325108
+      },
+      {
+        "test_id": "v5_hcabm40k_raw",
+        "dataset": "hcabm40k",
+        "file": "seurat_v5_hcabm40k_raw.rds",
+        "seurat_version": "V5",
+        "type": "raw",
+        "scale": "medium",
+        "n_cells": 40000,
+        "n_genes": 17369,
+        "nnz": 40325108
+      },
+      {
+        "test_id": "v5_hcabm40k_processed",
+        "dataset": "hcabm40k",
+        "file": "seurat_v5_hcabm40k_processed.rds",
+        "seurat_version": "V5",
+        "type": "processed",
+        "scale": "medium",
+        "n_cells": 40000,
+        "n_genes": 17369,
+        "nnz": 40325108
+      },
+      {
+        "test_id": "v4_ssHippo_raw",
+        "dataset": "ssHippo",
+        "file": "seurat_v4_ssHippo_raw.rds",
+        "seurat_version": "V4",
+        "type": "raw",
+        "scale": "medium",
+        "n_cells": 53173,
+        "n_genes": 23264,
+        "spatial": true,
+        "nnz": 22361774
+      },
+      {
+        "test_id": "v4_ssHippo_processed",
+        "dataset": "ssHippo",
+        "file": "seurat_v4_ssHippo_processed.rds",
+        "seurat_version": "V4",
+        "type": "processed",
+        "scale": "medium",
+        "n_cells": 53173,
+        "n_genes": 23264,
+        "spatial": true,
+        "nnz": 22361774
+      },
+      {
+        "test_id": "v5_ssHippo_raw",
+        "dataset": "ssHippo",
+        "file": "seurat_v5_ssHippo_raw.rds",
+        "seurat_version": "V5",
+        "type": "raw",
+        "scale": "medium",
+        "n_cells": 53173,
+        "n_genes": 23264,
+        "spatial": true,
+        "nnz": 22361774
+      },
+      {
+        "test_id": "v5_ssHippo_processed",
+        "dataset": "ssHippo",
+        "file": "seurat_v5_ssHippo_processed.rds",
+        "seurat_version": "V5",
+        "type": "processed",
+        "scale": "medium",
+        "n_cells": 53173,
+        "n_genes": 23264,
+        "spatial": true,
+        "nnz": 22361774
+      }
+    ],
+    "h5ad_to_rds": [
+      {
+        "test_id": "scanpy_pbmc3k",
+        "dataset": "scanpy_pbmc3k",
+        "file": "scanpy_pbmc3k.h5ad",
+        "source": "scanpy",
+        "scale": "small",
+        "n_cells": 2700,
+        "n_genes": 32738,
+        "nnz": 2286884
+      },
+      {
+        "test_id": "scanpy_pbmc3k_processed",
+        "dataset": "scanpy_pbmc3k_processed",
+        "file": "scanpy_pbmc3k_processed.h5ad",
+        "source": "scanpy",
+        "scale": "small",
+        "n_cells": 2700,
+        "n_genes": 1838,
+        "nnz": 4848644
+      },
+      {
+        "test_id": "scvelo_dentategyrus",
+        "dataset": "scvelo_dentategyrus",
+        "file": "scvelo_dentategyrus.h5ad",
+        "source": "scvelo",
+        "scale": "small",
+        "n_cells": 2930,
+        "n_genes": 13913,
+        "nnz": 4122695
+      },
+      {
+        "test_id": "scvelo_pancreas",
+        "dataset": "scvelo_pancreas",
+        "file": "scvelo_pancreas.h5ad",
+        "source": "scvelo",
+        "scale": "small",
+        "n_cells": 3696,
+        "n_genes": 27998,
+        "nnz": 9298890
+      },
+      {
+        "test_id": "cellxgene_pbmc_15k",
+        "dataset": "cellxgene_pbmc_15k",
+        "file": "cellxgene_pbmc_15k.h5ad",
+        "source": "cellxgene",
+        "scale": "medium",
+        "n_cells": 15000,
+        "n_genes": 33694
+      },
+      {
+        "test_id": "cellxgene_heart_23k",
+        "dataset": "cellxgene_heart_23k",
+        "file": "cellxgene_heart_23k.h5ad",
+        "source": "cellxgene",
+        "scale": "medium",
+        "n_cells": 23185,
+        "n_genes": 33694,
+        "nnz": 35404110
+      },
+      {
+        "test_id": "cellxgene_brain_40k",
+        "dataset": "cellxgene_brain_40k",
+        "file": "cellxgene_brain_40k.h5ad",
+        "source": "cellxgene",
+        "scale": "medium",
+        "n_cells": 39245,
+        "n_genes": 33694,
+        "nnz": 206406364
+      },
+      {
+        "test_id": "squidpy_visium_hne",
+        "dataset": "squidpy_visium_hne",
+        "file": "squidpy_visium_hne.h5ad",
+        "source": "squidpy",
+        "scale": "small",
+        "n_cells": 2688,
+        "n_genes": 18078,
+        "spatial": true,
+        "nnz": 15411927
+      },
+      {
+        "test_id": "squidpy_mibitof",
+        "dataset": "squidpy_mibitof",
+        "file": "squidpy_mibitof.h5ad",
+        "source": "squidpy",
+        "scale": "small",
+        "n_cells": 3309,
+        "n_genes": 36,
+        "spatial": true,
+        "nnz": 119124
+      },
+      {
+        "test_id": "squidpy_slideseqv2",
+        "dataset": "squidpy_slideseqv2",
+        "file": "squidpy_slideseqv2.h5ad",
+        "source": "squidpy",
+        "scale": "medium",
+        "n_cells": 41786,
+        "n_genes": 4000,
+        "spatial": true,
+        "nnz": 4410433
+      },
+      {
+        "test_id": "squidpy_seqfish",
+        "dataset": "squidpy_seqfish",
+        "file": "squidpy_seqfish.h5ad",
+        "source": "squidpy",
+        "scale": "medium",
+        "n_cells": 19416,
+        "n_genes": 351,
+        "spatial": true,
+        "nnz": 1890790
+      },
+      {
+        "test_id": "squidpy_merfish",
+        "dataset": "squidpy_merfish",
+        "file": "squidpy_merfish.h5ad",
+        "source": "squidpy",
+        "scale": "medium",
+        "n_cells": 73655,
+        "n_genes": 161,
+        "spatial": true,
+        "nnz": 4660375
+      },
+      {
+        "test_id": "squidpy_imc",
+        "dataset": "squidpy_imc",
+        "file": "squidpy_imc.h5ad",
+        "source": "squidpy",
+        "scale": "small",
+        "n_cells": 4668,
+        "n_genes": 34,
+        "spatial": true,
+        "nnz": 156306
+      }
+    ]
+  },
+  "summary": {
+    "total_test_cases": 55,
+    "rds_to_h5ad_count": 42,
+    "h5ad_to_rds_count": 13,
+    "scale_distribution": {
+      "small": 21,
+      "medium": 34,
+      "large": 0
+    },
+    "datasets_with_spatial": 8,
+    "seurat_versions": [
+      "V4",
+      "V5"
+    ],
+    "cell_range": [
+      1438,
+      73655
+    ]
+  }
+}

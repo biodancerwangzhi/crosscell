@@ -1,0 +1,149 @@
+name: Release Python
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  # ===========================================================================
+  # Linux wheels (manylinux)
+  # ===========================================================================
+  linux:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        target: [x86_64]
+        # aarch64 可后续添加，需要 QEMU 模拟，构建较慢
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Build wheels
+        uses: PyO3/maturin-action@v1
+        with:
+          target: ${{ matrix.target }}
+          args: --release --out dist -m crosscell-py/Cargo.toml
+          manylinux: auto
+          # manylinux 容器内安装 HDF5 构建依赖
+          # hdf5-sys static feature 从源码编译，需要 CMake
+          before-script-linux: |
+            yum install -y cmake3 zlib-devel || apt-get update && apt-get install -y cmake zlib1g-dev
+            # cmake3 -> cmake 软链接 (CentOS/manylinux)
+            which cmake3 && ln -sf $(which cmake3) /usr/local/bin/cmake || true
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: wheels-linux-${{ matrix.target }}
+          path: dist
+
+  # ===========================================================================
+  # macOS wheels (Intel + Apple Silicon)
+  # ===========================================================================
+  macos:
+    runs-on: macos-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        target: [x86_64, aarch64]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: 安装构建依赖
+        run: brew install cmake
+
+      - name: Build wheels
+        uses: PyO3/maturin-action@v1
+        with:
+          target: ${{ matrix.target }}-apple-darwin
+          args: --release --out dist -m crosscell-py/Cargo.toml
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: wheels-macos-${{ matrix.target }}
+          path: dist
+
+  # ===========================================================================
+  # Windows wheels
+  # Windows 上 hdf5-sys 编译可能有问题，标记 continue-on-error
+  # ===========================================================================
+  windows:
+    runs-on: windows-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Build wheels
+        uses: PyO3/maturin-action@v1
+        with:
+          args: --release --out dist -m crosscell-py/Cargo.toml
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: wheels-windows
+          path: dist
+
+  # ===========================================================================
+  # 源码包 (sdist)
+  # ===========================================================================
+  sdist:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build sdist
+        uses: PyO3/maturin-action@v1
+        with:
+          command: sdist
+          args: --out dist -m crosscell-py/Cargo.toml
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: wheels-sdist
+          path: dist
+
+  # ===========================================================================
+  # 发布到 PyPI
+  # ===========================================================================
+  publish:
+    needs: [linux, macos, windows, sdist]
+    # 即使 Windows 构建失败也继续发布
+    if: always() && needs.linux.result == 'success' && needs.sdist.result == 'success'
+    runs-on: ubuntu-latest
+    environment: pypi
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: wheels-*
+          merge-multiple: true
+          path: dist
+
+      - name: 列出待发布文件
+        run: ls -la dist/
+
+      - name: Publish to PyPI
+        uses: PyO3/maturin-action@v1
+        env:
+          MATURIN_PYPI_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
+        with:
+          command: upload
+          args: --non-interactive --skip-existing dist/*

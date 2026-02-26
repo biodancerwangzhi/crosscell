@@ -55,7 +55,7 @@ pub struct DirectReadResult {
 // Public API
 // ============================================================
 
-pub fn read_seurat_direct<P: AsRef<Path>>(path: P) -> Result<DirectReadResult, SeuratError> {
+pub fn read_seurat_direct<P: AsRef<Path>>(path: P, keep_layers: bool) -> Result<DirectReadResult, SeuratError> {
     let path = path.as_ref();
     let opts = ParseRdsOptions::default();
     let file = parse_rds_file(path, &opts)
@@ -64,7 +64,7 @@ pub fn read_seurat_direct<P: AsRef<Path>>(path: P) -> Result<DirectReadResult, S
     let mut skipped = SkippedComponents::new();
     let data = match version {
         SeuratVersion::V3 | SeuratVersion::V4 => extract_seurat_v3_v4(&file.object, &file, &mut skipped)?,
-        SeuratVersion::V5 | SeuratVersion::Unknown => extract_seurat_v5(&file.object, &file, &mut skipped)?,
+        SeuratVersion::V5 | SeuratVersion::Unknown => extract_seurat_v5(&file.object, &file, &mut skipped, keep_layers)?,
     };
     Ok(DirectReadResult { data, version, skipped })
 }
@@ -349,9 +349,9 @@ fn extract_seurat_v3_v4(robj: &RObject, _file: &RdsFile, skipped: &mut SkippedCo
 // Seurat V5 extraction
 // ============================================================
 
-fn extract_seurat_v5(robj: &RObject, _file: &RdsFile, skipped: &mut SkippedComponents) -> Result<SingleCellData, SeuratError> {
+fn extract_seurat_v5(robj: &RObject, _file: &RdsFile, skipped: &mut SkippedComponents, keep_layers: bool) -> Result<SingleCellData, SeuratError> {
     let assays = extract_slot(robj, "assays")?;
-    let (expression, gene_metadata, layers) = extract_assays_v5(assays)?;
+    let (expression, gene_metadata, layers) = extract_assays_v5(assays, keep_layers)?;
     let (n_cells, n_genes) = expression.shape();
     let meta_data = extract_slot(robj, "meta.data")?;
     let cell_metadata = extract_metadata(meta_data, n_cells)?;
@@ -416,19 +416,70 @@ fn extract_single_assay_v3_v4(robj: &RObject, skipped: &mut SkippedComponents) -
     Ok((expression, DataFrame::empty(n_genes)))
 }
 
-fn extract_assays_v5(robj: &RObject) -> Result<(ExpressionMatrix, DataFrame, Option<HashMap<String, ExpressionMatrix>>), SeuratError> {
+fn extract_assays_v5(robj: &RObject, keep_layers: bool) -> Result<(ExpressionMatrix, DataFrame, Option<HashMap<String, ExpressionMatrix>>), SeuratError> {
+    use crate::seurat::assay5::merge_split_layers;
+
     let assay_list = get_named_list_items(robj).ok_or_else(|| SeuratError::ParseError("Expected named list for assays".into()))?;
     if assay_list.is_empty() { return Err(SeuratError::ParseError("No assays found".into())); }
     let (_, first_assay) = &assay_list[0];
-    let expression = extract_assay5_main_matrix(first_assay)?;
+
+    // Get raw layers from the first assay (before merge)
+    let raw_layers = extract_assay5_layers(first_assay)?;
+
+    // Always merge to produce the main expression matrix (X)
+    let merged_layers = merge_split_layers(raw_layers.clone())?;
+    let expression = if let Some(m) = merged_layers.get("counts") {
+        m.clone()
+    } else if let Some(m) = merged_layers.get("data") {
+        m.clone()
+    } else {
+        merged_layers.into_iter().next().map(|(_, m)| m)
+            .ok_or_else(|| SeuratError::ParseError("No layers in Assay5".into()))?
+    };
+
     let (_, n_genes) = expression.shape();
-    let layers = if assay_list.len() > 1 {
-        let mut layer_map = HashMap::new();
-        for (name, assay) in assay_list.iter().skip(1) {
-            if let Ok(layer_expr) = extract_assay5_main_matrix(assay) { layer_map.insert(name.to_string(), layer_expr); }
+
+    // Build the layers map
+    let mut layer_map = HashMap::new();
+
+    // If keep_layers is true, preserve the original split layers (e.g. counts.1, counts.2)
+    // Pad each sub-layer to full cell count so AnnData dimension requirements are met
+    if keep_layers {
+        use crate::seurat::assay5::pad_split_layers_to_full_size;
+
+        let re = regex::Regex::new(r"^(.+)\..+$").unwrap();
+        let has_split = raw_layers.keys().any(|k| {
+            let prefix = re.captures(k).map(|c| c[1].to_string());
+            if let Some(p) = prefix {
+                raw_layers.keys().filter(|k2| {
+                    re.captures(k2).map(|c2| c2[1].to_string()) == Some(p.clone())
+                }).count() > 1
+            } else {
+                false
+            }
+        });
+        if has_split {
+            let (total_cells, _) = expression.shape();
+            let padded = pad_split_layers_to_full_size(&raw_layers, total_cells, n_genes)?;
+            for (name, matrix) in padded {
+                layer_map.insert(name, matrix);
+            }
+            log::info!(
+                "Preserved and padded {} split layer(s) with --keep-layers (total_cells={})",
+                layer_map.len(),
+                total_cells
+            );
         }
-        if layer_map.is_empty() { None } else { Some(layer_map) }
-    } else { None };
+    }
+
+    // Also add layers from additional assays (e.g. SCT, ADT)
+    for (name, assay) in assay_list.iter().skip(1) {
+        if let Ok(layer_expr) = extract_assay5_main_matrix(assay) {
+            layer_map.insert(name.to_string(), layer_expr);
+        }
+    }
+
+    let layers = if layer_map.is_empty() { None } else { Some(layer_map) };
     Ok((expression, DataFrame::empty(n_genes), layers))
 }
 

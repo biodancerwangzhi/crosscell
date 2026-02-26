@@ -80,6 +80,13 @@ pub fn write_h5ad<P: AsRef<Path>>(data: &SingleCellData, path: P) -> Result<()> 
     if let Some(ref spatial) = data.spatial {
         write_spatial_data(&file, spatial, data.metadata.n_cells)?;
     }
+
+    // 写入基因加载矩阵 /varm
+    if let Some(ref gene_loadings) = data.gene_loadings {
+        if !gene_loadings.is_empty() {
+            write_varm(&file, gene_loadings)?;
+        }
+    }
     
     Ok(())
 }
@@ -238,6 +245,22 @@ fn write_metadata_dataframe(file: &File, group_name: &str, df: &DataFrame) -> Re
     Ok(())
 }
 
+/// 写入 crosscell_original_dtype 属性到 HDF5 Dataset
+///
+/// 记录原始 Arrow 数据类型，用于读取时恢复类型保真度。
+/// 写入失败时仅记录警告，不阻断转换。
+fn write_dtype_attribute(dataset: &hdf5::Dataset, dtype_str: &str) {
+    if let Err(e) = (|| -> std::result::Result<(), hdf5::Error> {
+        dataset.new_attr::<hdf5::types::VarLenUnicode>()
+            .create("crosscell_original_dtype")?
+            .write_scalar(&dtype_str.parse::<hdf5::types::VarLenUnicode>()
+                .map_err(|_| hdf5::Error::Internal("Failed to create VarLenUnicode".to_string()))?)?;
+        Ok(())
+    })() {
+        log::warn!("Failed to write crosscell_original_dtype attribute: {}", e);
+    }
+}
+
 /// 写入 Float64 列
 fn write_float64_column(group: &hdf5::Group, col_name: &str, array: &arrow::array::ArrayRef) -> Result<()> {
     let float_array = array.as_primitive::<arrow::datatypes::Float64Type>();
@@ -247,6 +270,7 @@ fn write_float64_column(group: &hdf5::Group, col_name: &str, array: &arrow::arra
         .shape([values.len()])
         .create(col_name)?;
     dataset.write(&values)?;
+    write_dtype_attribute(&dataset, "float64");
     
     Ok(())
 }
@@ -260,6 +284,7 @@ fn write_int64_column(group: &hdf5::Group, col_name: &str, array: &arrow::array:
         .shape([values.len()])
         .create(col_name)?;
     dataset.write(&values)?;
+    write_dtype_attribute(&dataset, "int64");
     
     Ok(())
 }
@@ -273,6 +298,7 @@ fn write_int32_column(group: &hdf5::Group, col_name: &str, array: &arrow::array:
         .shape([values.len()])
         .create(col_name)?;
     dataset.write(&values)?;
+    write_dtype_attribute(&dataset, "int32");
     
     Ok(())
 }
@@ -288,6 +314,7 @@ fn write_boolean_column(group: &hdf5::Group, col_name: &str, array: &arrow::arra
         .shape([values.len()])
         .create(col_name)?;
     dataset.write(&values)?;
+    write_dtype_attribute(&dataset, "bool");
     
     Ok(())
 }
@@ -309,6 +336,7 @@ fn write_string_column(group: &hdf5::Group, col_name: &str, array: &arrow::array
         .shape([values.len()])
         .create(col_name)?;
     dataset.write(&values)?;
+    write_dtype_attribute(&dataset, "utf8");
     
     Ok(())
 }
@@ -387,6 +415,17 @@ fn write_categorical_column_v2(
         .shape([categories.len()])
         .create("categories")?;
     cat_dataset.write(&categories)?;
+    
+    // 写入 crosscell_original_dtype 属性到 categorical group
+    if let Err(e) = (|| -> std::result::Result<(), hdf5::Error> {
+        cat_col_group.new_attr::<hdf5::types::VarLenUnicode>()
+            .create("crosscell_original_dtype")?
+            .write_scalar(&"dictionary".parse::<hdf5::types::VarLenUnicode>()
+                .map_err(|_| hdf5::Error::Internal("Failed to create VarLenUnicode".to_string()))?)?;
+        Ok(())
+    })() {
+        log::warn!("Failed to write crosscell_original_dtype attribute for categorical column: {}", e);
+    }
     
     Ok(())
 }
@@ -783,6 +822,37 @@ fn write_sparse_csr_to_group(group: &hdf5::Group, csr: &SparseMatrixCSR) -> Resu
 
 /// 写入空间数据 (/obsm['spatial'] 和 /uns['spatial'])
 ///
+/// 写入基因加载矩阵 (/varm)
+///
+/// HDF5 结构：
+/// - /varm: Group，包含多个 2D Dataset (n_genes × n_components)
+/// - 常见成员：PCs (PCA loadings)
+fn write_varm(
+    file: &File,
+    gene_loadings: &HashMap<String, Embedding>,
+) -> Result<()> {
+    let varm_group = file.create_group("varm")?;
+    
+    for (name, loading) in gene_loadings {
+        let dataset = varm_group.new_dataset::<f64>()
+            .shape([loading.n_rows, loading.n_cols])
+            .create(name.as_str())?;
+        dataset.write_raw(&loading.data)?;
+        
+        // 写入 encoding-type 属性
+        dataset.new_attr::<hdf5::types::VarLenUnicode>()
+            .create("encoding-type")?
+            .write_scalar(&"array".parse::<hdf5::types::VarLenUnicode>()
+                .map_err(|_| hdf5::Error::Internal("Failed to create VarLenUnicode".to_string()))?)?;
+        dataset.new_attr::<hdf5::types::VarLenUnicode>()
+            .create("encoding-version")?
+            .write_scalar(&"0.2.0".parse::<hdf5::types::VarLenUnicode>()
+                .map_err(|_| hdf5::Error::Internal("Failed to create VarLenUnicode".to_string()))?)?;
+    }
+    
+    Ok(())
+}
+
 /// AnnData 空间数据结构：
 /// - /obsm/spatial: 空间坐标矩阵 (n_cells × 2 或 n_cells × 3)
 /// - /uns/spatial: Group，包含图像和缩放因子

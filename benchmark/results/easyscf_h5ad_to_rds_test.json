@@ -1,0 +1,80 @@
+[
+  {
+    "test_id": "scanpy_pbmc3k",
+    "step1_ok": true,
+    "step2_ok": false,
+    "step2_error": "object 'sce' not found"
+  },
+  {
+    "test_id": "scanpy_pbmc3k_processed",
+    "step1_ok": false,
+    "step2_ok": false,
+    "step2_error": "step1 failed"
+  },
+  {
+    "test_id": "scvelo_dentategyrus",
+    "step1_ok": true,
+    "step2_ok": false,
+    "step2_error": "object 'sce' not found"
+  },
+  {
+    "test_id": "scvelo_pancreas",
+    "step1_ok": true,
+    "step2_ok": false,
+    "step2_error": "object 'sce' not found"
+  },
+  {
+    "test_id": "cellxgene_pbmc_15k",
+    "step1_ok": true,
+    "step2_ok": false,
+    "step2_error": "object 'sce' not found"
+  },
+  {
+    "test_id": "cellxgene_heart_23k",
+    "step1_ok": true,
+    "step2_ok": false,
+    "step2_error": "object 'sce' not found"
+  },
+  {
+    "test_id": "cellxgene_brain_40k",
+    "step1_ok": true,
+    "step2_ok": false,
+    "step2_error": "object 'sce' not found"
+  },
+  {
+    "test_id": "squidpy_visium_hne",
+    "step1_ok": false,
+    "step2_ok": false,
+    "step2_error": "step1 failed"
+  },
+  {
+    "test_id": "squidpy_mibitof",
+    "step1_ok": false,
+    "step2_ok": false,
+    "step2_error": "step1 failed"
+  },
+  {
+    "test_id": "squidpy_slideseqv2",
+    "step1_ok": true,
+    "step2_ok": false,
+    "step2_error": "object 'sce' not found"
+  },
+  {
+    "test_id": "squidpy_seqfish",
+    "step1_ok": true,
+    "step2_ok": false,
+    "step2_error": "object 'sce' not found"
+  },
+  {
+    "test_id": "squidpy_merfish",
+    "step1_ok": true,
+    "step2_ok": false,
+    "step2_error": "object 'sce' not found"
+  },
+  {
+    "test_id": "squidpy_imc",
+    "step1_ok": true,
+    "step2_ok": false,
+    "step2_error": "object 'sce' not found"
+  }
+]

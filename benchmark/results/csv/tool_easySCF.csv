@@ -1,0 +1,60 @@
+tool,direction,test_id,dataset,file,seurat_version,type,n_cells,n_genes,status,conversion_time_seconds,peak_memory_mb,output_size_mb,error
+easySCF,rds_to_h5ad,v4_pbmc3k_raw,pbmc3k,,V4,raw,2700,13714,success,8.318,670.5,,
+easySCF,rds_to_h5ad,v4_pbmc3k_processed,pbmc3k,,V4,processed,2700,13714,success,11.811,892.5,,
+easySCF,rds_to_h5ad,v5_pbmc3k_raw,pbmc3k,,V5,raw,2700,13714,success,7.555,617.6,,
+easySCF,rds_to_h5ad,v5_pbmc3k_processed,pbmc3k,,V5,processed,2700,13714,success,10.322,816.4,,
+easySCF,rds_to_h5ad,v4_stxKidney_raw,stxKidney,,,,,,failed,,,,"Loading required package: SeuratObject
+Loading required package: sp
+
+Attaching package: ‘SeuratObject’
+
+The following objects are masked from ‘package:base’:
+
+    intersect, t
+
+Validating object structure
+Updating object slots
+Ensuring keys are in the proper structure
+Warning: Assay Spatial changing from Assay to Assay
+Error in slot(object = object, name = ""key"") : 
+  no slot of name ""key"" for this object of class ""SliceImage""
+Calls: UpdateSeuratObject
+Execution halted
+Command exited with non-zero status 1"
+easySCF,rds_to_h5ad,v5_stxKidney_raw,stxKidney,,V5,raw,1438,31053,success,6.558,697.3,,
+easySCF,rds_to_h5ad,v4_celegans_raw,celegans.embryo,,V4,raw,6188,20222,success,10.396,935.2,,
+easySCF,rds_to_h5ad,v4_celegans_processed,celegans.embryo,,V4,processed,6188,20222,success,16.631,1369.3,,
+easySCF,rds_to_h5ad,v5_celegans_raw,celegans.embryo,,V5,raw,6188,20222,success,10.504,817.6,,
+easySCF,rds_to_h5ad,v5_celegans_processed,celegans.embryo,,V5,processed,6188,20222,success,13.097,1229.7,,
+easySCF,rds_to_h5ad,v4_cbmc_raw,cbmc,,V4,raw,8617,20501,success,12.117,1235.6,,
+easySCF,rds_to_h5ad,v4_cbmc_processed,cbmc,,V4,processed,8617,20501,success,20.562,1868.0,,
+easySCF,rds_to_h5ad,v5_cbmc_raw,cbmc,,V5,raw,8617,20501,success,10.423,1043.6,,
+easySCF,rds_to_h5ad,v5_cbmc_processed,cbmc,,V5,processed,8617,20501,success,17.177,1793.1,,
+easySCF,rds_to_h5ad,v4_ifnb_raw,ifnb,,V4,raw,13999,14053,success,15.242,1361.2,,
+easySCF,rds_to_h5ad,v4_ifnb_processed,ifnb,,V4,processed,13999,14053,success,22.688,2069.7,,
+easySCF,rds_to_h5ad,v5_ifnb_raw,ifnb,,V5,raw,13999,14053,success,12.451,1063.3,,
+easySCF,rds_to_h5ad,v5_ifnb_processed,ifnb,,V5,processed,13999,14053,success,20.915,2047.9,,
+easySCF,rds_to_h5ad,v4_panc8_raw,panc8,,V4,raw,14890,34363,success,41.103,4660.4,,
+easySCF,rds_to_h5ad,v4_panc8_processed,panc8,,V4,processed,14890,34363,success,46.93,6462.3,,
+easySCF,rds_to_h5ad,v5_panc8_raw,panc8,,V5,raw,14890,34363,success,30.965,4062.5,,
+easySCF,rds_to_h5ad,v5_panc8_processed,panc8,,V5,processed,14890,34363,success,44.666,6227.0,,
+easySCF,rds_to_h5ad,v4_thp1_raw,thp1.eccite,,V4,raw,20729,18649,success,47.219,6360.8,,
+easySCF,rds_to_h5ad,v4_thp1_processed,thp1.eccite,,V4,processed,20729,18649,success,63.415,7743.1,,
+easySCF,rds_to_h5ad,v5_thp1_raw,thp1.eccite,,V5,raw,20729,18649,success,39.599,5278.0,,
+easySCF,rds_to_h5ad,v5_thp1_processed,thp1.eccite,,V5,processed,20729,18649,success,59.131,8270.9,,
+easySCF,rds_to_h5ad,v4_bmcite_raw,bmcite,,V4,raw,30672,17009,success,26.665,2916.0,,
+easySCF,rds_to_h5ad,v4_bmcite_processed,bmcite,,V4,processed,30672,17009,success,40.3,5286.8,,
+easySCF,rds_to_h5ad,v5_bmcite_raw,bmcite,,V5,raw,30672,17009,success,18.155,2364.4,,
+easySCF,rds_to_h5ad,v5_bmcite_processed,bmcite,,V5,processed,30672,17009,success,35.608,4564.7,,
+easySCF,rds_to_h5ad,v4_pbmcsca_raw,pbmcsca,,V4,raw,31021,33694,success,22.805,2745.1,,
+easySCF,rds_to_h5ad,v4_pbmcsca_processed,pbmcsca,,V4,processed,31021,33694,success,35.965,5252.4,,
+easySCF,rds_to_h5ad,v5_pbmcsca_raw,pbmcsca,,V5,raw,31021,33694,success,20.59,2393.4,,
+easySCF,rds_to_h5ad,v5_pbmcsca_processed,pbmcsca,,V5,processed,31021,33694,success,33.127,4627.9,,
+easySCF,rds_to_h5ad,v4_hcabm40k_raw,hcabm40k,,V4,raw,40000,17369,success,29.765,3833.4,,
+easySCF,rds_to_h5ad,v4_hcabm40k_processed,hcabm40k,,V4,processed,40000,17369,success,50.087,6935.7,,
+easySCF,rds_to_h5ad,v5_hcabm40k_raw,hcabm40k,,V5,raw,40000,17369,success,23.823,3277.1,,
+easySCF,rds_to_h5ad,v5_hcabm40k_processed,hcabm40k,,V5,processed,40000,17369,success,46.121,5859.9,,
+easySCF,rds_to_h5ad,v4_ssHippo_raw,ssHippo,,V4,raw,53173,23264,success,9.728,999.5,,
+easySCF,rds_to_h5ad,v4_ssHippo_processed,ssHippo,,V4,processed,53173,23264,success,17.935,3560.5,,
+easySCF,rds_to_h5ad,v5_ssHippo_raw,ssHippo,,V5,raw,53173,23264,success,8.377,1161.6,,
+easySCF,rds_to_h5ad,v5_ssHippo_processed,ssHippo,,V5,processed,53173,23264,success,15.045,2047.3,,

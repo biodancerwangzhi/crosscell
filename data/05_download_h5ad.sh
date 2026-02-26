@@ -9,6 +9,7 @@
 #   docker-compose -f benchmark/docker-compose.benchmark.yml run --rm benchmark bash /benchmark/data/download_h5ad.sh scanpy
 #   docker-compose -f benchmark/docker-compose.benchmark.yml run --rm benchmark bash /benchmark/data/download_h5ad.sh scvelo
 #   docker-compose -f benchmark/docker-compose.benchmark.yml run --rm benchmark bash /benchmark/data/download_h5ad.sh squidpy
+#   docker-compose -f benchmark/docker-compose.benchmark.yml run --rm benchmark bash /benchmark/data/download_h5ad.sh cellxgene-large
 # ============================================
 
 set -e

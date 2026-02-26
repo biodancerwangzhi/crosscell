@@ -1,0 +1,19 @@
+[package]
+name = "crosscell-r"
+version = "0.1.0"
+edition = "2021"
+description = "R bindings for CrossCell single-cell data converter"
+license = "MIT OR Apache-2.0"
+
+[lib]
+crate-type = ["staticlib"]
+
+[dependencies]
+crosscell-core = { path = "../../.." }
+extendr-api = "0.7"
+arrow = { version = "48.0" }
+
+[features]
+default = ["hdf5-static"]
+# R 包默认静态链接 HDF5（R-universe 构建服务器不一定有 libhdf5-dev）
+hdf5-static = ["crosscell-core/hdf5-static"]
