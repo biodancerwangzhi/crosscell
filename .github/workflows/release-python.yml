@@ -35,13 +35,11 @@ jobs:
         with:
           target: ${{ matrix.target }}
           args: --release --out dist -m crosscell-py/Cargo.toml
-          manylinux: auto
-          # manylinux 容器内安装 HDF5 构建依赖
-          # hdf5-sys static feature 从源码编译，需要 CMake
+          manylinux: 2_28
           before-script-linux: |
-            yum install -y cmake3 zlib-devel || apt-get update && apt-get install -y cmake zlib1g-dev
-            # cmake3 -> cmake 软链接 (CentOS/manylinux)
-            which cmake3 && ln -sf $(which cmake3) /usr/local/bin/cmake || true
+            # manylinux_2_28 is AlmaLinux 8 based (has dnf/yum)
+            yum install -y cmake zlib-devel perl-IPC-Cmd || true
+            which cmake || (yum install -y cmake3 && ln -sf $(which cmake3) /usr/local/bin/cmake) || true
 
       - uses: actions/upload-artifact@v4
         with:

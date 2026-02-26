@@ -102,3 +102,7 @@ tests/data/
 # R package build artifacts
 # ============================================
 crosscell-r/*.tar.gz
+crosscell-r/src/*.so
+crosscell-r/src/*.o
+crosscell-r/src/*.dll
+crosscell-r/src/rust/target/

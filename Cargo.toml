@@ -1,5 +1,6 @@
 [workspace]
-members = [".", "crosscell-py", "crosscell-r/src/rust"]
+members = [".", "crosscell-py"]
+exclude = ["crosscell-r/src/rust"]
 resolver = "2"
 
 [package]

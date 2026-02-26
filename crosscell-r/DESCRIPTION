@@ -3,7 +3,7 @@ Title: High-Performance Single-Cell Data Format Converter
 Version: 0.1.0
 Authors@R: 
     person("CrossCell Contributors", role = c("aut", "cre"),
-           email = "crosscell@example.com")
+           email = "szxszx@foxmail.com")
 Description: Fast conversion between H5AD (AnnData) and RDS (Seurat/SCE) formats
     for single-cell transcriptomics data. Implemented in Rust for high performance.
 License: MIT + file LICENSE
