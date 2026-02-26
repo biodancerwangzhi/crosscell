@@ -47,12 +47,12 @@ jobs:
           cat > Cross.toml << 'EOF'
           [target.x86_64-unknown-linux-gnu]
           pre-build = [
-            "DEBIAN_FRONTEND=noninteractive apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y cmake pkg-config libclang-dev zlib1g-dev"
+            "DEBIAN_FRONTEND=noninteractive apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y wget pkg-config libclang-dev zlib1g-dev && wget -q https://github.com/Kitware/CMake/releases/download/v3.31.4/cmake-3.31.4-linux-x86_64.tar.gz -O /tmp/cmake.tar.gz && tar xzf /tmp/cmake.tar.gz -C /opt/ && rm /tmp/cmake.tar.gz && ln -sf /opt/cmake-3.31.4-linux-x86_64/bin/cmake /usr/local/bin/cmake"
           ]
 
           [target.x86_64-unknown-linux-musl]
           pre-build = [
-            "DEBIAN_FRONTEND=noninteractive apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y cmake pkg-config libclang-dev zlib1g-dev musl-tools"
+            "DEBIAN_FRONTEND=noninteractive apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y wget pkg-config libclang-dev zlib1g-dev musl-tools && wget -q https://github.com/Kitware/CMake/releases/download/v3.31.4/cmake-3.31.4-linux-x86_64.tar.gz -O /tmp/cmake.tar.gz && tar xzf /tmp/cmake.tar.gz -C /opt/ && rm /tmp/cmake.tar.gz && ln -sf /opt/cmake-3.31.4-linux-x86_64/bin/cmake /usr/local/bin/cmake"
           ]
           EOF
 
