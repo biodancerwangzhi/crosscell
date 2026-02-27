@@ -13,11 +13,17 @@ crate-type = ["staticlib"]
 [workspace]
 
 [dependencies]
-# Default: git dependency for R-universe / CRAN builds
-# Local dev: override via .cargo/config.toml patch (see below)
+# Default: path dependency (works inside full repo)
+# configure script switches to git dependency for R-universe/tarball builds
 crosscell-core = { path = "../../.." }
 extendr-api = "0.7"
 arrow = { version = "48.0" }
+
+# Pin versions to match crosscell-core's Cargo.lock
+# Prevents R-universe from resolving incompatible versions
+ndarray = "=0.15.6"
+hdf5 = { package = "hdf5-metno", version = "=0.12.3" }
+hdf5-sys = { package = "hdf5-metno-sys", version = "=0.11.2" }
 
 [features]
 default = ["hdf5-static"]
