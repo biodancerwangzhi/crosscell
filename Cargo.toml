@@ -40,9 +40,9 @@ num-complex = "0.4"
 # 使用 hdf5-metno（metno fork，活跃维护，支持 HDF5 1.14.x / 2.0.0）
 # 默认动态链接系统 HDF5 库（需要 libhdf5-dev >= 1.10）
 # 使用 `cargo build --features hdf5-static` 可以静态编译内置 HDF5（2.0.0，支持所有格式）
-ndarray = "0.15"
-hdf5 = { package = "hdf5-metno", version = "0.12.3" }
-hdf5-sys = { package = "hdf5-metno-sys", version = "0.11.2", features = ["zlib"] }
+ndarray = "=0.15.6"
+hdf5 = { package = "hdf5-metno", version = "=0.12.3" }
+hdf5-sys = { package = "hdf5-metno-sys", version = "=0.11.2", features = ["zlib"] }
 libz-sys = { version = "1", features = ["libc"], default-features = false }
 
 # CLI 依赖
