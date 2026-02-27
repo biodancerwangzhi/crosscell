@@ -13,7 +13,7 @@ crate-type = ["staticlib"]
 [workspace]
 
 [dependencies]
-crosscell-core = { path = "../../.." }
+crosscell-core = { git = "https://github.com/biodancerwangzhi/crosscell.git" }
 extendr-api = "0.7"
 arrow = { version = "48.0" }
 
