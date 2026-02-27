@@ -1,6 +1,6 @@
 ^\.Rbuildignore$
-^src/rust/target$
-^src/rust/\.cargo$
-^src/\.cargo$
-^\.github$
+^src/rust/target
+^src/rust/\.cargo
+^src/\.cargo
+^\.github
 crosscell_.*\.tar\.gz$

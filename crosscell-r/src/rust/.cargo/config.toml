@@ -1,4 +1,0 @@
-# Local development override: use local crosscell-core instead of git
-# This file is excluded from R CMD build via .Rbuildignore
-[patch."https://github.com/biodancerwangzhi/crosscell.git"]
-crosscell-core = { path = "../../../.." }

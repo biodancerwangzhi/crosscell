@@ -1,0 +1,14 @@
+#!/bin/sh
+# configure script for crosscell R package
+# Detects whether we're building inside the full repo or from a tarball,
+# and adjusts the Rust dependency accordingly.
+
+CARGO_TOML="src/rust/Cargo.toml"
+CORE_CARGO="src/rust/../../../Cargo.toml"
+
+if [ ! -f "$CORE_CARGO" ]; then
+    echo "** crosscell: not inside full repo, switching to git dependency"
+    sed -i 's|crosscell-core = { path = "../../.." }|crosscell-core = { git = "https://github.com/biodancerwangzhi/crosscell.git" }|' "$CARGO_TOML"
+else
+    echo "** crosscell: full repo detected, using path dependency"
+fi
