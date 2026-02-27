@@ -32,16 +32,16 @@ python3 benchmark/scripts/compare_tools.py
 
 ### Step 1: Obtain Test Data
 
-Test datasets are archived on Zenodo (DOI: TODO).
+Test datasets are archived on Zenodo (DOI: [10.5281/zenodo.18610876](https://doi.org/10.5281/zenodo.18610876)).
 
 ```bash
 # Option A: Download from Zenodo (split archives, download what you need)
 # See data/README.md for full Zenodo upload/download instructions
-wget https://zenodo.org/records/XXXXXXX/files/seurat_v4_datasets.tar.gz
-wget https://zenodo.org/records/XXXXXXX/files/seurat_v5_datasets.tar.gz
-wget https://zenodo.org/records/XXXXXXX/files/h5ad_small_datasets.tar.gz
-wget https://zenodo.org/records/XXXXXXX/files/h5ad_spatial_datasets.tar.gz
-wget https://zenodo.org/records/XXXXXXX/files/h5ad_cellxgene_datasets.tar.gz
+wget https://zenodo.org/records/18610876/files/seurat_v4_datasets.tar.gz
+wget https://zenodo.org/records/18610876/files/seurat_v5_datasets.tar.gz
+wget https://zenodo.org/records/18610876/files/h5ad_small_datasets.tar.gz
+wget https://zenodo.org/records/18610876/files/h5ad_spatial_datasets.tar.gz
+wget https://zenodo.org/records/18610876/files/h5ad_cellxgene_datasets.tar.gz
 for f in *.tar.gz; do tar xzf "$f"; done
 
 # Option B: Generate from SeuratData (requires R environment)

@@ -1,0 +1,100 @@
+{
+  "id": 65086311335,
+  "run_id": 22470564604,
+  "workflow_name": "crosscell 0.1.0",
+  "head_branch": "master",
+  "run_url": "https://api.github.com/repos/r-universe/biodancerwangzhi/actions/runs/22470564604",
+  "run_attempt": 1,
+  "node_id": "CR_kwDORZ_p_s8AAAAPJ3JLpw",
+  "head_sha": "46a89db0cef2d771d32a56d4f06d07022db8d431",
+  "url": "https://api.github.com/repos/r-universe/biodancerwangzhi/actions/jobs/65086311335",
+  "html_url": "https://github.com/r-universe/biodancerwangzhi/actions/runs/22470564604/job/65086311335",
+  "status": "completed",
+  "conclusion": "failure",
+  "created_at": "2026-02-27T02:45:51Z",
+  "started_at": "2026-02-27T02:45:53Z",
+  "completed_at": "2026-02-27T02:50:34Z",
+  "name": "Deploy to R-universe / Build and Check / Build source pkg and vignettes",
+  "steps": [
+    {
+      "name": "Set up job",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 1,
+      "started_at": "2026-02-27T02:45:53Z",
+      "completed_at": "2026-02-27T02:45:55Z"
+    },
+    {
+      "name": "Pull ghcr.io/r-universe-org/build-source",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 2,
+      "started_at": "2026-02-27T02:45:55Z",
+      "completed_at": "2026-02-27T02:47:50Z"
+    },
+    {
+      "name": "Free disk space on runner",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 3,
+      "started_at": "2026-02-27T02:47:50Z",
+      "completed_at": "2026-02-27T02:48:24Z"
+    },
+    {
+      "name": "Build source package and vignettes",
+      "status": "completed",
+      "conclusion": "failure",
+      "number": 4,
+      "started_at": "2026-02-27T02:48:24Z",
+      "completed_at": "2026-02-27T02:50:32Z"
+    },
+    {
+      "name": "Store source package",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 5,
+      "started_at": "2026-02-27T02:50:32Z",
+      "completed_at": "2026-02-27T02:50:33Z"
+    },
+    {
+      "name": "Store linux binary package",
+      "status": "completed",
+      "conclusion": "skipped",
+      "number": 6,
+      "started_at": "2026-02-27T02:50:33Z",
+      "completed_at": "2026-02-27T02:50:33Z"
+    },
+    {
+      "name": "Run if [ \"\" ]; then",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 7,
+      "started_at": "2026-02-27T02:50:33Z",
+      "completed_at": "2026-02-27T02:50:33Z"
+    },
+    {
+      "name": "Conclude: source: 4.5.2: ERROR: 5684024003",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 8,
+      "started_at": "2026-02-27T02:50:33Z",
+      "completed_at": "2026-02-27T02:50:33Z"
+    },
+    {
+      "name": "Complete job",
+      "status": "completed",
+      "conclusion": "success",
+      "number": 9,
+      "started_at": "2026-02-27T02:50:33Z",
+      "completed_at": "2026-02-27T02:50:33Z"
+    }
+  ],
+  "check_run_url": "https://api.github.com/repos/r-universe/biodancerwangzhi/check-runs/65086311335",
+  "labels": [
+    "ubuntu-latest"
+  ],
+  "runner_id": 1008277964,
+  "runner_name": "GitHub Actions 1008277964",
+  "runner_group_id": 0,
+  "runner_group_name": "GitHub Actions"
+}

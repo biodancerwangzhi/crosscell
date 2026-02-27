@@ -9,7 +9,7 @@ version = "0.1.0"
 edition = "2021"
 authors = ["CrossCell Contributors"]
 license = "MIT OR Apache-2.0"
-repository = "https://github.com/yourusername/crosscell"
+repository = "https://github.com/biodancerwangzhi/crosscell"
 description = "High-performance H5AD and RDS format converter for single-cell transcriptomics data"
 
 [lib]

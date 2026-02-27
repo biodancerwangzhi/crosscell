@@ -250,7 +250,7 @@ docker pull username/crosscell-benchmark:latest
 import urllib.request
 import json
 
-ZENODO_RECORD_ID = "XXXXXXX"  # 替换为实际 Record ID
+ZENODO_RECORD_ID = "18610876"
 BASE_URL = f"https://zenodo.org/api/records/{ZENODO_RECORD_ID}"
 
 # 获取文件列表

@@ -1,0 +1,25 @@
+{
+  "total_count": 1,
+  "artifacts": [
+    {
+      "id": 5684024003,
+      "node_id": "MDg6QXJ0aWZhY3Q1Njg0MDI0MDAz",
+      "name": "package-source",
+      "size_in_bytes": 218,
+      "url": "https://api.github.com/repos/r-universe/biodancerwangzhi/actions/artifacts/5684024003",
+      "archive_download_url": "https://api.github.com/repos/r-universe/biodancerwangzhi/actions/artifacts/5684024003/zip",
+      "expired": false,
+      "digest": "sha256:e342340eb159302aafaf009b9f0a1027ca2a75e1aa50a441283f72078ddabcc8",
+      "created_at": "2026-02-27T02:50:33Z",
+      "updated_at": "2026-02-27T02:50:33Z",
+      "expires_at": "2026-05-28T02:45:32Z",
+      "workflow_run": {
+        "id": 22470564604,
+        "repository_id": 1168108030,
+        "head_repository_id": 1168108030,
+        "head_branch": "master",
+        "head_sha": "46a89db0cef2d771d32a56d4f06d07022db8d431"
+      }
+    }
+  ]
+}
