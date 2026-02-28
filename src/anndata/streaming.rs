@@ -32,7 +32,6 @@ use arrow::array::{
 };
 use arrow::datatypes::Int32Type;
 use hdf5::File;
-use ndarray::s;
 use std::collections::HashMap;
 use std::ops::Range;
 use std::path::{Path, PathBuf};
@@ -318,12 +317,12 @@ impl StreamingH5adReader {
         // Slice read indptr（只读 start_row..=end_row）
         let indptr_dataset = x_group.dataset("indptr")?;
         let indptr_slice: Vec<i64> = if let Ok(slice_i32) =
-            indptr_dataset.read_slice_1d::<i32, _>(s![start_row..=end_row])
+            indptr_dataset.read_slice_1d::<i32, _>(start_row..=end_row)
         {
             slice_i32.to_vec().into_iter().map(|x| x as i64).collect()
         } else {
             indptr_dataset
-                .read_slice_1d::<i64, _>(s![start_row..=end_row])?
+                .read_slice_1d::<i64, _>(start_row..=end_row)?
                 .to_vec()
         };
 
@@ -343,18 +342,18 @@ impl StreamingH5adReader {
 
         let data: Vec<f64> = if data_start < data_end {
             data_dataset
-                .read_slice_1d::<f64, _>(s![data_start..data_end])?
+                .read_slice_1d::<f64, _>(data_start..data_end)?
                 .to_vec()
         } else {
             Vec::new()
         };
 
         let indices: Vec<usize> = if data_start < data_end {
-            if let Ok(idx_i32) = indices_dataset.read_slice_1d::<i32, _>(s![data_start..data_end]) {
+            if let Ok(idx_i32) = indices_dataset.read_slice_1d::<i32, _>(data_start..data_end) {
                 idx_i32.to_vec().into_iter().map(|x| x as usize).collect()
             } else {
                 indices_dataset
-                    .read_slice_1d::<i64, _>(s![data_start..data_end])?
+                    .read_slice_1d::<i64, _>(data_start..data_end)?
                     .to_vec()
                     .into_iter()
                     .map(|x| x as usize)
@@ -377,7 +376,7 @@ impl StreamingH5adReader {
         let n_cols = self.metadata.n_genes;
 
         // Slice read: 只读取需要的行
-        let chunk_data = x_dataset.read_slice_2d::<f64, _>(s![start_row..end_row, ..])?;
+        let chunk_data = x_dataset.read_slice_2d::<f64, _>((start_row..end_row, ..))?;
         let data = chunk_data.into_raw_vec();
 
         let dense =
@@ -445,22 +444,22 @@ impl StreamingH5adReader {
         end_row: usize,
     ) -> Result<ArrayRef> {
         // Slice read 数值类型
-        if let Ok(values) = dataset.read_slice_1d::<f64, _>(s![start_row..end_row]) {
+        if let Ok(values) = dataset.read_slice_1d::<f64, _>(start_row..end_row) {
             let array = Float64Array::from(values.to_vec());
             return Ok(Arc::new(array) as ArrayRef);
         }
 
-        if let Ok(values) = dataset.read_slice_1d::<i64, _>(s![start_row..end_row]) {
+        if let Ok(values) = dataset.read_slice_1d::<i64, _>(start_row..end_row) {
             let array = Int64Array::from(values.to_vec());
             return Ok(Arc::new(array) as ArrayRef);
         }
 
-        if let Ok(values) = dataset.read_slice_1d::<i32, _>(s![start_row..end_row]) {
+        if let Ok(values) = dataset.read_slice_1d::<i32, _>(start_row..end_row) {
             let array = Int32Array::from(values.to_vec());
             return Ok(Arc::new(array) as ArrayRef);
         }
 
-        if let Ok(values) = dataset.read_slice_1d::<bool, _>(s![start_row..end_row]) {
+        if let Ok(values) = dataset.read_slice_1d::<bool, _>(start_row..end_row) {
             let array = BooleanArray::from(values.to_vec());
             return Ok(Arc::new(array) as ArrayRef);
         }
@@ -491,15 +490,15 @@ impl StreamingH5adReader {
         // Slice read codes（只读需要的范围）
         let codes_dataset = group.dataset("codes")?;
         let codes: Vec<i32> =
-            if let Ok(c) = codes_dataset.read_slice_1d::<i8, _>(s![start_row..end_row]) {
+            if let Ok(c) = codes_dataset.read_slice_1d::<i8, _>(start_row..end_row) {
                 c.to_vec().into_iter().map(|x| x as i32).collect()
-            } else if let Ok(c) = codes_dataset.read_slice_1d::<i16, _>(s![start_row..end_row]) {
+            } else if let Ok(c) = codes_dataset.read_slice_1d::<i16, _>(start_row..end_row) {
                 c.to_vec().into_iter().map(|x| x as i32).collect()
-            } else if let Ok(c) = codes_dataset.read_slice_1d::<i32, _>(s![start_row..end_row]) {
+            } else if let Ok(c) = codes_dataset.read_slice_1d::<i32, _>(start_row..end_row) {
                 c.to_vec()
             } else {
                 codes_dataset
-                    .read_slice_1d::<i64, _>(s![start_row..end_row])?
+                    .read_slice_1d::<i64, _>(start_row..end_row)?
                     .to_vec()
                     .into_iter()
                     .map(|x| x as i32)
@@ -556,7 +555,7 @@ impl StreamingH5adReader {
 
         // Slice read mask（true = NA）
         let mask_slice: Vec<bool> = mask_dataset
-            .read_slice_1d::<bool, _>(s![start_row..end_row])
+            .read_slice_1d::<bool, _>(start_row..end_row)
             .map(|v| v.to_vec())
             .unwrap_or_else(|_| vec![false; end_row - start_row]);
 
@@ -564,7 +563,7 @@ impl StreamingH5adReader {
         let validity: Vec<bool> = mask_slice.iter().map(|&m| !m).collect();
 
         // Slice read 数值类型
-        if let Ok(vals) = values_dataset.read_slice_1d::<i64, _>(s![start_row..end_row]) {
+        if let Ok(vals) = values_dataset.read_slice_1d::<i64, _>(start_row..end_row) {
             let vals = vals.to_vec();
             let array = Int64Array::from(
                 vals.iter()
@@ -575,7 +574,7 @@ impl StreamingH5adReader {
             return Ok(Arc::new(array) as ArrayRef);
         }
 
-        if let Ok(vals) = values_dataset.read_slice_1d::<i32, _>(s![start_row..end_row]) {
+        if let Ok(vals) = values_dataset.read_slice_1d::<i32, _>(start_row..end_row) {
             let vals = vals.to_vec();
             let array = Int32Array::from(
                 vals.iter()
@@ -586,7 +585,7 @@ impl StreamingH5adReader {
             return Ok(Arc::new(array) as ArrayRef);
         }
 
-        if let Ok(vals) = values_dataset.read_slice_1d::<f64, _>(s![start_row..end_row]) {
+        if let Ok(vals) = values_dataset.read_slice_1d::<f64, _>(start_row..end_row) {
             let vals = vals.to_vec();
             let array = Float64Array::from(
                 vals.iter()
@@ -597,7 +596,7 @@ impl StreamingH5adReader {
             return Ok(Arc::new(array) as ArrayRef);
         }
 
-        if let Ok(vals) = values_dataset.read_slice_1d::<bool, _>(s![start_row..end_row]) {
+        if let Ok(vals) = values_dataset.read_slice_1d::<bool, _>(start_row..end_row) {
             let vals = vals.to_vec();
             let array = BooleanArray::from(
                 vals.iter()
@@ -637,10 +636,10 @@ impl StreamingH5adReader {
 
                 // Slice read: 只读取需要的行
                 let chunk_data = if let Ok(arr) =
-                    dataset.read_slice_2d::<f64, _>(s![start_row..end_row, ..])
+                    dataset.read_slice_2d::<f64, _>((start_row..end_row, ..))
                 {
                     arr.into_raw_vec()
-                } else if let Ok(arr) = dataset.read_slice_2d::<f32, _>(s![start_row..end_row, ..])
+                } else if let Ok(arr) = dataset.read_slice_2d::<f32, _>((start_row..end_row, ..))
                 {
                     arr.into_raw_vec().into_iter().map(|x| x as f64).collect()
                 } else {
