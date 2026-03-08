@@ -81,7 +81,7 @@ data/seurat-packages/
 # ============================================
 # Benchmark artifacts
 # ============================================
-benchmark/crosscell
+# benchmark/crosscell
 benchmark/results/**/*.rds
 benchmark/results/**/*.h5ad
 benchmark/results/**/*.h5
